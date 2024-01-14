@@ -1,0 +1,48 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SKS_Service_Manager.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="company_name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SKS</Value>
+    </Setting>
+    <Setting Name="NIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">9590560152</Value>
+    </Setting>
+    <Setting Name="name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Paweł</Value>
+    </Setting>
+    <Setting Name="surname" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Kobierski</Value>
+    </Setting>
+    <Setting Name="post_code" Type="System.String" Scope="User">
+      <Value Profile="(Default)">28-400</Value>
+    </Setting>
+    <Setting Name="city" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Pińczów</Value>
+    </Setting>
+    <Setting Name="street_number" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Legionistów 22</Value>
+    </Setting>
+    <Setting Name="phone" Type="System.String" Scope="User">
+      <Value Profile="(Default)">692257275</Value>
+    </Setting>
+    <Setting Name="email" Type="System.String" Scope="User">
+      <Value Profile="(Default)">none@gmail.com</Value>
+    </Setting>
+    <Setting Name="mysql_host" Type="System.String" Scope="User">
+      <Value Profile="(Default)">localhost</Value>
+    </Setting>
+    <Setting Name="mysql_user" Type="System.String" Scope="User">
+      <Value Profile="(Default)">admin</Value>
+    </Setting>
+    <Setting Name="mysql_password" Type="System.String" Scope="User">
+      <Value Profile="(Default)">admin</Value>
+    </Setting>
+    <Setting Name="mysql_database" Type="System.String" Scope="User">
+      <Value Profile="(Default)">sks</Value>
+    </Setting>
+    <Setting Name="mysql_port" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">22</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
