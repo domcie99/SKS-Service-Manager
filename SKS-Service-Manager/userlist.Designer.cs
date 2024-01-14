@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(userlist));
             Add = new Button();
             Edit = new Button();
-            button1 = new Button();
+            delete = new Button();
             dataGridView1 = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -62,26 +62,31 @@
             Edit.Size = new Size(50, 50);
             Edit.TabIndex = 20;
             Edit.UseVisualStyleBackColor = false;
+            Edit.Click += Edit_Click;
             // 
-            // button1
+            // delete
             // 
-            button1.BackColor = Color.Transparent;
-            button1.BackgroundImage = Properties.Resources.delete;
-            button1.BackgroundImageLayout = ImageLayout.Zoom;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(431, 12);
-            button1.Name = "button1";
-            button1.Size = new Size(50, 50);
-            button1.TabIndex = 21;
-            button1.UseVisualStyleBackColor = false;
+            delete.BackColor = Color.Transparent;
+            delete.BackgroundImage = Properties.Resources.delete;
+            delete.BackgroundImageLayout = ImageLayout.Zoom;
+            delete.FlatAppearance.BorderSize = 0;
+            delete.FlatStyle = FlatStyle.Flat;
+            delete.Location = new Point(431, 12);
+            delete.Name = "delete";
+            delete.Size = new Size(50, 50);
+            delete.TabIndex = 21;
+            delete.UseVisualStyleBackColor = false;
+            delete.Click += delete_Click;
             // 
             // dataGridView1
             // 
+            dataGridView1.AllowUserToAddRows = false;
             dataGridView1.BackgroundColor = Color.Gainsboro;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(12, 93);
             dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(776, 345);
             dataGridView1.TabIndex = 22;
             // 
@@ -92,7 +97,7 @@
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(800, 450);
             Controls.Add(dataGridView1);
-            Controls.Add(button1);
+            Controls.Add(delete);
             Controls.Add(Edit);
             Controls.Add(Add);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -106,7 +111,7 @@
 
         private Button Add;
         private Button Edit;
-        private Button button1;
+        private Button delete;
         private DataGridView dataGridView1;
 
     }

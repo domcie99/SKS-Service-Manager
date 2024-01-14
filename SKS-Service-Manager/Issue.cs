@@ -1,20 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace SKS_Service_Manager
+﻿namespace SKS_Service_Manager
 {
     public partial class Issue : Form
     {
-        public Issue()
+
+        private Form1 mainForm;
+
+        public Issue(int Id, Form1 mainForm)
         {
             InitializeComponent();
+        }
+
+        private void Load_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Value_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Pozwól na tylko cyfry, kropkę, Backspace oraz Control (do kopiowania i wklejania)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+
+            // Upewnij się, że jest tylko jedna kropka w polu tekstowym
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+            {
+                e.Handled = true;
+            }
         }
     }
 }

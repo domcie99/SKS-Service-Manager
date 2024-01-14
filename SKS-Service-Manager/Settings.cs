@@ -10,10 +10,14 @@ namespace SKS_Service_Manager
 {
     partial class Settings : Form
     {
-        public Settings()
+
+        private Form1 mainForm;
+
+        public Settings(Form1 mainForm)
         {
             InitializeComponent();
             CenterToScreen(); // Centruje formularz na ekranie
+            this.mainForm = mainForm; // Przekazanie referencji do formularza Form1
             LoadSettings();
         }
 
@@ -46,12 +50,19 @@ namespace SKS_Service_Manager
             {
                 MessageBox.Show("Nie udało się zapisać ustawień: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            this.Hide();
+
+            mainForm.CheckMySQLConnection();
+
+            this.Close();
         }
 
         private void Abort_Click(object sender, EventArgs e)
         {
             this.Close(); // Zamknięcie formularza bez zapisywania zmian
         }
+
+
 
         // Metoda do ładowania ustawień przy otwieraniu formularza
         private void LoadSettings()

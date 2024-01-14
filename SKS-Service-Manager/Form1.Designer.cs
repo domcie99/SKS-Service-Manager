@@ -48,6 +48,9 @@
             label10 = new Label();
             label11 = new Label();
             button8 = new Button();
+            label12 = new Label();
+            pictureBox1 = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // button1
@@ -55,6 +58,7 @@
             button1.BackColor = Color.Transparent;
             button1.BackgroundImage = Properties.Resources.WystawFakture;
             button1.BackgroundImageLayout = ImageLayout.Zoom;
+            button1.Cursor = Cursors.Hand;
             button1.FlatAppearance.BorderSize = 0;
             button1.FlatStyle = FlatStyle.Flat;
             button1.Location = new Point(133, 168);
@@ -63,12 +67,14 @@
             button1.TabIndex = 0;
             button1.UseMnemonic = false;
             button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
             // 
             // button2
             // 
             button2.BackColor = Color.Transparent;
             button2.BackgroundImage = Properties.Resources.WystawFakture;
             button2.BackgroundImageLayout = ImageLayout.Zoom;
+            button2.Cursor = Cursors.Hand;
             button2.FlatAppearance.BorderSize = 0;
             button2.FlatStyle = FlatStyle.Flat;
             button2.Location = new Point(312, 168);
@@ -83,6 +89,7 @@
             button3.BackColor = Color.Transparent;
             button3.BackgroundImage = Properties.Resources.WystawFakture;
             button3.BackgroundImageLayout = ImageLayout.Zoom;
+            button3.Cursor = Cursors.Hand;
             button3.FlatAppearance.BorderSize = 0;
             button3.FlatStyle = FlatStyle.Flat;
             button3.Location = new Point(493, 168);
@@ -97,6 +104,7 @@
             button4.BackColor = Color.Transparent;
             button4.BackgroundImage = Properties.Resources.EdytujFakture;
             button4.BackgroundImageLayout = ImageLayout.Zoom;
+            button4.Cursor = Cursors.Hand;
             button4.FlatAppearance.BorderSize = 0;
             button4.FlatStyle = FlatStyle.Flat;
             button4.Location = new Point(133, 329);
@@ -112,6 +120,7 @@
             button5.BackColor = Color.Transparent;
             button5.BackgroundImage = Properties.Resources.EdytujFakture;
             button5.BackgroundImageLayout = ImageLayout.Zoom;
+            button5.Cursor = Cursors.Hand;
             button5.FlatAppearance.BorderSize = 0;
             button5.FlatStyle = FlatStyle.Flat;
             button5.Location = new Point(312, 329);
@@ -126,6 +135,7 @@
             button6.BackColor = Color.Transparent;
             button6.BackgroundImage = Properties.Resources.EdytujFakture;
             button6.BackgroundImageLayout = ImageLayout.Zoom;
+            button6.Cursor = Cursors.Hand;
             button6.FlatAppearance.BorderSize = 0;
             button6.FlatStyle = FlatStyle.Flat;
             button6.Location = new Point(493, 329);
@@ -140,6 +150,7 @@
             button7.BackColor = Color.Transparent;
             button7.BackgroundImage = (Image)resources.GetObject("button7.BackgroundImage");
             button7.BackgroundImageLayout = ImageLayout.Zoom;
+            button7.Cursor = Cursors.Hand;
             button7.FlatAppearance.BorderSize = 0;
             button7.FlatStyle = FlatStyle.Flat;
             button7.Location = new Point(223, 479);
@@ -148,6 +159,7 @@
             button7.TabIndex = 12;
             button7.UseMnemonic = false;
             button7.UseVisualStyleBackColor = false;
+            button7.Click += button7_Click;
             // 
             // label1
             // 
@@ -279,6 +291,7 @@
             button8.BackColor = Color.Transparent;
             button8.BackgroundImage = Properties.Resources.Ustawienia;
             button8.BackgroundImageLayout = ImageLayout.Zoom;
+            button8.Cursor = Cursors.Hand;
             button8.FlatAppearance.BorderSize = 0;
             button8.FlatStyle = FlatStyle.Flat;
             button8.Location = new Point(401, 479);
@@ -289,12 +302,36 @@
             button8.UseVisualStyleBackColor = false;
             button8.Click += button8_Click;
             // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.BackColor = Color.Transparent;
+            label12.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label12.Location = new Point(473, 671);
+            label12.Name = "label12";
+            label12.Size = new Size(207, 21);
+            label12.TabIndex = 25;
+            label12.Text = "Połączenie z Bazą Danych";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BackColor = Color.Transparent;
+            pictureBox1.Image = Properties.Resources.no_connection;
+            pictureBox1.Location = new Point(686, 671);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(25, 25);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 26;
+            pictureBox1.TabStop = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(724, 701);
+            Controls.Add(pictureBox1);
+            Controls.Add(label12);
             Controls.Add(label11);
             Controls.Add(button8);
             Controls.Add(label10);
@@ -317,6 +354,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "SKS-Service Manager";
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -342,5 +380,7 @@
         private Label label10;
         private Label label11;
         private Button button8;
+        private Label label12;
+        private PictureBox pictureBox1;
     }
 }

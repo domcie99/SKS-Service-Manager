@@ -393,7 +393,6 @@
             Controls.Add(label1);
             Controls.Add(company_name);
             DoubleBuffered = true;
-            FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Settings";
             Text = "Ustawienia";
