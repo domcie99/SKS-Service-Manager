@@ -38,5 +38,11 @@ namespace SKS_Service_Manager
                 MessageBox.Show("Wyst¹pi³ b³¹d: " + ex.Message);
             }
         }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            Settings settings = new Settings();
+            settings.ShowDialog(); // Otwiera formularz jako modalne okno dialogowe
+        }
     }
 }

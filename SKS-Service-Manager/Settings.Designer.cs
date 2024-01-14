@@ -227,6 +227,7 @@
             Abort.Size = new Size(50, 50);
             Abort.TabIndex = 17;
             Abort.UseVisualStyleBackColor = false;
+            Abort.Click += Abort_Click;
             // 
             // Save
             // 
@@ -240,6 +241,7 @@
             Save.Size = new Size(50, 50);
             Save.TabIndex = 18;
             Save.UseVisualStyleBackColor = false;
+            Save.Click += Save_Click;
             // 
             // label9
             // 
@@ -394,7 +396,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Settings";
-            Text = "Settings";
+            Text = "Ustawienia";
             ResumeLayout(false);
             PerformLayout();
         }

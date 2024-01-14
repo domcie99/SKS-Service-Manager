@@ -287,6 +287,7 @@
             button8.TabIndex = 23;
             button8.UseMnemonic = false;
             button8.UseVisualStyleBackColor = false;
+            button8.Click += button8_Click;
             // 
             // Form1
             // 
