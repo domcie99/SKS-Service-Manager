@@ -53,25 +53,25 @@
             label1 = new Label();
             Name = new TextBox();
             groupBox2 = new GroupBox();
+            label19 = new Label();
             Value = new TextBox();
             label10 = new Label();
             Description = new RichTextBox();
             label9 = new Label();
             groupBox3 = new GroupBox();
-            Issue_Date = new DateTimePicker();
-            label15 = new Label();
-            Pickup_Date = new DateTimePicker();
-            label14 = new Label();
-            label16 = new Label();
-            Days = new TextBox();
+            label20 = new Label();
+            Comments = new RichTextBox();
+            label18 = new Label();
             textBox1 = new TextBox();
             label17 = new Label();
-            label18 = new Label();
-            label19 = new Label();
-            Comments = new RichTextBox();
-            label20 = new Label();
-            button1 = new Button();
-            button2 = new Button();
+            Days = new TextBox();
+            label16 = new Label();
+            Pickup_Date = new DateTimePicker();
+            label14 = new Label();
+            Issue_Date = new DateTimePicker();
+            label15 = new Label();
+            Print = new Button();
+            Save = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -343,6 +343,17 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Przedmiot";
             // 
+            // label19
+            // 
+            label19.BackColor = Color.Transparent;
+            label19.Font = new Font("Segoe UI", 12F);
+            label19.Location = new Point(242, 81);
+            label19.Name = "label19";
+            label19.Size = new Size(22, 23);
+            label19.TabIndex = 94;
+            label19.Text = "zł";
+            label19.TextAlign = ContentAlignment.MiddleLeft;
+            // 
             // Value
             // 
             Value.Location = new Point(182, 81);
@@ -403,65 +414,35 @@
             groupBox3.TabIndex = 91;
             groupBox3.TabStop = false;
             // 
-            // Issue_Date
+            // label20
             // 
-            Issue_Date.CustomFormat = "dd-MM-yyyy";
-            Issue_Date.Format = DateTimePickerFormat.Short;
-            Issue_Date.Location = new Point(182, 22);
-            Issue_Date.Name = "Issue_Date";
-            Issue_Date.Size = new Size(100, 23);
-            Issue_Date.TabIndex = 88;
+            label20.BackColor = Color.Transparent;
+            label20.Font = new Font("Segoe UI", 12F);
+            label20.Location = new Point(6, 148);
+            label20.Name = "label20";
+            label20.Size = new Size(150, 23);
+            label20.TabIndex = 97;
+            label20.Text = "Uwagi";
+            label20.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // label15
+            // Comments
             // 
-            label15.BackColor = Color.Transparent;
-            label15.Font = new Font("Segoe UI", 12F);
-            label15.Location = new Point(6, 22);
-            label15.Name = "label15";
-            label15.Size = new Size(150, 23);
-            label15.TabIndex = 87;
-            label15.Text = "Data Przyjęcia";
-            label15.TextAlign = ContentAlignment.MiddleLeft;
+            Comments.Location = new Point(182, 138);
+            Comments.Name = "Comments";
+            Comments.Size = new Size(585, 56);
+            Comments.TabIndex = 96;
+            Comments.Text = "";
             // 
-            // Pickup_Date
+            // label18
             // 
-            Pickup_Date.CustomFormat = "dd-MM-yyyy";
-            Pickup_Date.Format = DateTimePickerFormat.Short;
-            Pickup_Date.Location = new Point(182, 51);
-            Pickup_Date.Name = "Pickup_Date";
-            Pickup_Date.Size = new Size(100, 23);
-            Pickup_Date.TabIndex = 90;
-            // 
-            // label14
-            // 
-            label14.BackColor = Color.Transparent;
-            label14.Font = new Font("Segoe UI", 12F);
-            label14.Location = new Point(6, 51);
-            label14.Name = "label14";
-            label14.Size = new Size(150, 23);
-            label14.TabIndex = 89;
-            label14.Text = "Termin Odbioru";
-            label14.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // label16
-            // 
-            label16.BackColor = Color.Transparent;
-            label16.Font = new Font("Segoe UI", 12F);
-            label16.Location = new Point(6, 80);
-            label16.Name = "label16";
-            label16.Size = new Size(150, 23);
-            label16.TabIndex = 91;
-            label16.Text = "Ilośc Dni";
-            label16.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // Days
-            // 
-            Days.Location = new Point(182, 80);
-            Days.Name = "Days";
-            Days.Size = new Size(60, 23);
-            Days.TabIndex = 92;
-            Days.Text = "0";
-            Days.TextAlign = HorizontalAlignment.Right;
+            label18.BackColor = Color.Transparent;
+            label18.Font = new Font("Segoe UI", 12F);
+            label18.Location = new Point(242, 109);
+            label18.Name = "label18";
+            label18.Size = new Size(28, 23);
+            label18.TabIndex = 95;
+            label18.Text = "%";
+            label18.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // textBox1
             // 
@@ -483,74 +464,93 @@
             label17.Text = "Procent zwyżki";
             label17.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // label18
+            // Days
             // 
-            label18.BackColor = Color.Transparent;
-            label18.Font = new Font("Segoe UI", 12F);
-            label18.Location = new Point(242, 109);
-            label18.Name = "label18";
-            label18.Size = new Size(28, 23);
-            label18.TabIndex = 95;
-            label18.Text = "%";
-            label18.TextAlign = ContentAlignment.MiddleLeft;
+            Days.Location = new Point(182, 80);
+            Days.Name = "Days";
+            Days.Size = new Size(60, 23);
+            Days.TabIndex = 92;
+            Days.Text = "0";
+            Days.TextAlign = HorizontalAlignment.Right;
             // 
-            // label19
+            // label16
             // 
-            label19.BackColor = Color.Transparent;
-            label19.Font = new Font("Segoe UI", 12F);
-            label19.Location = new Point(242, 81);
-            label19.Name = "label19";
-            label19.Size = new Size(22, 23);
-            label19.TabIndex = 94;
-            label19.Text = "zł";
-            label19.TextAlign = ContentAlignment.MiddleLeft;
+            label16.BackColor = Color.Transparent;
+            label16.Font = new Font("Segoe UI", 12F);
+            label16.Location = new Point(6, 80);
+            label16.Name = "label16";
+            label16.Size = new Size(150, 23);
+            label16.TabIndex = 91;
+            label16.Text = "Ilośc Dni";
+            label16.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // Comments
+            // Pickup_Date
             // 
-            Comments.Location = new Point(182, 138);
-            Comments.Name = "Comments";
-            Comments.Size = new Size(585, 56);
-            Comments.TabIndex = 96;
-            Comments.Text = "";
+            Pickup_Date.CustomFormat = "dd-MM-yyyy";
+            Pickup_Date.Format = DateTimePickerFormat.Short;
+            Pickup_Date.Location = new Point(182, 51);
+            Pickup_Date.Name = "Pickup_Date";
+            Pickup_Date.Size = new Size(100, 23);
+            Pickup_Date.TabIndex = 90;
             // 
-            // label20
+            // label14
             // 
-            label20.BackColor = Color.Transparent;
-            label20.Font = new Font("Segoe UI", 12F);
-            label20.Location = new Point(6, 148);
-            label20.Name = "label20";
-            label20.Size = new Size(150, 23);
-            label20.TabIndex = 97;
-            label20.Text = "Uwagi";
-            label20.TextAlign = ContentAlignment.MiddleLeft;
+            label14.BackColor = Color.Transparent;
+            label14.Font = new Font("Segoe UI", 12F);
+            label14.Location = new Point(6, 51);
+            label14.Name = "label14";
+            label14.Size = new Size(150, 23);
+            label14.TabIndex = 89;
+            label14.Text = "Termin Odbioru";
+            label14.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // button1
+            // Issue_Date
             // 
-            button1.BackColor = Color.Transparent;
-            button1.BackgroundImage = Properties.Resources.printer;
-            button1.BackgroundImageLayout = ImageLayout.Zoom;
-            button1.Cursor = Cursors.Hand;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(749, 583);
-            button1.Name = "button1";
-            button1.Size = new Size(50, 50);
-            button1.TabIndex = 92;
-            button1.UseVisualStyleBackColor = false;
+            Issue_Date.CustomFormat = "dd-MM-yyyy";
+            Issue_Date.Format = DateTimePickerFormat.Short;
+            Issue_Date.Location = new Point(182, 22);
+            Issue_Date.Name = "Issue_Date";
+            Issue_Date.Size = new Size(100, 23);
+            Issue_Date.TabIndex = 88;
             // 
-            // button2
+            // label15
             // 
-            button2.BackColor = Color.Transparent;
-            button2.BackgroundImage = Properties.Resources.save;
-            button2.BackgroundImageLayout = ImageLayout.Zoom;
-            button2.Cursor = Cursors.Hand;
-            button2.FlatAppearance.BorderSize = 0;
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(693, 583);
-            button2.Name = "button2";
-            button2.Size = new Size(50, 50);
-            button2.TabIndex = 93;
-            button2.UseVisualStyleBackColor = false;
+            label15.BackColor = Color.Transparent;
+            label15.Font = new Font("Segoe UI", 12F);
+            label15.Location = new Point(6, 22);
+            label15.Name = "label15";
+            label15.Size = new Size(150, 23);
+            label15.TabIndex = 87;
+            label15.Text = "Data Przyjęcia";
+            label15.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Print
+            // 
+            Print.BackColor = Color.Transparent;
+            Print.BackgroundImage = Properties.Resources.printer;
+            Print.BackgroundImageLayout = ImageLayout.Zoom;
+            Print.Cursor = Cursors.Hand;
+            Print.FlatAppearance.BorderSize = 0;
+            Print.FlatStyle = FlatStyle.Flat;
+            Print.Location = new Point(749, 583);
+            Print.Name = "Print";
+            Print.Size = new Size(50, 50);
+            Print.TabIndex = 92;
+            Print.UseVisualStyleBackColor = false;
+            // 
+            // Save
+            // 
+            Save.BackColor = Color.Transparent;
+            Save.BackgroundImage = Properties.Resources.save;
+            Save.BackgroundImageLayout = ImageLayout.Zoom;
+            Save.Cursor = Cursors.Hand;
+            Save.FlatAppearance.BorderSize = 0;
+            Save.FlatStyle = FlatStyle.Flat;
+            Save.Location = new Point(693, 583);
+            Save.Name = "Save";
+            Save.Size = new Size(50, 50);
+            Save.TabIndex = 93;
+            Save.UseVisualStyleBackColor = false;
             // 
             // Issue
             // 
@@ -558,11 +558,12 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(818, 650);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(Save);
+            Controls.Add(Print);
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
+
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
@@ -616,7 +617,7 @@
         private Label label17;
         private TextBox Days;
         private Label label16;
-        private Button button1;
-        private Button button2;
+        private Button Print;
+        private Button Save;
     }
 }

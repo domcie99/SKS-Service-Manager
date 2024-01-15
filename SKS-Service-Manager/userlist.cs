@@ -11,6 +11,7 @@ namespace SKS_Service_Manager
         private string connectionString;
         private Form1 mainForm;
         private Settings settingsForm;
+        public int issueUserId;
 
         public userlist(Form1 mainForm)
         {
@@ -149,6 +150,36 @@ namespace SKS_Service_Manager
                 MessageBox.Show("Wybierz wiersz do usunięcia.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        public void setIssueVisible(bool visible)
+        {
+            if (visible)
+            {
+                button1.Visible = true;
+                label1.Visible = true;
 
+            }
+            else
+            {
+                button1.Visible = false;
+                label1.Visible = false;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Sprawdź, czy użytkownik wybrał wiersz w DataGridView
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                // Pobierz ID wybranego wiersza
+                issueUserId = (int)dataGridView1.SelectedRows[0].Cells["ID"].Value;
+
+                setIssueVisible(false);
+                DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                MessageBox.Show("Wybierz użytkownika do edycji.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

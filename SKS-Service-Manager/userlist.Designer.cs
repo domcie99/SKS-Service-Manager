@@ -33,6 +33,8 @@
             Edit = new Button();
             delete = new Button();
             dataGridView1 = new DataGridView();
+            button1 = new Button();
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -90,12 +92,40 @@
             dataGridView1.Size = new Size(776, 345);
             dataGridView1.TabIndex = 22;
             // 
+            // button1
+            // 
+            button1.BackColor = Color.Transparent;
+            button1.BackgroundImage = Properties.Resources.EdytujFakture;
+            button1.BackgroundImageLayout = ImageLayout.Zoom;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Location = new Point(738, 12);
+            button1.Name = "button1";
+            button1.Size = new Size(50, 50);
+            button1.TabIndex = 23;
+            button1.UseVisualStyleBackColor = false;
+            button1.Visible = false;
+            button1.Click += button1_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.BackColor = Color.Transparent;
+            label1.Location = new Point(615, 30);
+            label1.Name = "label1";
+            label1.Size = new Size(114, 15);
+            label1.TabIndex = 24;
+            label1.Text = "Wybierz Zaznaczone";
+            label1.Visible = false;
+            // 
             // userlist
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(800, 450);
+            Controls.Add(label1);
+            Controls.Add(button1);
             Controls.Add(dataGridView1);
             Controls.Add(delete);
             Controls.Add(Edit);
@@ -105,6 +135,7 @@
             Text = "Lista Użytkowników";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -113,6 +144,7 @@
         private Button Edit;
         private Button delete;
         private DataGridView dataGridView1;
-
+        private Button button1;
+        private Label label1;
     }
 }
