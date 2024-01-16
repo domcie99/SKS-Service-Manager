@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace SKS_Service_Manager
 {
-    public partial class userlist : Form
+    public partial class UserList : Form
     {
         private MySqlConnection connection;
         private string connectionString;
@@ -13,7 +13,7 @@ namespace SKS_Service_Manager
         private Settings settingsForm;
         public int issueUserId;
 
-        public userlist(Form1 mainForm)
+        public UserList(Form1 mainForm)
         {
             InitializeComponent();
 
@@ -71,7 +71,20 @@ namespace SKS_Service_Manager
             {
                 connection.Open();
 
-                string query = "SELECT * FROM Users;";
+                string query = "SELECT " +
+                    "ID, " +
+                    "Name AS 'Imię Nazwisko', " +
+                    "Address AS 'Ulica Numer', " +
+                    "PostalCode AS 'Kod Pocztowy', " +
+                    "City AS 'Miasto', " +
+                    "Phone AS 'Telefon', " +
+                    "Email AS 'E-Mail', " +
+                    "DocumentType AS 'Typ Dokumentu', " +
+                    "NIP AS 'NIP', " +
+                    "Pesel AS 'Pesel', " +
+                    "Notes AS 'Uwagi' " +
+                    "FROM Users;";
+
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                 DataTable dt = new DataTable();

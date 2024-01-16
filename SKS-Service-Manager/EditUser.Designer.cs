@@ -46,7 +46,7 @@
             label2 = new Label();
             Adress = new TextBox();
             label1 = new Label();
-            Name = new TextBox();
+            FullName = new TextBox();
             DocumentType = new ComboBox();
             label3 = new Label();
             Notes = new RichTextBox();
@@ -223,12 +223,12 @@
             label1.Text = "Nazwa / Imie Nazwisko";
             label1.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // Name
+            // FullName
             // 
-            Name.Location = new Point(194, 80);
-            Name.Name = "Name";
-            Name.Size = new Size(200, 23);
-            Name.TabIndex = 1;
+            FullName.Location = new Point(194, 80);
+            FullName.Name = "FullName";
+            FullName.Size = new Size(200, 23);
+            FullName.TabIndex = 1;
             // 
             // DocumentType
             // 
@@ -304,8 +304,9 @@
             Controls.Add(label2);
             Controls.Add(Adress);
             Controls.Add(label1);
-            Controls.Add(Name);
+            Controls.Add(FullName);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Name = "EditUser";
             Text = "Edycja Użytkownika";
             ResumeLayout(false);
             PerformLayout();
@@ -329,7 +330,7 @@
         private Label label2;
         private TextBox Adress;
         private Label label1;
-        private TextBox Name;
+        private TextBox FullName;
         private ComboBox DocumentType;
         private Label label3;
         private RichTextBox Notes;

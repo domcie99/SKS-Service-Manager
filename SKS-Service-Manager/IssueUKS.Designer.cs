@@ -1,6 +1,6 @@
 ﻿namespace SKS_Service_Manager
 {
-    partial class Issue
+    partial class IssueUKS
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Issue));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssueUKS));
             groupBox1 = new GroupBox();
             label6 = new Label();
             Load = new Button();
@@ -52,7 +52,7 @@
             label2 = new Label();
             Adress = new TextBox();
             label1 = new Label();
-            Name = new TextBox();
+            FullName = new TextBox();
             groupBox2 = new GroupBox();
             label19 = new Label();
             Value = new TextBox();
@@ -103,7 +103,7 @@
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(Adress);
             groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(Name);
+            groupBox1.Controls.Add(FullName);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(795, 225);
@@ -322,12 +322,12 @@
             label1.Text = "Nazwa / Imie Nazwisko";
             label1.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // Name
+            // FullName
             // 
-            Name.Location = new Point(182, 19);
-            Name.Name = "Name";
-            Name.Size = new Size(200, 23);
-            Name.TabIndex = 67;
+            FullName.Location = new Point(182, 19);
+            FullName.Name = "FullName";
+            FullName.Size = new Size(200, 23);
+            FullName.TabIndex = 67;
             // 
             // groupBox2
             // 
@@ -567,7 +567,6 @@
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "Issue";
             Text = "Tworzenie umowy";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
@@ -601,7 +600,7 @@
         private Label label2;
         private TextBox Adress;
         private Label label1;
-        private TextBox Name;
+        private TextBox FullName;
         private Button Load;
         private Label label6;
         private GroupBox groupBox2;

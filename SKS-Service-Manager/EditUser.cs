@@ -11,9 +11,9 @@ namespace SKS_Service_Manager
         private int userIdToEdit; // Identyfikator użytkownika do edycji
         private Settings settingsForm;
         private Form1 mainForm;
-        private userlist parentForm;
+        private UserList parentForm;
 
-        public EditUser(int userID, userlist parentForm)
+        public EditUser(int userID, UserList parentForm)
         {
             InitializeComponent();
 
@@ -59,7 +59,7 @@ namespace SKS_Service_Manager
                 MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    Name.Text = reader["Name"].ToString();
+                    FullName.Text = reader["Name"].ToString();
                     Adress.Text = reader["Address"].ToString();
                     Post_Code.Text = reader["PostalCode"].ToString();
                     City.Text = reader["City"].ToString();
@@ -88,7 +88,7 @@ namespace SKS_Service_Manager
             // Pozostała część kodu jest taka sama jak wcześniej
 
             // Pobierz dane z kontrolek formularza
-            string name = Name.Text;
+            string name = FullName.Text;
             string address = Adress.Text;
             string postalCode = Post_Code.Text;
             string city = City.Text;

@@ -1,6 +1,6 @@
 ﻿namespace SKS_Service_Manager
 {
-    partial class UserList
+    partial class UksList
     {
         /// <summary>
         /// Required designer variable.
@@ -30,43 +30,13 @@
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserList));
-            Add = new Button();
-            Edit = new Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UksList));
             delete = new Button();
+            Edit = new Button();
+            Add = new Button();
             dataGridView1 = new DataGridView();
-            label1 = new Label();
-            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
-            // 
-            // Add
-            // 
-            Add.BackColor = Color.Transparent;
-            Add.BackgroundImage = Properties.Resources.add;
-            Add.BackgroundImageLayout = ImageLayout.Zoom;
-            Add.FlatAppearance.BorderSize = 0;
-            Add.FlatStyle = FlatStyle.Flat;
-            Add.Location = new Point(12, 21);
-            Add.Name = "Add";
-            Add.Size = new Size(50, 50);
-            Add.TabIndex = 19;
-            Add.UseVisualStyleBackColor = false;
-            Add.Click += Add_Click;
-            // 
-            // Edit
-            // 
-            Edit.BackColor = Color.Transparent;
-            Edit.BackgroundImage = Properties.Resources.edit;
-            Edit.BackgroundImageLayout = ImageLayout.Zoom;
-            Edit.FlatAppearance.BorderSize = 0;
-            Edit.FlatStyle = FlatStyle.Flat;
-            Edit.Location = new Point(68, 21);
-            Edit.Name = "Edit";
-            Edit.Size = new Size(50, 50);
-            Edit.TabIndex = 20;
-            Edit.UseVisualStyleBackColor = false;
-            Edit.Click += Edit_Click;
             // 
             // delete
             // 
@@ -75,12 +45,39 @@
             delete.BackgroundImageLayout = ImageLayout.Zoom;
             delete.FlatAppearance.BorderSize = 0;
             delete.FlatStyle = FlatStyle.Flat;
-            delete.Location = new Point(124, 21);
+            delete.Location = new Point(124, 25);
             delete.Name = "delete";
             delete.Size = new Size(50, 50);
-            delete.TabIndex = 21;
+            delete.TabIndex = 27;
             delete.UseVisualStyleBackColor = false;
-            delete.Click += delete_Click;
+            // 
+            // Edit
+            // 
+            Edit.BackColor = Color.Transparent;
+            Edit.BackgroundImage = Properties.Resources.edit;
+            Edit.BackgroundImageLayout = ImageLayout.Zoom;
+            Edit.FlatAppearance.BorderSize = 0;
+            Edit.FlatStyle = FlatStyle.Flat;
+            Edit.Location = new Point(68, 25);
+            Edit.Name = "Edit";
+            Edit.Size = new Size(50, 50);
+            Edit.TabIndex = 26;
+            Edit.UseVisualStyleBackColor = false;
+            Edit.Click += Edit_Click;
+            // 
+            // Add
+            // 
+            Add.BackColor = Color.Transparent;
+            Add.BackgroundImage = Properties.Resources.add;
+            Add.BackgroundImageLayout = ImageLayout.Zoom;
+            Add.FlatAppearance.BorderSize = 0;
+            Add.FlatStyle = FlatStyle.Flat;
+            Add.Location = new Point(12, 25);
+            Add.Name = "Add";
+            Add.Size = new Size(50, 50);
+            Add.TabIndex = 25;
+            Add.UseVisualStyleBackColor = false;
+            Add.Click += Add_Click;
             // 
             // dataGridView1
             // 
@@ -108,62 +105,32 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(776, 345);
-            dataGridView1.TabIndex = 22;
+            dataGridView1.Size = new Size(1119, 375);
+            dataGridView1.TabIndex = 28;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.BackColor = Color.Transparent;
-            label1.Location = new Point(615, 30);
-            label1.Name = "label1";
-            label1.Size = new Size(114, 15);
-            label1.TabIndex = 24;
-            label1.Text = "Wybierz Zaznaczone";
-            label1.Visible = false;
-            // 
-            // button1
-            // 
-            button1.BackColor = Color.Transparent;
-            button1.BackgroundImage = Properties.Resources.EdytujFakture;
-            button1.BackgroundImageLayout = ImageLayout.Zoom;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(738, 12);
-            button1.Name = "button1";
-            button1.Size = new Size(50, 50);
-            button1.TabIndex = 23;
-            button1.UseVisualStyleBackColor = false;
-            button1.Visible = false;
-            button1.Click += button1_Click;
-            // 
-            // UserList
+            // UksList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
-            ClientSize = new Size(800, 450);
-            Controls.Add(label1);
-            Controls.Add(button1);
+            BackgroundImageLayout = ImageLayout.Stretch;
+            ClientSize = new Size(1143, 480);
             Controls.Add(dataGridView1);
             Controls.Add(delete);
             Controls.Add(Edit);
             Controls.Add(Add);
+            DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "UserList";
-            Text = "Lista Użytkowników";
+            Name = "UksList";
+            Text = "Umowy Kupna-Sprzedaży";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button Add;
-        private Button Edit;
         private Button delete;
+        private Button Edit;
+        private Button Add;
         private DataGridView dataGridView1;
-        private Label label1;
-        private Button button1;
     }
 }

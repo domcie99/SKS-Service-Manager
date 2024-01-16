@@ -10,7 +10,7 @@ using Humanizer;
 
 namespace SKS_Service_Manager
 {
-    public partial class Issue : Form
+    public partial class IssueUKS : Form
     {
         private Form1 mainForm;
         private int issueUserId;
@@ -19,8 +19,18 @@ namespace SKS_Service_Manager
         private Settings settingsForm;
         private MySqlConnection connection;
         private string connectionString;
+        private bool generated = false;
 
-        public Issue(int Id, Form1 mainForm)
+        // Ścieżka do oryginalnego dokumentu DOCX
+        string docxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks.docx";
+
+        // Ścieżka do nowego dokumentu DOCX z zastąpionymi danymi
+        string editedDocxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks_new.docx";
+
+        // Ścieżka do pliku PDF wynikowego
+        string pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks.pdf";
+
+        public IssueUKS(int Id, Form1 mainForm)
         {
             InitializeComponent();
 
@@ -28,13 +38,23 @@ namespace SKS_Service_Manager
             connectionString = $"Server={settingsForm.GetMySQLHost()};Port={settingsForm.GetMySQLPort()};Database={settingsForm.GetMySQLDatabase()};User ID={settingsForm.GetMySQLUser()};Password={settingsForm.GetMySQLPassword()};";
             connection = new MySqlConnection(connectionString);
 
-            CreateInvoicesTableIfNotExists();
+            issueId = Id; // Przypisz identyfikator faktury UKS (może być -1, jeśli to nowa faktura)
+
+            if (issueId > 0)
+            {
+                // Jeśli issueId jest większe od zera, to oznacza, że edytujemy istniejącą fakturę UKS
+                LoadInvoiceData(issueId);
+            }
+            else
+            {
+                CreateInvoicesTableIfNotExists();
+            }
         }
 
         private void Load_Click(object sender, EventArgs e)
         {
             // Open the userlist form to select a user
-            using (userlist userListForm = new userlist(Form1))
+            using (UserList userListForm = new UserList(Form1))
             {
                 userListForm.setIssueVisible(true);
                 if (userListForm.ShowDialog() == DialogResult.OK)
@@ -61,7 +81,7 @@ namespace SKS_Service_Manager
                 MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    Name.Text = reader["Name"].ToString();
+                    FullName.Text = reader["Name"].ToString();
                     Adress.Text = reader["Address"].ToString();
                     Post_Code.Text = reader["PostalCode"].ToString();
                     City.Text = reader["City"].ToString();
@@ -107,15 +127,6 @@ namespace SKS_Service_Manager
             Print.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
 
-            // Ścieżka do oryginalnego dokumentu DOCX
-            string docxFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/uks.docx";
-
-            // Ścieżka do nowego dokumentu DOCX z zastąpionymi danymi
-            string editedDocxFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/uks_new.docx";
-
-            // Ścieżka do pliku PDF wynikowego
-            string pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione/uks.pdf";
-
             try
             {
                 // Skopiuj oryginalny plik DOCX do miejsca docelowego
@@ -136,7 +147,7 @@ namespace SKS_Service_Manager
                     ReplaceText(body, "#[firma-nip]", settingsForm.GetNIP());
                     ReplaceText(body, "#[data-wystawienia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
 
-                    ReplaceText(body, "#[sprzedajacy-imie-nazwisko]", Name.Text);
+                    ReplaceText(body, "#[sprzedajacy-imie-nazwisko]", FullName.Text);
                     ReplaceText(body, "#[sprzedajacy-adres]", Adress.Text);
                     ReplaceText(body, "#[sprzedajacy-kod]", Post_Code.Text);
                     ReplaceText(body, "#[sprzedajacy-miasto]", City.Text);
@@ -174,6 +185,13 @@ namespace SKS_Service_Manager
                 Load.Enabled = true;
                 Save.Enabled = true;
                 Print.Enabled = true;
+                generated = true;
+                if (issueId > 0)
+                {
+                    // Aktualizuj dane faktury w bazie danych
+                    UpdateInvoiceInDatabase(issueId);
+                    UpdateUserInDatabase(CheckUserExistsByPesel(Pesel.Text)); ;
+                }
             }
         }
 
@@ -291,26 +309,43 @@ namespace SKS_Service_Manager
 
         private void Print_Click(object sender, EventArgs e)
         {
-            string pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/Wystawione/uks.pdf";
-
-            // Wyświetl MessageBox z pytaniem
+            if (generated)
+            {
+                           // Wyświetl MessageBox z pytaniem
             DialogResult result = MessageBox.Show("Czy wszystkie dane się zgadzają?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (result == DialogResult.Yes)
+                if (result == DialogResult.Yes)
+                {
+                    DialogResult result2 = MessageBox.Show("Czy chcesz zapisać plik pdf w katalogu?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (result == DialogResult.Yes)
+                    {
+                        string savedpdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione/uks_" + issueId + ".pdf";
+                        File.Copy(pdfFilePath, savedpdfFilePath, true);
+                    }
+
+                    if (issueId < 0)
+                    {
+                        // Aktualizuj dane faktury w bazie danych
+                        UpdateUserInDatabase(CheckUserExistsByPesel(Pesel.Text));
+                        SaveInvoiceToDatabase(issueUserId); ;
+                    }
+
+                    try
+                    {
+                        Process.Start("cmd", $"/c start {pdfFilePath}");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Błąd podczas otwierania pliku PDF: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    generated = false;
+                    this.Close();
+                }
+            }
+            else
             {
-
-                UpdateUserInDatabase(CheckUserExistsByPesel(Pesel.Text));
-                SaveInvoiceToDatabase(issueUserId);
-
-                try
-                {
-                    Process.Start("cmd", $"/c start {pdfFilePath}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Błąd podczas otwierania pliku PDF: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                this.Close();
+                MessageBox.Show("Musisz pierw wygenerować dokument guzikiem Zapisz", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -355,7 +390,7 @@ namespace SKS_Service_Manager
                         WHERE Pesel = @Pesel;";
 
                     MySqlCommand cmd = new MySqlCommand(updateQuery, connection);
-                    cmd.Parameters.AddWithValue("@Name", Name.Text);
+                    cmd.Parameters.AddWithValue("@Name", FullName.Text);
                     cmd.Parameters.AddWithValue("@Address", Adress.Text);
                     cmd.Parameters.AddWithValue("@PostalCode", Post_Code.Text);
                     cmd.Parameters.AddWithValue("@City", City.Text);
@@ -390,7 +425,7 @@ namespace SKS_Service_Manager
                 SELECT LAST_INSERT_ID();"; // Dodaj zapytanie do pobrania ostatnio dodanego ID
 
                     MySqlCommand cmd = new MySqlCommand(insertUserQuery, connection);
-                    cmd.Parameters.AddWithValue("@Name", Name.Text);
+                    cmd.Parameters.AddWithValue("@Name", FullName.Text);
                     cmd.Parameters.AddWithValue("@Address", Adress.Text);
                     cmd.Parameters.AddWithValue("@PostalCode", Post_Code.Text);
                     cmd.Parameters.AddWithValue("@City", City.Text);
@@ -414,6 +449,67 @@ namespace SKS_Service_Manager
                 }
             }
         }
+        private void LoadInvoiceData(int invoiceId)
+        {
+            try
+            {
+                connection.Open();
 
+                // Wczytaj dane faktury o identyfikatorze invoiceId z bazy danych
+                string query = "SELECT * FROM UKS WHERE ID = @InvoiceID;";
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@InvoiceID", invoiceId);
+
+                MySqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    Description.Text = reader["Description"].ToString();
+                    Value.Text = reader["TotalAmount"].ToString();
+                    Issue_Date.Value = Convert.ToDateTime(reader["InvoiceDate"]);
+                    Notes.Text = reader["Notes"].ToString();
+                    issueUserId = reader.GetInt32("USERID");
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas wczytywania danych faktury: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                connection.Close();
+                LoadUserData(issueUserId);
+            }
+        }
+        private void UpdateInvoiceInDatabase(int invoiceId)
+        {
+            try
+            {
+                connection.Open();
+
+                string updateInvoiceQuery = @"
+            UPDATE UKS
+            SET City = @City, Description = @Description, TotalAmount = @TotalAmount, InvoiceDate = @InvoiceDate, Notes = @Notes
+            WHERE ID = @InvoiceID;";
+
+                MySqlCommand cmd = new MySqlCommand(updateInvoiceQuery, connection);
+                cmd.Parameters.AddWithValue("@City", City.Text);
+                cmd.Parameters.AddWithValue("@Description", Description.Text);
+                cmd.Parameters.AddWithValue("@TotalAmount", decimal.Parse(Value.Text));
+                cmd.Parameters.AddWithValue("@InvoiceDate", Issue_Date.Value.Date);
+                cmd.Parameters.AddWithValue("@Notes", Notes.Text);
+                cmd.Parameters.AddWithValue("@InvoiceID", invoiceId);
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas aktualizacji danych faktury w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
     }
 }

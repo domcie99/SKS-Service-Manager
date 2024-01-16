@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using DocumentFormat.OpenXml.Packaging;
@@ -10,45 +11,38 @@ namespace SKS_Service_Manager
     public partial class Form1 : Form
     {
         private Settings settingsForm; // Deklaracja zmiennej do przechowywania formularza ustawieñ
-        private userlist userlistForm;// Deklaracja zmiennej do przechowywania formularza listy u¿ytkowników
-        private Issue IssueForm;// Deklaracja zmiennej do przechowywania formularza listy u¿ytkowników
+        private UserList userlistForm;// Deklaracja zmiennej do przechowywania formularza listy u¿ytkowników
+        private IssueUKS IssueForm;// Deklaracja zmiennej do przechowywania formularza listy u¿ytkowników
+        private UksList uksListForm;
 
         public Form1()
         {
             InitializeComponent();
+
             settingsForm = new Settings(this); // Inicjalizacja formularza ustawieñ
-            userlistForm = new userlist(this); // Inicjalizacja formularza listy u¿ytkowników
-            IssueForm = new Issue(-1, this);
-            CheckMySQLConnection(); // Sprawdzanie po³¹czenia MySQL przy starcie aplikacji
+
+            CheckMySQLConnection();
+
+            uksListForm = new UksList(this);
+            userlistForm = new UserList(this); // Inicjalizacja formularza listy u¿ytkowników
+
+            IssueForm = new IssueUKS(-1, this);
         }
 
         private void button1_Click(object sender, EventArgs e) //Issue 1
         {
-            OpenIssueForm(1);
+            OpenUksForm();
         }
         private void button4_Click(object sender, EventArgs e) //Edit 1
         {
-            // Œcie¿ka do pliku szablonu w folderze wyjœciowym aplikacji
-            string reportPath = Path.Combine(Application.StartupPath, "Umowa-Kupna-Sprzedazy.docx");
-            string outputPath = Path.Combine(Application.StartupPath, "Zakladki.txt");
-
+            string docxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks.docx";
             try
             {
-                using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(reportPath, false))
-                {
-                    using (StreamWriter writer = new StreamWriter(outputPath))
-                    {
-                        var bookmarks = wordDoc.MainDocumentPart.RootElement.Descendants<BookmarkStart>();
-                        foreach (var bookmark in bookmarks)
-                        {
-                            writer.WriteLine("Zak³adka: " + bookmark.Name); // Zapisz do pliku
-                        }
-                    }
-                }
+                Process.Start("cmd", $"/c start {docxFile}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Wyst¹pi³ b³¹d: " + ex.Message);
+                MessageBox.Show("B³¹d podczas otwierania pliku uks: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -94,7 +88,7 @@ namespace SKS_Service_Manager
                 pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
                 MessageBox.Show($"Wyst¹pi³ b³¹d po³¹czenia z baz¹ danych: \n {ex.Message} \nSprawdŸ ustawienia po³¹czenia z baz¹ danych!");
                 // Otwieranie formularza ustawieñ w przypadku b³êdu
-                // OpenSettingsForm();
+                OpenSettingsForm();
             }
         }
 
@@ -107,13 +101,13 @@ namespace SKS_Service_Manager
             settingsForm.ShowDialog(); // Wyœwietlanie formularza ustawieñ
         }
 
-        private void OpenIssueForm(int Id)
+        private void OpenUksForm()
         {
-            if (IssueForm == null || IssueForm.IsDisposed)
+            if (uksListForm == null || uksListForm.IsDisposed)
             {
-                IssueForm = new Issue(Id, this);
+                uksListForm = new UksList(this);
             }
-            IssueForm.ShowDialog(); // Wyœwietlanie formularza ustawieñ
+            uksListForm.ShowDialog(); // Wyœwietlanie formularza ustawieñ
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -121,7 +115,7 @@ namespace SKS_Service_Manager
             // Tworzenie nowego formularza listy u¿ytkowników i przekazanie do niego referencji do formy Settings
             if (userlistForm == null || userlistForm.IsDisposed)
             {
-                userlistForm = new userlist(this); // Tworzenie nowego formularza ustawieñ, jeœli nie istnieje lub zosta³ zamkniêty
+                userlistForm = new UserList(this); // Tworzenie nowego formularza ustawieñ, jeœli nie istnieje lub zosta³ zamkniêty
             }
             userlistForm.Show(); // Wyœwietlenie formularza listy u¿ytkowników
         }
