@@ -173,5 +173,31 @@ namespace SKS_Service_Manager
             Close();
         }
 
+        private bool CheckUserExistsByPesel(string pesel)
+        {
+            try
+            {
+                connection.Open();
+
+                // Sprawdź, czy istnieje użytkownik o danym numerze PESEL
+                string query = "SELECT COUNT(*) FROM Users WHERE Pesel = @Pesel;";
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@Pesel", pesel);
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return count > 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
     }
 }

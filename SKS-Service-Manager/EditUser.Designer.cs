@@ -106,6 +106,7 @@
             Save.BackColor = Color.Transparent;
             Save.BackgroundImage = Properties.Resources.save;
             Save.BackgroundImageLayout = ImageLayout.Zoom;
+            Save.Cursor = Cursors.Hand;
             Save.FlatAppearance.BorderSize = 0;
             Save.FlatStyle = FlatStyle.Flat;
             Save.Location = new Point(749, 243);
@@ -120,6 +121,7 @@
             Abort.BackColor = Color.Transparent;
             Abort.BackgroundImage = Properties.Resources.abort;
             Abort.BackgroundImageLayout = ImageLayout.Zoom;
+            Abort.Cursor = Cursors.Hand;
             Abort.FlatAppearance.BorderSize = 0;
             Abort.FlatStyle = FlatStyle.Flat;
             Abort.Location = new Point(670, 243);

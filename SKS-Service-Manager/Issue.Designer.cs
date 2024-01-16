@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Issue));
             groupBox1 = new GroupBox();
             label6 = new Label();
             Load = new Button();
@@ -360,7 +361,7 @@
             Value.Name = "Value";
             Value.Size = new Size(60, 23);
             Value.TabIndex = 90;
-            Value.Text = "0.0";
+            Value.Text = "0,00";
             Value.TextAlign = HorizontalAlignment.Right;
             Value.KeyPress += Value_KeyPress;
             // 
@@ -431,7 +432,7 @@
             Comments.Name = "Comments";
             Comments.Size = new Size(585, 56);
             Comments.TabIndex = 96;
-            Comments.Text = "";
+            Comments.Text = "Brak Uwag";
             // 
             // label18
             // 
@@ -537,6 +538,7 @@
             Print.Size = new Size(50, 50);
             Print.TabIndex = 92;
             Print.UseVisualStyleBackColor = false;
+            Print.Click += Print_Click;
             // 
             // Save
             // 
@@ -551,6 +553,7 @@
             Save.Size = new Size(50, 50);
             Save.TabIndex = 93;
             Save.UseVisualStyleBackColor = false;
+            Save.Click += Save_Click;
             // 
             // Issue
             // 
@@ -563,7 +566,9 @@
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
-
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Name = "Issue";
+            Text = "Tworzenie umowy";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
