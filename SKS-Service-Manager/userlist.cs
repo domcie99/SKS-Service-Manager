@@ -1,7 +1,5 @@
 ﻿using MySqlConnector;
-using System;
 using System.Data;
-using System.Windows.Forms;
 
 namespace SKS_Service_Manager
 {
@@ -12,101 +10,40 @@ namespace SKS_Service_Manager
         private Form1 mainForm;
         private Settings settingsForm;
         public int issueUserId;
+        private DataBase database;
 
-        public UserList(Form1 mainForm)
+        public UserList(Form1 Form1)
         {
             InitializeComponent();
-
+            mainForm = Form1;
             settingsForm = new Settings(mainForm);
 
+            database = mainForm.getDataBase();
+
             // Inicjalizacja połączenia z bazą danych
-            connectionString = $"Server={settingsForm.GetMySQLHost()};Port={settingsForm.GetMySQLPort()};Database={settingsForm.GetMySQLDatabase()};User ID={settingsForm.GetMySQLUser()};Password={settingsForm.GetMySQLPassword()};";
-            connection = new MySqlConnection(connectionString);
 
-            userlist_Load();
+            LoadUserData();
         }
 
-        private void userlist_Load()
+
+
+        public void LoadUserData()
         {
-            // Tworzenie tabeli w bazie danych, jeśli nie istnieje
-            try
+            DataTable userData = database.LoadAllUserData();
+
+            if (userData != null)
             {
-                connection.Open();
-
-                string createTableQuery = @"
-                    CREATE TABLE IF NOT EXISTS Users (
-                        ID INT AUTO_INCREMENT PRIMARY KEY,
-                        Name VARCHAR(255),
-                        Nip VARCHAR(255),
-                        Address VARCHAR(255),
-                        PostalCode VARCHAR(10),
-                        City VARCHAR(255),
-                        Phone VARCHAR(20),
-                        Email VARCHAR(255),
-                        DocumentType VARCHAR(50),
-                        DocumentNumber VARCHAR(20),
-                        Pesel VARCHAR(11),
-                        Notes TEXT
-                    );";
-
-                MySqlCommand cmd = new MySqlCommand(createTableQuery, connection);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd podczas tworzenia tabeli: " + ex.Message);
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            // Wczytywanie danych z bazy danych
-            LoadData();
-        }
-
-        public void LoadData()
-        {
-            try
-            {
-                connection.Open();
-
-                string query = "SELECT " +
-                    "ID, " +
-                    "Name AS 'Imię Nazwisko', " +
-                    "Address AS 'Ulica Numer', " +
-                    "PostalCode AS 'Kod Pocztowy', " +
-                    "City AS 'Miasto', " +
-                    "Phone AS 'Telefon', " +
-                    "Email AS 'E-Mail', " +
-                    "DocumentType AS 'Typ Dokumentu', " +
-                    "NIP AS 'NIP', " +
-                    "Pesel AS 'Pesel', " +
-                    "Notes AS 'Uwagi' " +
-                    "FROM Users;";
-
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-
-                dataGridView1.DataSource = dt;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd podczas odczytu danych: " + ex.Message);
-            }
-            finally
-            {
-                connection.Close();
+                dataGridView1.DataSource = userData;
             }
         }
+
 
         private void Add_Click(object sender, EventArgs e)
         {
             // Otwórz formularz EditUser w trybie dodawania (userIdToEdit = -1)
-            EditUser addUserForm = new EditUser(-1, this);
+            EditUser addUserForm = new EditUser(-1, this, mainForm);
             addUserForm.ShowDialog();
+            LoadUserData();
         }
 
         private void Edit_Click(object sender, EventArgs e)
@@ -115,11 +52,12 @@ namespace SKS_Service_Manager
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 // Pobierz ID wybranego wiersza
-                int selectedUserID = (int)dataGridView1.SelectedRows[0].Cells["ID"].Value;
+                int selectedUserID = int.Parse(dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString());
 
                 // Otwórz formularz EditUser w trybie edycji (przekazując ID użytkownika i referencję do formularza userlist)
-                EditUser editUserForm = new EditUser(selectedUserID, this);
+                EditUser editUserForm = new EditUser(selectedUserID, this, mainForm);
                 editUserForm.ShowDialog();
+                LoadUserData();
             }
             else
             {
@@ -131,38 +69,20 @@ namespace SKS_Service_Manager
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
-                try
-                {
-                    connection.Open();
+                int selectedRowID = int.Parse(dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString());
+                database.DeleteUserFromList(selectedRowID);
 
-                    // Pobierz ID wybranego wiersza
-                    int selectedRowID = (int)dataGridView1.SelectedRows[0].Cells["ID"].Value;
+                // Usuń zaznaczony wiersz z DataGridView
+                LoadUserData();
 
-                    // Usuń rekord o danym ID z bazy danych
-                    string deleteQuery = "DELETE FROM Users WHERE ID = @ID;";
-                    MySqlCommand cmd = new MySqlCommand(deleteQuery, connection);
-                    cmd.Parameters.AddWithValue("@ID", selectedRowID);
-                    cmd.ExecuteNonQuery();
-
-                    // Usuń zaznaczony wiersz z DataGridView
-                    dataGridView1.Rows.RemoveAt(dataGridView1.SelectedRows[0].Index);
-
-                    MessageBox.Show("Rekord został usunięty.", "Usuwanie", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Błąd podczas usuwania rekordu: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    connection.Close();
-                }
+                MessageBox.Show("Rekord został usunięty.", "Usuwanie", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 MessageBox.Show("Wybierz wiersz do usunięcia.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         public void setIssueVisible(bool visible)
         {
             if (visible)
@@ -184,7 +104,8 @@ namespace SKS_Service_Manager
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 // Pobierz ID wybranego wiersza
-                issueUserId = (int)dataGridView1.SelectedRows[0].Cells["ID"].Value;
+                string dataID = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
+                issueUserId = int.Parse(dataID);
 
                 setIssueVisible(false);
                 DialogResult = DialogResult.OK;

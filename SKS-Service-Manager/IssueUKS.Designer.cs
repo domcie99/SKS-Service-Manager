@@ -161,7 +161,7 @@
             Notes.Name = "Notes";
             Notes.Size = new Size(200, 55);
             Notes.TabIndex = 77;
-            Notes.Text = "";
+            Notes.Text = "Brak Notatek";
             // 
             // label3
             // 
@@ -555,7 +555,7 @@
             Save.UseVisualStyleBackColor = false;
             Save.Click += Save_Click;
             // 
-            // Issue
+            // IssueUKS
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -567,6 +567,7 @@
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Name = "IssueUKS";
             Text = "Tworzenie umowy";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

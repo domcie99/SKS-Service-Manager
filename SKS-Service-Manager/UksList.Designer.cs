@@ -50,6 +50,7 @@
             delete.Size = new Size(50, 50);
             delete.TabIndex = 27;
             delete.UseVisualStyleBackColor = false;
+            delete.Click += delete_Click;
             // 
             // Edit
             // 

@@ -1,22 +1,23 @@
-﻿using MySqlConnector;
-using System;
-using System.Windows.Forms;
+﻿using System.Data;
 
 namespace SKS_Service_Manager
 {
     public partial class EditUser : Form
     {
-        private MySqlConnection connection;
+
         private string connectionString;
         private int userIdToEdit; // Identyfikator użytkownika do edycji
         private Settings settingsForm;
         private Form1 mainForm;
         private UserList parentForm;
+        private DataBase database;
 
-        public EditUser(int userID, UserList parentForm)
+        public EditUser(int userID, UserList parentForm, Form1 form1)
         {
             InitializeComponent();
 
+            mainForm = form1;
+            database = mainForm.getDataBase();
 
             DocumentType.Items.Add("Dowód Osobisty");
             DocumentType.Items.Add("Prawo Jazdy");
@@ -28,8 +29,6 @@ namespace SKS_Service_Manager
             this.parentForm = parentForm;
 
             settingsForm = new Settings(mainForm);
-            connectionString = $"Server={settingsForm.GetMySQLHost()};Port={settingsForm.GetMySQLPort()};Database={settingsForm.GetMySQLDatabase()};User ID={settingsForm.GetMySQLUser()};Password={settingsForm.GetMySQLPassword()};";
-            connection = new MySqlConnection(connectionString);
 
             if (userIdToEdit == -1)
             {
@@ -49,39 +48,35 @@ namespace SKS_Service_Manager
         {
             try
             {
-                connection.Open();
+                DataTable userData = database.loadUserData(userIdToEdit);
 
-                // Wczytaj dane użytkownika o identyfikatorze userIdToEdit z bazy danych
-                string query = "SELECT * FROM Users WHERE ID = @UserID;";
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@UserID", userIdToEdit);
-
-                MySqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                if (userData != null && userData.Rows.Count > 0)
                 {
-                    FullName.Text = reader["Name"].ToString();
-                    Adress.Text = reader["Address"].ToString();
-                    Post_Code.Text = reader["PostalCode"].ToString();
-                    City.Text = reader["City"].ToString();
-                    Phone.Text = reader["Phone"].ToString();
-                    EMail.Text = reader["Email"].ToString();
-                    DocumentType.Text = reader["DocumentType"].ToString();
-                    DocumentNumber.Text = reader["DocumentNumber"].ToString();
-                    Pesel.Text = reader["Pesel"].ToString();
-                    Nip.Text = reader["NIP"].ToString(); // Nowe pole NIP
-                    Notes.Text = reader["Notes"].ToString();
+                    DataRow row = userData.Rows[0]; // Pobierz pierwszy wiersz (powinien być tylko jeden)
+
+                    FullName.Text = row["Name"].ToString();
+                    Adress.Text = row["Address"].ToString();
+                    Post_Code.Text = row["PostalCode"].ToString();
+                    City.Text = row["City"].ToString();
+                    Phone.Text = row["Phone"].ToString();
+                    EMail.Text = row["Email"].ToString();
+                    DocumentType.Text = row["DocumentType"].ToString();
+                    DocumentNumber.Text = row["DocumentNumber"].ToString();
+                    Pesel.Text = row["Pesel"].ToString();
+                    Nip.Text = row["NIP"].ToString(); // Nowe pole NIP
+                    Notes.Text = row["Notes"].ToString();
                 }
-                reader.Close();
+                else
+                {
+                    MessageBox.Show("Nie znaleziono danych użytkownika o ID: " + userIdToEdit, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd podczas wczytywania danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
-            {
-                connection.Close();
-            }
         }
+
 
         private void Save_Click(object sender, EventArgs e)
         {
@@ -102,68 +97,19 @@ namespace SKS_Service_Manager
 
             try
             {
-                connection.Open();
+                // Ustal, czy użytkownik istnieje w bazie danych
+                bool userExists = database.CheckUserExistsByPesel(pesel);
 
-                if (userIdToEdit == -1)
-                {
-                    // Tryb dodawania nowego użytkownika
-                    string insertQuery = @"
-                    INSERT INTO Users (Name, Address, PostalCode, City, Phone, Email, DocumentType, DocumentNumber, Pesel, NIP, Notes)
-                    VALUES (@Name, @Address, @PostalCode, @City, @Phone, @Email, @DocumentType, @DocumentNumber, @Pesel, @NIP, @Notes);";
-
-                    MySqlCommand cmd = new MySqlCommand(insertQuery, connection);
-                    cmd.Parameters.AddWithValue("@Name", name);
-                    cmd.Parameters.AddWithValue("@Address", address);
-                    cmd.Parameters.AddWithValue("@PostalCode", postalCode);
-                    cmd.Parameters.AddWithValue("@City", city);
-                    cmd.Parameters.AddWithValue("@Phone", phone);
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@DocumentType", documentType);
-                    cmd.Parameters.AddWithValue("@DocumentNumber", documentNumber);
-                    cmd.Parameters.AddWithValue("@Pesel", pesel);
-                    cmd.Parameters.AddWithValue("@NIP", nip); // Nowe pole NIP
-                    cmd.Parameters.AddWithValue("@Notes", notes);
-
-                    cmd.ExecuteNonQuery();
-                }
-                else
-                {
-                    // Tryb edycji istniejącego użytkownika
-                    string updateQuery = @"
-                    UPDATE Users
-                    SET Name = @Name, Address = @Address, PostalCode = @PostalCode, City = @City,
-                        Phone = @Phone, Email = @Email, DocumentType = @DocumentType, DocumentNumber = @DocumentNumber,
-                        Pesel = @Pesel, NIP = @NIP, Notes = @Notes
-                    WHERE ID = @UserID;";
-
-                    MySqlCommand cmd = new MySqlCommand(updateQuery, connection);
-                    cmd.Parameters.AddWithValue("@Name", name);
-                    cmd.Parameters.AddWithValue("@Address", address);
-                    cmd.Parameters.AddWithValue("@PostalCode", postalCode);
-                    cmd.Parameters.AddWithValue("@City", city);
-                    cmd.Parameters.AddWithValue("@Phone", phone);
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@DocumentType", documentType);
-                    cmd.Parameters.AddWithValue("@DocumentNumber", documentNumber);
-                    cmd.Parameters.AddWithValue("@Pesel", pesel);
-                    cmd.Parameters.AddWithValue("@NIP", nip); // Nowe pole NIP
-                    cmd.Parameters.AddWithValue("@Notes", notes);
-                    cmd.Parameters.AddWithValue("@UserID", userIdToEdit);
-
-                    cmd.ExecuteNonQuery();
-                }
+                // Wywołaj metodę UpdateUserInDatabase z klasy Database
+                database.UpdateUserInDatabase(userExists, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
 
                 MessageBox.Show("Dane zostały zapisane.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                parentForm.LoadData();
+                parentForm.LoadUserData();
                 Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd podczas zapisywania danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                connection.Close();
             }
         }
 
@@ -171,32 +117,6 @@ namespace SKS_Service_Manager
         {
             // Obsługa przycisku Anuluj - zamknij formularz
             Close();
-        }
-
-        private bool CheckUserExistsByPesel(string pesel)
-        {
-            try
-            {
-                connection.Open();
-
-                // Sprawdź, czy istnieje użytkownik o danym numerze PESEL
-                string query = "SELECT COUNT(*) FROM Users WHERE Pesel = @Pesel;";
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@Pesel", pesel);
-
-                int count = Convert.ToInt32(cmd.ExecuteScalar());
-
-                return count > 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            finally
-            {
-                connection.Close();
-            }
         }
 
     }

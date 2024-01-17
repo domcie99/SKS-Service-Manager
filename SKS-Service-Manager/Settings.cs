@@ -12,11 +12,14 @@ namespace SKS_Service_Manager
     {
 
         private Form1 mainForm;
+        private DataBase dataBase;
 
-        public Settings(Form1 mainForm)
+        public Settings(Form1 form1)
         {
             InitializeComponent();
+            mainForm = form1;
             CenterToScreen(); // Centruje formularz na ekranie
+            
             this.mainForm = mainForm; // Przekazanie referencji do formularza Form1
             LoadSettings();
         }
@@ -51,7 +54,7 @@ namespace SKS_Service_Manager
                 MessageBox.Show("Nie udało się zapisać ustawień: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             this.Hide();
-
+            mainForm.setDataBase();
             mainForm.CheckMySQLConnection();
 
             this.Close();

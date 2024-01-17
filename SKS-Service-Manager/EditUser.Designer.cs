@@ -62,7 +62,7 @@
             label11.Name = "label11";
             label11.Size = new Size(150, 23);
             label11.TabIndex = 59;
-            label11.Text = "Notatki";
+            label11.Text = "Uwagi";
             label11.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label12
@@ -211,6 +211,7 @@
             Adress.Name = "Adress";
             Adress.Size = new Size(200, 23);
             Adress.TabIndex = 3;
+            Adress.Text = "ul. ";
             // 
             // label1
             // 
@@ -256,7 +257,7 @@
             Notes.Name = "Notes";
             Notes.Size = new Size(200, 55);
             Notes.TabIndex = 11;
-            Notes.Text = "";
+            Notes.Text = "Brak Uwag";
             // 
             // label4
             // 

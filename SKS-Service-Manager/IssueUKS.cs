@@ -1,12 +1,15 @@
-﻿using MySqlConnector;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Body = DocumentFormat.OpenXml.Wordprocessing.Body;
-using System.Runtime.InteropServices;
-using Microsoft.Office.Interop.Word;
-using Word = Microsoft.Office.Interop.Word;
-using System.Diagnostics;
+﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Humanizer;
+using Microsoft.Office.Interop.Word;
+using MySqlConnector;
+using System.Data;
+using System.Data.Entity;
+using System.Diagnostics;
+using Body = DocumentFormat.OpenXml.Wordprocessing.Body;
+using DataTable = System.Data.DataTable;
+using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace SKS_Service_Manager
 {
@@ -20,41 +23,36 @@ namespace SKS_Service_Manager
         private MySqlConnection connection;
         private string connectionString;
         private bool generated = false;
+        private DataBase dataBase;
 
-        // Ścieżka do oryginalnego dokumentu DOCX
         string docxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks.docx";
-
-        // Ścieżka do nowego dokumentu DOCX z zastąpionymi danymi
         string editedDocxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks_new.docx";
-
-        // Ścieżka do pliku PDF wynikowego
         string pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks.pdf";
 
-        public IssueUKS(int Id, Form1 mainForm)
+        public IssueUKS(int Id, Form1 form1)
         {
             InitializeComponent();
-
+            mainForm = form1;
             settingsForm = new Settings(mainForm);
-            connectionString = $"Server={settingsForm.GetMySQLHost()};Port={settingsForm.GetMySQLPort()};Database={settingsForm.GetMySQLDatabase()};User ID={settingsForm.GetMySQLUser()};Password={settingsForm.GetMySQLPassword()};";
-            connection = new MySqlConnection(connectionString);
+            issueId = Id;
 
-            issueId = Id; // Przypisz identyfikator faktury UKS (może być -1, jeśli to nowa faktura)
+            dataBase = mainForm.getDataBase();
+            dataBase.CreateInvoicesTableIfNotExists();
+
+            DocumentType.Items.Add("Dowód Osobisty");
+            DocumentType.Items.Add("Prawo Jazdy");
+            DocumentType.Items.Add("Paszport");
 
             if (issueId > 0)
             {
-                // Jeśli issueId jest większe od zera, to oznacza, że edytujemy istniejącą fakturę UKS
                 LoadInvoiceData(issueId);
-            }
-            else
-            {
-                CreateInvoicesTableIfNotExists();
             }
         }
 
         private void Load_Click(object sender, EventArgs e)
         {
             // Open the userlist form to select a user
-            using (UserList userListForm = new UserList(Form1))
+            using (UserList userListForm = new UserList(mainForm))
             {
                 userListForm.setIssueVisible(true);
                 if (userListForm.ShowDialog() == DialogResult.OK)
@@ -71,37 +69,28 @@ namespace SKS_Service_Manager
         {
             try
             {
-                connection.Open();
+                System.Data.DataTable userData = dataBase.loadUserData(userIdToEdit);
 
-                // Wczytaj dane użytkownika o identyfikatorze userIdToEdit z bazy danych
-                string query = "SELECT * FROM Users WHERE ID = @UserID;";
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@UserID", userIdToEdit);
-
-                MySqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                if (userData != null && userData.Rows.Count > 0)
                 {
-                    FullName.Text = reader["Name"].ToString();
-                    Adress.Text = reader["Address"].ToString();
-                    Post_Code.Text = reader["PostalCode"].ToString();
-                    City.Text = reader["City"].ToString();
-                    Phone.Text = reader["Phone"].ToString();
-                    EMail.Text = reader["Email"].ToString();
-                    DocumentType.Text = reader["DocumentType"].ToString();
-                    DocumentNumber.Text = reader["DocumentNumber"].ToString();
-                    Pesel.Text = reader["Pesel"].ToString();
-                    Nip.Text = reader["NIP"].ToString(); // Nowe pole NIP
-                    Notes.Text = reader["Notes"].ToString();
+                    DataRow row = userData.Rows[0]; // Załóżmy, że jest tylko jeden wiersz wynikowy
+
+                    FullName.Text = row["Name"].ToString();
+                    Adress.Text = row["Address"].ToString();
+                    Post_Code.Text = row["PostalCode"].ToString();
+                    City.Text = row["City"].ToString();
+                    Phone.Text = row["Phone"].ToString();
+                    EMail.Text = row["Email"].ToString();
+                    DocumentType.Text = row["DocumentType"].ToString();
+                    DocumentNumber.Text = row["DocumentNumber"].ToString();
+                    Pesel.Text = row["Pesel"].ToString();
+                    Nip.Text = row["NIP"].ToString(); // Nowe pole NIP
+                    Notes.Text = row["Notes"].ToString();
                 }
-                reader.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd podczas wczytywania danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                connection.Close();
             }
         }
 
@@ -162,7 +151,7 @@ namespace SKS_Service_Manager
                     // Pobierz część całkowitą (złotówki) i część ułamkową (grosze)
                     int wholePart = (int)value;
                     int fractionalPart = (int)((value - wholePart) * 100); // Przekształć ułamek na grosze
- 
+
                     string wholePartInWords = wholePart.ToWords();
                     string fractionalPartInWords = fractionalPart.ToWords();
 
@@ -179,7 +168,7 @@ namespace SKS_Service_Manager
             {
                 MessageBox.Show("Błąd podczas generowania dokumentu: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally 
+            finally
             {
                 this.Cursor = Cursors.Default;
                 Load.Enabled = true;
@@ -190,7 +179,7 @@ namespace SKS_Service_Manager
                 {
                     // Aktualizuj dane faktury w bazie danych
                     UpdateInvoiceInDatabase(issueId);
-                    UpdateUserInDatabase(CheckUserExistsByPesel(Pesel.Text)); ;
+                    UpdateUserInDatabase(dataBase.CheckUserExistsByPesel(Pesel.Text)); ;
                 }
             }
         }
@@ -245,65 +234,33 @@ namespace SKS_Service_Manager
             oWord.Quit(ref oMissing, ref oMissing, ref oMissing);
         }
 
-        private void CreateInvoicesTableIfNotExists()
-        {
-            try
-            {
-                connection.Open();
-
-                string createTableQuery = @"
-            CREATE TABLE IF NOT EXISTS UKS (
-                ID INT AUTO_INCREMENT PRIMARY KEY,
-                UserID INT,
-                City VARCHAR(255),
-                Description TEXT,
-                TotalAmount DECIMAL(10, 2),
-                InvoiceDate DATE,
-                Notes TEXT
-            );";
-
-                MySqlCommand cmd = new MySqlCommand(createTableQuery, connection);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd podczas tworzenia tabeli UKS: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                connection.Close();
-            }
-        }
-
-
         private void SaveInvoiceToDatabase(int userId)
         {
             try
             {
-                connection.Open();
+                System.Data.DataTable invoiceData = new System.Data.DataTable();
+                invoiceData.Columns.Add("UserID", typeof(int));
+                invoiceData.Columns.Add("City", typeof(string));
+                invoiceData.Columns.Add("Description", typeof(string));
+                invoiceData.Columns.Add("TotalAmount", typeof(decimal));
+                invoiceData.Columns.Add("InvoiceDate", typeof(DateTime));
+                invoiceData.Columns.Add("Notes", typeof(string));
 
-                string insertInvoiceQuery = @"
-                    INSERT INTO UKS (UserID, City, Description, TotalAmount, InvoiceDate, Notes)
-                    VALUES (@UserID, @City, @Description, @TotalAmount, @InvoiceDate, @Notes);
-                    SELECT LAST_INSERT_ID();"; // Dodaj zapytanie do pobrania ostatnio dodanego ID
+                DataRow newRow = invoiceData.NewRow();
+                newRow["UserID"] = userId;
+                newRow["City"] = settingsForm.GetCity();
+                newRow["Description"] = Description.Text;
+                newRow["TotalAmount"] = decimal.Parse(Value.Text);
+                newRow["InvoiceDate"] = Issue_Date.Value.Date;
+                newRow["Notes"] = Comments.Text;
 
-                MySqlCommand cmd = new MySqlCommand(insertInvoiceQuery, connection);
-                cmd.Parameters.AddWithValue("@UserID", userId); // ID użytkownika, do którego przypisana jest faktura
-                cmd.Parameters.AddWithValue("@City", settingsForm.GetCity()); // Dodaj miasto z ustawień
-                cmd.Parameters.AddWithValue("@Description", Description.Text); // Opis przedmiotu
-                cmd.Parameters.AddWithValue("@TotalAmount", decimal.Parse(Value.Text)); // Przyjmujemy, że Value.Text zawiera wartość faktury
-                cmd.Parameters.AddWithValue("@InvoiceDate", Issue_Date.Value.Date); // Data przyjęcia
-                cmd.Parameters.AddWithValue("@Notes", Notes.Text); // Uwagi
+                invoiceData.Rows.Add(newRow);
 
-                issueId = Convert.ToInt32(cmd.ExecuteScalar());        
+                dataBase.SaveInvoiceToDatabase(invoiceData);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd podczas zapisywania faktury do bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                connection.Close();
             }
         }
 
@@ -311,8 +268,8 @@ namespace SKS_Service_Manager
         {
             if (generated)
             {
-                           // Wyświetl MessageBox z pytaniem
-            DialogResult result = MessageBox.Show("Czy wszystkie dane się zgadzają?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                // Wyświetl MessageBox z pytaniem
+                DialogResult result = MessageBox.Show("Czy wszystkie dane się zgadzają?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
@@ -320,13 +277,14 @@ namespace SKS_Service_Manager
                     if (result == DialogResult.Yes)
                     {
                         string savedpdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione/uks_" + issueId + ".pdf";
+                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione");
                         File.Copy(pdfFilePath, savedpdfFilePath, true);
                     }
 
                     if (issueId < 0)
                     {
                         // Aktualizuj dane faktury w bazie danych
-                        UpdateUserInDatabase(CheckUserExistsByPesel(Pesel.Text));
+                        UpdateUserInDatabase(dataBase.CheckUserExistsByPesel(Pesel.Text));
                         SaveInvoiceToDatabase(issueUserId); ;
                     }
 
@@ -349,167 +307,60 @@ namespace SKS_Service_Manager
             }
         }
 
-        private bool CheckUserExistsByPesel(string pesel)
-        {
-            try
-            {
-                connection.Open();
-
-                // Sprawdź, czy istnieje użytkownik o danym numerze PESEL
-                string query = "SELECT COUNT(*) FROM Users WHERE Pesel = @Pesel;";
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@Pesel", pesel);
-
-                int count = Convert.ToInt32(cmd.ExecuteScalar());
-
-                return count > 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            finally
-            {
-                connection.Close();
-            }
-        }
         private void UpdateUserInDatabase(bool exist)
         {
-            if (exist)
+            // Pobierz dane z pól formularza, które chcesz zaktualizować
+            string fullName = FullName.Text;
+            string address = Adress.Text;
+            string postalCode = Post_Code.Text;
+            string city = City.Text;
+            string phone = Phone.Text;
+            string email = EMail.Text;
+            string documentType = DocumentType.Text;
+            string documentNumber = DocumentNumber.Text;
+            string pesel = Pesel.Text;
+            string nip = Nip.Text;
+            string notes = Notes.Text;
+
+            // Sprawdź, czy użytkownik o danym numerze PESEL istnieje
+            bool userExists = dataBase.CheckUserExistsByPesel(pesel);
+
+            // Wywołaj funkcję UpdateUserInDatabase, przekazując odpowiednie parametry
+            dataBase.UpdateUserInDatabase(userExists, fullName, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
+
+        }
+
+        private void LoadInvoiceData(int invoiceId)
+        {
+            DataTable invoiceData = dataBase.LoadInvoiceData(invoiceId);
+
+            if (invoiceData != null)
             {
-                try
-                {
-                    connection.Open();
+                DataRow row = invoiceData.Rows[0];
 
-                    // Aktualizuj dane użytkownika w bazie danych na podstawie numeru PESEL
-                    string updateQuery = @"
-                        UPDATE Users
-                        SET Name = @Name, Address = @Address, PostalCode = @PostalCode, City = @City, Phone = @Phone, Email = @Email,
-                            DocumentType = @DocumentType, DocumentNumber = @DocumentNumber, NIP = @NIP, Notes = @Notes
-                        WHERE Pesel = @Pesel;";
+                Description.Text = row["Description"].ToString();
+                Value.Text = row["TotalAmount"].ToString();
+                Issue_Date.Value = Convert.ToDateTime(row["InvoiceDate"]);
+                Comments.Text = row["Notes"].ToString();
+                issueUserId = Convert.ToInt32(row["USERID"]);
 
-                    MySqlCommand cmd = new MySqlCommand(updateQuery, connection);
-                    cmd.Parameters.AddWithValue("@Name", FullName.Text);
-                    cmd.Parameters.AddWithValue("@Address", Adress.Text);
-                    cmd.Parameters.AddWithValue("@PostalCode", Post_Code.Text);
-                    cmd.Parameters.AddWithValue("@City", City.Text);
-                    cmd.Parameters.AddWithValue("@Phone", Phone.Text);
-                    cmd.Parameters.AddWithValue("@Email", EMail.Text);
-                    cmd.Parameters.AddWithValue("@DocumentType", DocumentType.Text);
-                    cmd.Parameters.AddWithValue("@DocumentNumber", DocumentNumber.Text);
-                    cmd.Parameters.AddWithValue("@NIP", Nip.Text);
-                    cmd.Parameters.AddWithValue("@Notes", Notes.Text);
-                    cmd.Parameters.AddWithValue("@Pesel", Pesel.Text);
-
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Błąd podczas aktualizacji danych użytkownika w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    connection.Close();
-                }
+                LoadUserData(issueUserId);
             }
             else
             {
-                try
-                {
-                    connection.Open();
-
-                    string insertUserQuery = @"
-                INSERT INTO Users (Name, Address, PostalCode, City, Phone, Email, DocumentType, DocumentNumber, Pesel, NIP, Notes)
-                VALUES (@Name, @Address, @PostalCode, @City, @Phone, @Email, @DocumentType, @DocumentNumber, @Pesel, @NIP, @Notes);
-                SELECT LAST_INSERT_ID();"; // Dodaj zapytanie do pobrania ostatnio dodanego ID
-
-                    MySqlCommand cmd = new MySqlCommand(insertUserQuery, connection);
-                    cmd.Parameters.AddWithValue("@Name", FullName.Text);
-                    cmd.Parameters.AddWithValue("@Address", Adress.Text);
-                    cmd.Parameters.AddWithValue("@PostalCode", Post_Code.Text);
-                    cmd.Parameters.AddWithValue("@City", City.Text);
-                    cmd.Parameters.AddWithValue("@Phone", Phone.Text);
-                    cmd.Parameters.AddWithValue("@Email", EMail.Text);
-                    cmd.Parameters.AddWithValue("@DocumentType", DocumentType.Text);
-                    cmd.Parameters.AddWithValue("@DocumentNumber", DocumentNumber.Text);
-                    cmd.Parameters.AddWithValue("@Pesel", Pesel.Text);
-                    cmd.Parameters.AddWithValue("@NIP", Nip.Text);
-                    cmd.Parameters.AddWithValue("@Notes", Notes.Text);
-
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Błąd podczas zapisywania użytkownika do bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    connection.Close();
-                }
+                MessageBox.Show("Nie można znaleźć danych faktury.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void LoadInvoiceData(int invoiceId)
-        {
-            try
-            {
-                connection.Open();
 
-                // Wczytaj dane faktury o identyfikatorze invoiceId z bazy danych
-                string query = "SELECT * FROM UKS WHERE ID = @InvoiceID;";
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@InvoiceID", invoiceId);
-
-                MySqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
-                {
-                    Description.Text = reader["Description"].ToString();
-                    Value.Text = reader["TotalAmount"].ToString();
-                    Issue_Date.Value = Convert.ToDateTime(reader["InvoiceDate"]);
-                    Notes.Text = reader["Notes"].ToString();
-                    issueUserId = reader.GetInt32("USERID");
-                }
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd podczas wczytywania danych faktury: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                connection.Close();
-                LoadUserData(issueUserId);
-            }
-        }
         private void UpdateInvoiceInDatabase(int invoiceId)
         {
-            try
-            {
-                connection.Open();
+            string city = City.Text;
+            string description = Description.Text;
+            decimal totalAmount = decimal.Parse(Value.Text);
+            DateTime invoiceDate = Issue_Date.Value.Date;
+            string notes = Comments.Text;
 
-                string updateInvoiceQuery = @"
-            UPDATE UKS
-            SET City = @City, Description = @Description, TotalAmount = @TotalAmount, InvoiceDate = @InvoiceDate, Notes = @Notes
-            WHERE ID = @InvoiceID;";
-
-                MySqlCommand cmd = new MySqlCommand(updateInvoiceQuery, connection);
-                cmd.Parameters.AddWithValue("@City", City.Text);
-                cmd.Parameters.AddWithValue("@Description", Description.Text);
-                cmd.Parameters.AddWithValue("@TotalAmount", decimal.Parse(Value.Text));
-                cmd.Parameters.AddWithValue("@InvoiceDate", Issue_Date.Value.Date);
-                cmd.Parameters.AddWithValue("@Notes", Notes.Text);
-                cmd.Parameters.AddWithValue("@InvoiceID", invoiceId);
-
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd podczas aktualizacji danych faktury w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                connection.Close();
-            }
+            dataBase.UpdateInvoiceInDatabase(invoiceId, city, description, totalAmount, invoiceDate, notes);
         }
     }
 }
