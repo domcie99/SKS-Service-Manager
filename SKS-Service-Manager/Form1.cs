@@ -2,6 +2,7 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
+using System.Runtime.CompilerServices;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
 
@@ -15,47 +16,81 @@ namespace SKS_Service_Manager
         private UksList uksListForm;
         private DataBase database;
 
-        private string version = "1.0.1";
+        private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
+        private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v{0}/SKS-Service-Manager.zip";
+        private string localVersion = "1.0.0"; // Wersja Twojej aplikacji
+
+        
 
         public Form1()
         {
             InitializeComponent();
-
+            CheckForUpdates();
+            this.Text = "SKS-Service Manager v" + localVersion;
 
             WebClient webClient = new WebClient();
             var client = new WebClient();
-            if (!webClient.DownloadString("https://github.com/domcie99/SKS-Service-Manager/blob/master/SKS-Service-Manager/version.txt").Contains(version))
-            {
-                if (MessageBox.Show("Nowa Aktualizacja jest dostêpna, czy chcesz j¹ pobraæ teraz", "Aktualizacja", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    try
-                    {
-                        if (File.Exists(@".\SKS-Service-Manager.msi")) { File.Delete(@".\SKS-Service-Manager.msi"); }
-                        client.DownloadFile("https://github.com/domcie99/SKS-Service-Manager/releases/download/v" + version + "/SKS-Service-Manager.zip", @"SKS-Service-Manager.zip");
-                        string zipPath = @".\SKS-Service-Manager.zip";
-                        string extractPath = @".\";
-                        ZipFile.ExtractToDirectory(zipPath, extractPath);
-                        Process process = new Process();
-                        process.StartInfo.FileName = "msiexec.exe";
-                        process.StartInfo.Arguments = string.Format("/i SKS-Service-Manager.msi");
-                        this.Close();
-                        process.Start();
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-
 
             settingsForm = new Settings(this); // Inicjalizacja formularza ustawieñ
             database = new DataBase(this);
 
             CheckMySQLConnection();
             CheckAndShowOfficeMessage();
+
+        }
+
+        private void CheckForUpdates()
+        {
+            try
+            {
+                WebClient webClient = new WebClient();
+                string latestVersion = webClient.DownloadString(versionUrl).Trim();
+
+                if (latestVersion != localVersion)
+                {
+                    DialogResult result = MessageBox.Show($"Nowa aktualizacja ({latestVersion}) jest dostêpna, czy chcesz j¹ pobraæ teraz?", "Aktualizacja", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        DownloadAndInstallUpdate(latestVersion);
+                    }
+                }
+                else
+                {
+                    //MessageBox.Show($"Masz najnowsz¹ wersjê ({latestVersion}) aplikacji.", "Brak dostêpnych aktualizacji", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Obs³uga b³êdów
+                Console.WriteLine("B³¹d podczas sprawdzania aktualizacji: " + ex.Message);
+            }
         }
 
 
+        private void DownloadAndInstallUpdate(string latestVersion)
+        {
+            try
+            {
+                WebClient client = new WebClient();
+                string updateUrlFormatted = string.Format(updateUrl, latestVersion);
+                string zipPath = Path.Combine(Path.GetTempPath(), "SKS-Service-Manager.zip");
+                string extractPath = Path.Combine(Path.GetTempPath(), "Update");
+
+                client.DownloadFile(updateUrlFormatted, zipPath);
+
+                ZipFile.ExtractToDirectory(zipPath, extractPath);
+
+                Process.Start(Path.Combine(extractPath, "SKS-Service-Manager.exe"));
+
+                Application.Exit();
+            }
+            catch (Exception ex)
+            {
+                // Obs³uga b³êdów
+                Console.WriteLine("B³¹d podczas pobierania i instalowania aktualizacji: " + ex.Message);
+            }
+        }
 
         public static void CheckAndShowOfficeMessage()
         {
