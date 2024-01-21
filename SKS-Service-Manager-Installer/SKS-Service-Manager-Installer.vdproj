@@ -172,7 +172,7 @@
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_A5A1C5056E46478DBAB58C9B3253FE7D"
             {
-            "DefaultLocation" = "8:[ProgramFiles64Folder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[AppDataFolder][ProductName]"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -199,12 +199,12 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SKS-Service-Manager"
         "ProductCode" = "8:{5ACC4424-D99E-4051-896E-78B0AC1A80A6}"
-        "PackageCode" = "8:{6EB5A30C-6FCE-4E76-8925-EF6765CC0ADB}"
+        "PackageCode" = "8:{1C123A82-DC70-4859-B75C-A04101E83294}"
         "UpgradeCode" = "8:{E0B1CF2E-2426-4BC8-809A-A41031EDD0C2}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
-        "DetectNewerInstalledVersion" = "11:FALSE"
+        "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:SKS"
@@ -319,7 +319,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D409E2D0E27D4B74BE8734A302B36C7C"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_A687160A93064DD5964C1EAF3BDE2BB6"
             {
             "Name" = "8:SKS-Service-Manager"
             "Arguments" = "8:"
@@ -330,7 +330,7 @@
             "Target" = "8:_5BD857627A144E609DE1FBEBF9094DC8"
             "Folder" = "8:_03066ED6AD794C9199BE7998B3D2CD7E"
             "WorkingFolder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"
-            "Icon" = "8:"
+            "Icon" = "8:_82A46CDB15FE4B80BBD069D9230F63BC"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_DAC4613A201D42A48E01AA8CC8700165"
