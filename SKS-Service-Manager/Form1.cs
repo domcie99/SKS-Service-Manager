@@ -15,7 +15,7 @@ namespace SKS_Service_Manager
         private UksList uksListForm;
         private DataBase database;
 
-        private string version = "1.0.0";
+        private string version = "1.0.1";
 
         public Form1()
         {
