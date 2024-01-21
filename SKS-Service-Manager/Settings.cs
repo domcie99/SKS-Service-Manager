@@ -2,6 +2,7 @@
 using System;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -19,7 +20,7 @@ namespace SKS_Service_Manager
             InitializeComponent();
             mainForm = form1;
             CenterToScreen(); // Centruje formularz na ekranie
-            
+
             this.mainForm = mainForm; // Przekazanie referencji do formularza Form1
             LoadSettings();
         }
@@ -112,5 +113,38 @@ namespace SKS_Service_Manager
         public string GetMySQLPassword() => Properties.Settings.Default.mysql_password;
         public string GetMySQLDatabase() => Properties.Settings.Default.mysql_database;
         public int GetMySQLPort() => Properties.Settings.Default.mysql_port;
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            OpenFileToEdit("uks");
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            OpenFileToEdit("uk");
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            OpenFileToEdit("uppz");
+        }
+
+        private void OpenFileToEdit(String file) {
+
+            string docxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/"+ file + ".docx";
+            string copydocxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/"+ file + ".docx";
+
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "umowy/backup");
+            File.Copy(docxFile, copydocxFile, true);
+
+            try
+            {
+                Process.Start("cmd", $"/c start {docxFile}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas otwierania pliku uks: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

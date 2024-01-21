@@ -1,10 +1,16 @@
+using Microsoft.Win32;
 using System.Diagnostics;
+using System.IO.Compression;
+using System.Net;
+using static System.Net.WebRequestMethods;
+using File = System.IO.File;
 
 namespace SKS_Service_Manager
 {
     public partial class Form1 : Form
     {
         private Settings settingsForm;
+        private IssueUKS issueUksForm;
         private UserList userlistForm;
         private UksList uksListForm;
         private DataBase database;
@@ -13,16 +19,67 @@ namespace SKS_Service_Manager
         {
             InitializeComponent();
 
-            settingsForm = new Settings(this); // Inicjalizacja formularza ustawieñ
 
+            WebClient webClient = new WebClient();
+            var client = new WebClient();
+            if (!webClient.DownloadString("link to web host/Version.txt").Contains("1.0.0"))
+            {
+                if (MessageBox.Show("A new update is available! Do you want to download it?", "Demo", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    try
+                    {
+                        if (File.Exists(@".\MyAppSetup.msi")) { File.Delete(@".\MyAppSetup.msi"); }
+                        client.DownloadFile("link to web host/MyAppSetup.zip", @"MyAppSetup.zip");
+                        string zipPath = @".\MyAppSetup.zip";
+                        string extractPath = @".\";
+                        ZipFile.ExtractToDirectory(zipPath, extractPath);
+                        Process process = new Process();
+                        process.StartInfo.FileName = "msiexec.exe";
+                        process.StartInfo.Arguments = string.Format("/i MyAppSetup.msi");
+                        this.Close();
+                        process.Start();
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+
+
+            settingsForm = new Settings(this); // Inicjalizacja formularza ustawieñ
             database = new DataBase(this);
 
             CheckMySQLConnection();
+            CheckAndShowOfficeMessage();
+        }
 
-            uksListForm = new UksList(this);
-            userlistForm = new UserList(this); // Inicjalizacja formularza listy u¿ytkowników
 
 
+        public static void CheckAndShowOfficeMessage()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.ClassesRoot.OpenSubKey("Word.Application"))
+                {
+                    if (key == null)
+                    {
+                        DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego programu Microsoft Office. Kliknij 'OK', aby pobraæ Office.", "Brak zainstalowanego Office", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                        if (result == DialogResult.OK)
+                        {
+                            try
+                            {
+                                Process.Start("cmd", $"/c start https://www.microsoft.com/pl-pl/microsoft-365/get-started-with-office-2019");
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("B³¹d podczas otwierania pliku uks: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception){}
         }
 
         public void setDataBase()
@@ -36,26 +93,7 @@ namespace SKS_Service_Manager
 
         private void button1_Click(object sender, EventArgs e) //Issue 1
         {
-            OpenUksForm();
-        }
-        private void button4_Click(object sender, EventArgs e) //Edit 1
-        {
-            string docxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks.docx";
-
-
-            string copydocxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/uks.docx";
-
-            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "umowy/backup");
-            File.Copy(docxFile, copydocxFile, true);
-
-            try
-            {
-                Process.Start("cmd", $"/c start {docxFile}");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("B³¹d podczas otwierania pliku uks: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            OpenIssueUKSForm(-1);
         }
 
         private void button8_Click(object sender, EventArgs e)
@@ -78,6 +116,11 @@ namespace SKS_Service_Manager
                 pictureBox1.Image = Properties.Resources.no_connection;
                 pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             }
+
+            database = new DataBase(this);
+            issueUksForm = new IssueUKS(-1, this);
+            uksListForm = new UksList(this);
+            userlistForm = new UserList(this);
         }
 
         private void OpenSettingsForm()
@@ -95,6 +138,7 @@ namespace SKS_Service_Manager
             {
                 uksListForm = new UksList(this);
             }
+            uksListForm.LoadData();
             uksListForm.ShowDialog(); // Wyœwietlanie formularza ustawieñ
         }
 
@@ -110,16 +154,15 @@ namespace SKS_Service_Manager
 
         private void button2_Click(object sender, EventArgs e)
         {
-            OpenUppzForm();
+            OpenUksForm();
         }
-
-        private void OpenUppzForm()
+        private void OpenIssueUKSForm(int Id)
         {
-            if (uksListForm == null || uksListForm.IsDisposed)
+            if (issueUksForm == null || issueUksForm.IsDisposed)
             {
-                uksListForm = new UksList(this);
+                issueUksForm = new IssueUKS(Id, this);
             }
-            uksListForm.ShowDialog(); // Wyœwietlanie formularza ustawieñ
+            issueUksForm.ShowDialog();
         }
     }
 }

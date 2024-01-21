@@ -18,14 +18,17 @@ namespace SKS_Service_Manager
             mainForm = Form1;
             settingsForm = new Settings(mainForm);
 
-            database = mainForm.getDataBase();
+            UpdateReference();
 
             // Inicjalizacja połączenia z bazą danych
 
             LoadUserData();
         }
 
-
+        public void UpdateReference()
+        {
+            database = mainForm.getDataBase();
+        }
 
         public void LoadUserData()
         {

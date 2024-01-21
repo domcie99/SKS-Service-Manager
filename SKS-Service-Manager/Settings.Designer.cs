@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
             company_name = new TextBox();
             label1 = new Label();
@@ -60,6 +61,10 @@
             host = new TextBox();
             label15 = new Label();
             port = new TextBox();
+            button6 = new Button();
+            button5 = new Button();
+            button4 = new Button();
+            toolTip1 = new ToolTip(components);
             SuspendLayout();
             // 
             // company_name
@@ -355,12 +360,68 @@
             port.Size = new Size(200, 23);
             port.TabIndex = 29;
             // 
+            // button6
+            // 
+            button6.BackColor = Color.Transparent;
+            button6.BackgroundImage = Properties.Resources.EdytujFakture;
+            button6.BackgroundImageLayout = ImageLayout.Zoom;
+            button6.Cursor = Cursors.Hand;
+            button6.FlatAppearance.BorderSize = 0;
+            button6.FlatStyle = FlatStyle.Flat;
+            button6.Location = new Point(217, 321);
+            button6.Name = "button6";
+            button6.Size = new Size(74, 88);
+            button6.TabIndex = 33;
+            toolTip1.SetToolTip(button6, "Edytuj Wzór Umowa Pożyczki z Przechowaniem");
+            button6.UseMnemonic = false;
+            button6.UseVisualStyleBackColor = false;
+            button6.Click += button6_Click;
+            // 
+            // button5
+            // 
+            button5.BackColor = Color.Transparent;
+            button5.BackgroundImage = Properties.Resources.EdytujFakture;
+            button5.BackgroundImageLayout = ImageLayout.Zoom;
+            button5.Cursor = Cursors.Hand;
+            button5.FlatAppearance.BorderSize = 0;
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(137, 321);
+            button5.Name = "button5";
+            button5.Size = new Size(74, 88);
+            button5.TabIndex = 32;
+            toolTip1.SetToolTip(button5, "Edytuj Wzór Umowa Komisowa");
+            button5.UseMnemonic = false;
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
+            // 
+            // button4
+            // 
+            button4.AccessibleDescription = "";
+            button4.BackColor = Color.Transparent;
+            button4.BackgroundImage = Properties.Resources.EdytujFakture;
+            button4.BackgroundImageLayout = ImageLayout.Zoom;
+            button4.Cursor = Cursors.Hand;
+            button4.FlatAppearance.BorderSize = 0;
+            button4.FlatStyle = FlatStyle.Flat;
+            button4.Location = new Point(57, 321);
+            button4.Name = "button4";
+            button4.RightToLeft = RightToLeft.Yes;
+            button4.Size = new Size(74, 88);
+            button4.TabIndex = 31;
+            toolTip1.SetToolTip(button4, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button4.UseMnemonic = false;
+            button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
+            // 
             // Settings
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
-            ClientSize = new Size(904, 374);
+            ClientSize = new Size(904, 426);
+            Controls.Add(button6);
+            Controls.Add(button5);
+            Controls.Add(button4);
             Controls.Add(label15);
             Controls.Add(port);
             Controls.Add(label11);
@@ -433,5 +494,9 @@
         private TextBox host;
         private Label label15;
         private TextBox port;
+        private Button button6;
+        private Button button5;
+        private Button button4;
+        private ToolTip toolTip1;
     }
 }

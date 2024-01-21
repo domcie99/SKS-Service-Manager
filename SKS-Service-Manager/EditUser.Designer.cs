@@ -236,7 +236,9 @@
             // DocumentType
             // 
             DocumentType.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
+            DocumentType.DropDownStyle = ComboBoxStyle.DropDownList;
             DocumentType.FormattingEnabled = true;
+            DocumentType.Items.AddRange(new object[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
             DocumentType.Location = new Point(599, 80);
             DocumentType.Name = "DocumentType";
             DocumentType.Size = new Size(200, 23);

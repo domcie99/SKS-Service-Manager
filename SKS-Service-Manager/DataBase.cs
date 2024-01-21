@@ -105,7 +105,7 @@ namespace SKS_Service_Manager
                                     BuyDate DATE,
 
                                     Days INT,
-                                    Precentage INT,
+                                    Percentage INT,
 
                                     Fee DECIMAL(10, 2),
                                     LateFee DECIMAL(10, 2),
@@ -214,6 +214,7 @@ namespace SKS_Service_Manager
             try
             {
                 string query = "SELECT UKS.ID, " +
+                                "UKS.DocumentType AS 'Typ Umowy', " +
                                 "UKS.City AS 'Miasto Wystawienia', " +
                                 "UKS.Description AS 'Opis', " +
                                 "UKS.TotalAmount AS 'Wartość', " +
@@ -362,7 +363,8 @@ namespace SKS_Service_Manager
                     "City AS 'Miasto', " +
                     "Phone AS 'Telefon', " +
                     "Email AS 'E-Mail', " +
-                    "DocumentType AS 'Typ Dokumentu', " +
+                    "DocumentType AS 'Typ Dok.', " +
+                    "DocumentNumber AS 'Numer Dok.', " +
                     "NIP AS 'NIP', " +
                     "Name AS 'Nazwa Firmy', " +
                     "Pesel AS 'Pesel', " +
@@ -435,8 +437,8 @@ namespace SKS_Service_Manager
             try
             {
                 string insertInvoiceQuery = @"
-                    INSERT INTO UKS (UserID, City, Description, TotalAmount, InvoiceDate, Notes)
-                    VALUES (@UserID, @City, @Description, @TotalAmount, @InvoiceDate, @Notes);";
+            INSERT INTO UKS (UserID, DocumentType, City, Description, TotalAmount, InvoiceDate, BuyDate, Days, Percentage, Fee, LateFee, BuyAmount, DateOfReturn, SaleDate, SaleAmount, Notes)
+            VALUES (@UserID, @DocumentType, @City, @Description, @TotalAmount, @InvoiceDate, @BuyDate, @Days, @Percentage, @Fee, @LateFee, @BuyAmount, @DateOfReturn, @SaleDate, @SaleAmount, @Notes);";
 
                 if (useMySQL)
                 {
@@ -445,10 +447,20 @@ namespace SKS_Service_Manager
                     {
                         MySqlCommand cmd = new MySqlCommand(insertInvoiceQuery, mySqlConnection);
                         cmd.Parameters.AddWithValue("@UserID", row["UserID"]);
+                        cmd.Parameters.AddWithValue("@DocumentType", row["DocumentType"]);
                         cmd.Parameters.AddWithValue("@City", row["City"]);
                         cmd.Parameters.AddWithValue("@Description", row["Description"]);
                         cmd.Parameters.AddWithValue("@TotalAmount", row["TotalAmount"]);
                         cmd.Parameters.AddWithValue("@InvoiceDate", row["InvoiceDate"]);
+                        cmd.Parameters.AddWithValue("@BuyDate", row["BuyDate"]);
+                        cmd.Parameters.AddWithValue("@Days", row["Days"]);
+                        cmd.Parameters.AddWithValue("@Percentage", row["Percentage"]);
+                        cmd.Parameters.AddWithValue("@Fee", row["Fee"]);
+                        cmd.Parameters.AddWithValue("@LateFee", row["LateFee"]);
+                        cmd.Parameters.AddWithValue("@BuyAmount", row["BuyAmount"]);
+                        cmd.Parameters.AddWithValue("@DateOfReturn", row["DateOfReturn"]);
+                        cmd.Parameters.AddWithValue("@SaleDate", row["SaleDate"]);
+                        cmd.Parameters.AddWithValue("@SaleAmount", row["SaleAmount"]);
                         cmd.Parameters.AddWithValue("@Notes", row["Notes"]);
                         cmd.ExecuteScalar();
                     }
@@ -459,11 +471,21 @@ namespace SKS_Service_Manager
                     foreach (DataRow row in invoiceData.Rows)
                     {
                         SQLiteCommand cmd = new SQLiteCommand(insertInvoiceQuery, sqliteConnection);
+                        cmd.Parameters.AddWithValue("@DocumentType", row["DocumentType"]);
                         cmd.Parameters.AddWithValue("@UserID", row["UserID"]);
                         cmd.Parameters.AddWithValue("@City", row["City"]);
                         cmd.Parameters.AddWithValue("@Description", row["Description"]);
                         cmd.Parameters.AddWithValue("@TotalAmount", row["TotalAmount"]);
                         cmd.Parameters.AddWithValue("@InvoiceDate", row["InvoiceDate"]);
+                        cmd.Parameters.AddWithValue("@BuyDate", row["BuyDate"]);
+                        cmd.Parameters.AddWithValue("@Days", row["Days"]);
+                        cmd.Parameters.AddWithValue("@Percentage", row["Percentage"]);
+                        cmd.Parameters.AddWithValue("@Fee", row["Fee"]);
+                        cmd.Parameters.AddWithValue("@LateFee", row["LateFee"]);
+                        cmd.Parameters.AddWithValue("@BuyAmount", row["BuyAmount"]);
+                        cmd.Parameters.AddWithValue("@DateOfReturn", row["DateOfReturn"]);
+                        cmd.Parameters.AddWithValue("@SaleDate", row["SaleDate"]);
+                        cmd.Parameters.AddWithValue("@SaleAmount", row["SaleAmount"]);
                         cmd.Parameters.AddWithValue("@Notes", row["Notes"]);
                         cmd.ExecuteScalar();
                     }
@@ -471,13 +493,14 @@ namespace SKS_Service_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd podczas zapisywania faktury do bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Błąd podczas zapisywania faktury do bazy danych SaveInvoice: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 CloseConnection();
             }
         }
+
 
         public bool CheckUserExistsByPesel(string pesel)
         {
@@ -617,24 +640,50 @@ namespace SKS_Service_Manager
             return null;
         }
 
-        public void UpdateInvoiceInDatabase(int invoiceId, string city, string description, decimal totalAmount, DateTime invoiceDate, string notes)
+        public void UpdateInvoiceInDatabase(int invoiceId, int userId, string city, string description, decimal totalAmount, DateTime invoiceDate, string notes, string documentType, DateTime buyDate, int days, int percentage, decimal fee, decimal lateFee, decimal buyAmount, DateTime dateOfReturn, DateTime saleDate, decimal saleAmount)
         {
             try
             {
                 string query = @"
-                    UPDATE UKS
-                    SET City = @City, Description = @Description, TotalAmount = @TotalAmount, InvoiceDate = @InvoiceDate, Notes = @Notes
-                    WHERE ID = @InvoiceID;";
+            UPDATE UKS
+            SET City = @City, 
+                UserID = @UserID, 
+                Description = @Description, 
+                TotalAmount = @TotalAmount, 
+                InvoiceDate = @InvoiceDate, 
+                Notes = @Notes, 
+                DocumentType = @DocumentType, 
+                BuyDate = @BuyDate, 
+                Days = @Days, 
+                Percentage = @Percentage, 
+                Fee = @Fee, 
+                LateFee = @LateFee, 
+                BuyAmount = @BuyAmount, 
+                DateOfReturn = @DateOfReturn, 
+                SaleDate = @SaleDate, 
+                SaleAmount = @SaleAmount
+            WHERE ID = @InvoiceID;";
 
                 if (useMySQL)
                 {
                     mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@City", city);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@Description", description);
                     cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
                     cmd.Parameters.AddWithValue("@InvoiceDate", invoiceDate);
                     cmd.Parameters.AddWithValue("@Notes", notes);
+                    cmd.Parameters.AddWithValue("@DocumentType", documentType);
+                    cmd.Parameters.AddWithValue("@BuyDate", buyDate);
+                    cmd.Parameters.AddWithValue("@Days", days);
+                    cmd.Parameters.AddWithValue("@Percentage", percentage);
+                    cmd.Parameters.AddWithValue("@Fee", fee);
+                    cmd.Parameters.AddWithValue("@LateFee", lateFee);
+                    cmd.Parameters.AddWithValue("@BuyAmount", buyAmount);
+                    cmd.Parameters.AddWithValue("@DateOfReturn", dateOfReturn);
+                    cmd.Parameters.AddWithValue("@SaleDate", saleDate);
+                    cmd.Parameters.AddWithValue("@SaleAmount", saleAmount);
                     cmd.Parameters.AddWithValue("@InvoiceID", invoiceId);
                     cmd.ExecuteNonQuery();
                 }
@@ -643,10 +692,21 @@ namespace SKS_Service_Manager
                     sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@City", city);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@Description", description);
                     cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
                     cmd.Parameters.AddWithValue("@InvoiceDate", invoiceDate);
                     cmd.Parameters.AddWithValue("@Notes", notes);
+                    cmd.Parameters.AddWithValue("@DocumentType", documentType);
+                    cmd.Parameters.AddWithValue("@BuyDate", buyDate);
+                    cmd.Parameters.AddWithValue("@Days", days);
+                    cmd.Parameters.AddWithValue("@Percentage", percentage);
+                    cmd.Parameters.AddWithValue("@Fee", fee);
+                    cmd.Parameters.AddWithValue("@LateFee", lateFee);
+                    cmd.Parameters.AddWithValue("@BuyAmount", buyAmount);
+                    cmd.Parameters.AddWithValue("@DateOfReturn", dateOfReturn);
+                    cmd.Parameters.AddWithValue("@SaleDate", saleDate);
+                    cmd.Parameters.AddWithValue("@SaleAmount", saleAmount);
                     cmd.Parameters.AddWithValue("@InvoiceID", invoiceId);
                     cmd.ExecuteNonQuery();
                 }
@@ -660,6 +720,7 @@ namespace SKS_Service_Manager
                 CloseConnection();
             }
         }
+
 
     }
 }

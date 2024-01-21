@@ -81,7 +81,7 @@
             label20 = new Label();
             Comments = new RichTextBox();
             label18 = new Label();
-            Precentage = new TextBox();
+            Percentage = new TextBox();
             label17 = new Label();
             Days = new TextBox();
             label16 = new Label();
@@ -92,7 +92,7 @@
             Print = new Button();
             Save = new Button();
             label32 = new Label();
-            comboBox1 = new ComboBox();
+            FormType = new ComboBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -193,6 +193,7 @@
             DocumentType.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
             DocumentType.DropDownStyle = ComboBoxStyle.DropDownList;
             DocumentType.FormattingEnabled = true;
+            DocumentType.Items.AddRange(new object[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
             DocumentType.Location = new Point(587, 22);
             DocumentType.Name = "DocumentType";
             DocumentType.Size = new Size(200, 23);
@@ -460,7 +461,7 @@
             groupBox3.Controls.Add(label20);
             groupBox3.Controls.Add(Comments);
             groupBox3.Controls.Add(label18);
-            groupBox3.Controls.Add(Precentage);
+            groupBox3.Controls.Add(Percentage);
             groupBox3.Controls.Add(label17);
             groupBox3.Controls.Add(Days);
             groupBox3.Controls.Add(label16);
@@ -676,16 +677,16 @@
             label18.Text = "%";
             label18.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // Precentage
+            // Percentage
             // 
-            Precentage.Location = new Point(182, 109);
-            Precentage.Name = "Precentage";
-            Precentage.Size = new Size(60, 23);
-            Precentage.TabIndex = 108;
-            Precentage.Text = "0";
-            Precentage.TextAlign = HorizontalAlignment.Right;
-            Precentage.KeyPress += IsInt_KeyPress;
-            Precentage.Leave += Percentage_Leave;
+            Percentage.Location = new Point(182, 109);
+            Percentage.Name = "Percentage";
+            Percentage.Size = new Size(60, 23);
+            Percentage.TabIndex = 108;
+            Percentage.Text = "0";
+            Percentage.TextAlign = HorizontalAlignment.Right;
+            Percentage.KeyPress += IsInt_KeyPress;
+            Percentage.Leave += Percentage_Leave;
             // 
             // label17
             // 
@@ -802,16 +803,17 @@
             label32.Text = "Rodzaj Umowy";
             label32.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // comboBox1
+            // FormType
             // 
-            comboBox1.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
-            comboBox1.Location = new Point(174, 595);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(220, 23);
-            comboBox1.TabIndex = 118;
+            FormType.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
+            FormType.DropDownStyle = ComboBoxStyle.DropDownList;
+            FormType.FormattingEnabled = true;
+            FormType.Items.AddRange(new object[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            FormType.Location = new Point(174, 595);
+            FormType.Name = "FormType";
+            FormType.Size = new Size(220, 23);
+            FormType.TabIndex = 118;
+            FormType.SelectedValueChanged += FormType_ValueChanged;
             // 
             // IssueUKS
             // 
@@ -820,7 +822,7 @@
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(818, 650);
             Controls.Add(label32);
-            Controls.Add(comboBox1);
+            Controls.Add(FormType);
             Controls.Add(Save);
             Controls.Add(Print);
             Controls.Add(groupBox3);
@@ -857,7 +859,7 @@
         private Label label20;
         private RichTextBox Comments;
         private Label label18;
-        private TextBox Precentage;
+        private TextBox Percentage;
         private Label label17;
         private TextBox Days;
         private Label label16;
@@ -903,6 +905,6 @@
         private Label label31;
         private TextBox FullName;
         private Label label32;
-        private ComboBox comboBox1;
+        private ComboBox FormType;
     }
 }

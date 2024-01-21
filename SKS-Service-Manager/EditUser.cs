@@ -19,11 +19,6 @@ namespace SKS_Service_Manager
             mainForm = form1;
             database = mainForm.getDataBase();
 
-            DocumentType.Items.Add("Dowód Osobisty");
-            DocumentType.Items.Add("Prawo Jazdy");
-            DocumentType.Items.Add("Paszport");
-
-
             // Inicjalizacja połączenia z bazą danych (możesz użyć istniejącego połączenia z userlist)
             this.userIdToEdit = userID;
             this.parentForm = parentForm;

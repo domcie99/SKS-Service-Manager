@@ -25,9 +25,15 @@ namespace SKS_Service_Manager
         private bool generated = false;
         private DataBase dataBase;
 
-        string docxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks.docx";
-        string editedDocxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks_new.docx";
-        string pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/uks.pdf";
+        private decimal totalIntrest;
+        private decimal totalBuyOut;
+
+        private string newFile = "uks";
+        private string docxFilePath;
+        private string editedDocxFilePath;
+        private string pdfFilePath;
+        private string savedpdfFilePath;
+
 
         public IssueUKS(int Id, Form1 form1)
         {
@@ -39,9 +45,16 @@ namespace SKS_Service_Manager
             dataBase = mainForm.getDataBase();
             dataBase.CreateInvoicesTableIfNotExists();
 
-            DocumentType.Items.Add("Dowód Osobisty");
-            DocumentType.Items.Add("Prawo Jazdy");
-            DocumentType.Items.Add("Paszport");
+            DocumentType.SelectedIndex = 0;
+            FormType.SelectedIndex = 1;
+
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione");
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/umowy/backup");
+
+            docxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/" + newFile + ".docx";
+            editedDocxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/" + newFile + "_new.docx";
+            pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/" + newFile + ".pdf";
+            savedpdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione/" + newFile + "_" + issueId + ".pdf";
 
             if (issueId > 0)
             {
@@ -75,7 +88,8 @@ namespace SKS_Service_Manager
                 {
                     DataRow row = userData.Rows[0]; // Assuming there is only one result row
 
-                    FullName.Text = row["Name"].ToString();
+                    FullName.Text = row["FullName"].ToString();
+                    CompanyName.Text = row["Name"].ToString();
                     Adress.Text = row["Address"].ToString();
                     Post_Code.Text = row["PostalCode"].ToString();
                     City.Text = row["City"].ToString();
@@ -86,16 +100,6 @@ namespace SKS_Service_Manager
                     Pesel.Text = row["Pesel"].ToString();
                     Nip.Text = row["NIP"].ToString(); // New NIP field
                     Notes.Text = row["Notes"].ToString();
-
-                    // Add code to populate new fields here:
-                    Days.Text = row["Days"].ToString();
-                    Precentage.Text = row["Precentage"].ToString();
-                    Fee.Text = row["Fee"].ToString();
-                    LateFee.Text = row["LateFee"].ToString();
-                    BuyAmount.Text = row["BuyAmount"].ToString();
-                    DateOfReturn.Value = Convert.ToDateTime(row["DateOfReturn"]);
-                    SaleDate.Value = Convert.ToDateTime(row["SaleDate"]);
-                    SaleAmount.Text = row["SaleAmount"].ToString();
                 }
             }
             catch (Exception ex)
@@ -128,27 +132,12 @@ namespace SKS_Service_Manager
                 // Zamień kropkę na przecinek
                 textBox.Text = textBox.Text.Replace(".", ",");
 
-                // Sprawdź, czy istnieje przecinek
-                if (!textBox.Text.Contains(","))
-                {
-                    // Jeśli brak przecinka, dodaj ".00" na końcu
-                    textBox.Text += ",00";
-                }
-                else
-                {
-                    // Jeśli jest przecinek, sprawdź, czy są dwie cyfry po przecinku
-                    string[] parts = textBox.Text.Split(',');
-                    if (parts.Length == 2 && parts[1].Length == 1)
-                    {
-                        // Jeśli jest tylko jedna cyfra po przecinku, dodaj "0" na końcu
-                        textBox.Text += "0";
-                    }
-                }
-
                 decimal value;
                 if (decimal.TryParse(textBox.Text, out value))
                 {
-
+                    // Formatuj tekst w kontrolce TextBox zawsze z dwiema cyframi po przecinku
+                    textBox.Text = value.ToString("0.00");
+                    Interest_ValueChanged();
                 }
                 else
                 {
@@ -159,6 +148,7 @@ namespace SKS_Service_Manager
             }
         }
 
+
         private void Save_Click(object sender, EventArgs e)
         {
             Load.Enabled = false;
@@ -167,12 +157,7 @@ namespace SKS_Service_Manager
             this.Cursor = Cursors.WaitCursor;
 
             decimal value = decimal.Parse(Value.Text);
-
-            int wholePart = (int)value;
-            int fractionalPart = (int)((value - wholePart) * 100); // Przekształć ułamek na grosze
-
-            string wholePartInWords = wholePart.ToWords();
-            string fractionalPartInWords = fractionalPart.ToWords();
+            decimal total = CalculateTotalPrice(value, int.Parse(Days.Text), int.Parse(Percentage.Text));
 
             try
             {
@@ -209,12 +194,16 @@ namespace SKS_Service_Manager
 
                     ReplaceText(body, "#[przedmiot-opis]", Description.Text);
                     ReplaceText(body, "#[przedmiot-wartosc]", value.ToString());
-                    ReplaceText(body, "#[przedmiot-wartosc-slownie]", $"{wholePartInWords} złotych i {fractionalPartInWords} groszy");
+                    ReplaceText(body, "#[przedmiot-wartosc-slownie]", GetValueAsText(value));
+
+                    ReplaceText(body, "#[przedmiot-wartosc-odestki]", totalIntrest.ToString()) ;
+                    ReplaceText(body, "#[przedmiot-wartosc-calkowita]", total.ToString());
+                    ReplaceText(body, "#[przedmiot-wartosc-calkowita-slownie]", GetValueAsText(value));
 
                     ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
                     ReplaceText(body, "#[przedmiot-data-odbioru]", Pickup_Date.Value.ToString("dd-MM-yyyy"));
                     ReplaceText(body, "#[przedmiot-ilosc-dni]", Days.Text);
-                    ReplaceText(body, "#[przedmiot-procent]", Precentage.Text);
+                    ReplaceText(body, "#[przedmiot-procent]", Percentage.Text);
 
                     ReplaceText(body, "#[przedmiot-oplata]", Fee.Text);
                     ReplaceText(body, "#[przedmiot-oplata-opoznienia]", LateFee.Text);
@@ -306,18 +295,19 @@ namespace SKS_Service_Manager
         {
             try
             {
+                // Tworzymy nowy obiekt DataTable z odpowiednimi kolumnami
                 System.Data.DataTable invoiceData = new System.Data.DataTable();
                 invoiceData.Columns.Add("UserID", typeof(int));
+                invoiceData.Columns.Add("DocumentType", typeof(string));
                 invoiceData.Columns.Add("City", typeof(string));
                 invoiceData.Columns.Add("Description", typeof(string));
                 invoiceData.Columns.Add("TotalAmount", typeof(decimal));
                 invoiceData.Columns.Add("InvoiceDate", typeof(DateTime));
+                invoiceData.Columns.Add("BuyDate", typeof(DateTime));
                 invoiceData.Columns.Add("Notes", typeof(string));
-
-                // Add new fields to the DataTable:
                 invoiceData.Columns.Add("NIP", typeof(string));
                 invoiceData.Columns.Add("Days", typeof(int));
-                invoiceData.Columns.Add("Precentage", typeof(int));
+                invoiceData.Columns.Add("Percentage", typeof(int));
                 invoiceData.Columns.Add("Fee", typeof(decimal));
                 invoiceData.Columns.Add("LateFee", typeof(decimal));
                 invoiceData.Columns.Add("BuyAmount", typeof(decimal));
@@ -328,15 +318,15 @@ namespace SKS_Service_Manager
                 DataRow newRow = invoiceData.NewRow();
                 newRow["UserID"] = userId;
                 newRow["City"] = settingsForm.GetCity();
+                newRow["DocumentType"] = FormType.Text.ToString(); // Pobierz rodzaj dokumentu
                 newRow["Description"] = Description.Text;
                 newRow["TotalAmount"] = decimal.Parse(Value.Text);
                 newRow["InvoiceDate"] = Issue_Date.Value.Date;
+                newRow["BuyDate"] = Pickup_Date.Value.Date;
                 newRow["Notes"] = Comments.Text;
-
-                // Add values for the new fields:
                 newRow["NIP"] = Nip.Text;
                 newRow["Days"] = int.Parse(Days.Text);
-                newRow["Precentage"] = int.Parse(Precentage.Text);
+                newRow["Percentage"] = int.Parse(Percentage.Text);
                 newRow["Fee"] = decimal.Parse(Fee.Text);
                 newRow["LateFee"] = decimal.Parse(LateFee.Text);
                 newRow["BuyAmount"] = decimal.Parse(BuyAmount.Text);
@@ -355,6 +345,7 @@ namespace SKS_Service_Manager
         }
 
 
+
         private void Print_Click(object sender, EventArgs e)
         {
             if (generated)
@@ -367,8 +358,6 @@ namespace SKS_Service_Manager
                     DialogResult result2 = MessageBox.Show("Czy chcesz zapisać plik pdf w katalogu?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (result == DialogResult.Yes)
                     {
-                        string savedpdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione/uks_" + issueId + ".pdf";
-                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione");
                         File.Copy(pdfFilePath, savedpdfFilePath, true);
                     }
 
@@ -426,7 +415,7 @@ namespace SKS_Service_Manager
         {
             DataTable invoiceData = dataBase.LoadInvoiceData(invoiceId);
 
-            if (invoiceData != null)
+            if (invoiceData != null && invoiceData.Rows.Count > 0)
             {
                 DataRow row = invoiceData.Rows[0];
 
@@ -434,7 +423,19 @@ namespace SKS_Service_Manager
                 Value.Text = row["TotalAmount"].ToString();
                 Issue_Date.Value = Convert.ToDateTime(row["InvoiceDate"]);
                 Comments.Text = row["Notes"].ToString();
-                issueUserId = Convert.ToInt32(row["USERID"]);
+                issueUserId = Convert.ToInt32(row["UserID"]); // Poprawione "USERID" na "UserID"
+
+                // Nowe kolumny
+                FormType.SelectedIndex = GetFormTypeIndex(row["DocumentType"].ToString());
+                Pickup_Date.Value = Convert.ToDateTime(row["BuyDate"]);
+                Days.Text = row["Days"].ToString();
+                Percentage.Text = row["Percentage"].ToString();
+                Fee.Text = row["Fee"].ToString();
+                LateFee.Text = row["LateFee"].ToString();
+                BuyAmount.Text = row["BuyAmount"].ToString();
+                DateOfReturn.Value = Convert.ToDateTime(row["DateOfReturn"]);
+                SaleDate.Value = Convert.ToDateTime(row["SaleDate"]);
+                SaleAmount.Text = row["SaleAmount"].ToString();
 
                 LoadUserData(issueUserId);
             }
@@ -444,16 +445,30 @@ namespace SKS_Service_Manager
             }
         }
 
+
         private void UpdateInvoiceInDatabase(int invoiceId)
         {
             string city = City.Text;
+            int userId = issueUserId;
             string description = Description.Text;
             decimal totalAmount = decimal.Parse(Value.Text);
             DateTime invoiceDate = Issue_Date.Value.Date;
             string notes = Comments.Text;
+            decimal saleAmount = decimal.Parse(SaleAmount.Text);
+            string documentType = FormType.Text;
+            DateTime pickupDate = Pickup_Date.Value.Date;
+            int days = int.Parse(Days.Text);
+            int percentage = int.Parse(Percentage.Text);
+            decimal fee = decimal.Parse(Fee.Text);
+            decimal lateFee = decimal.Parse(LateFee.Text);
+            decimal buyAmount = decimal.Parse(BuyAmount.Text);
+            DateTime dateOfReturn = DateOfReturn.Value.Date;
+            DateTime saleDate = SaleDate.Value.Date;
 
-            dataBase.UpdateInvoiceInDatabase(invoiceId, city, description, totalAmount, invoiceDate, notes);
+            dataBase.UpdateInvoiceInDatabase(invoiceId, userId, city, description, totalAmount, invoiceDate, notes, documentType, pickupDate, days, percentage, fee, lateFee, buyAmount, dateOfReturn, saleDate, saleAmount);
         }
+
+
 
         private void IsInt_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -500,5 +515,92 @@ namespace SKS_Service_Manager
             // Wpisz liczbę dni w pole Days
             Days.Text = daysDifference.ToString();
         }
+
+        private string GetValueAsText(decimal value) {
+
+            int wholePart = (int)value;
+            int fractionalPart = (int)((value - wholePart) * 100); // Przekształć ułamek na grosze
+
+            string wholePartInWords = wholePart.ToWords();
+            string fractionalPartInWords = fractionalPart.ToWords();
+
+            return $"{wholePartInWords} złotych i {fractionalPartInWords} groszy";
+        }
+
+        public decimal CalculateTotalPrice(decimal initialPrice, int days, int percentage)
+        {
+            // Określamy, ile pełnych okresów 30 dni mieści się w podanej ilości dni
+            int fullPeriods = days / 30;
+
+            // Określamy pozostałą ilość dni po pełnych okresach 30 dni
+            int remainingDays = days % 30;
+
+            // Konwertujemy procent na decimal
+            decimal decimalPercentage = (decimal)percentage / 100;
+
+            // Obliczamy wartość odsetek za pełne okresy 30 dni
+            decimal interest = (initialPrice * decimalPercentage) * fullPeriods;
+
+            // Obliczamy wartość odsetek za pozostałe dni
+            decimal remainingInterest = (initialPrice * decimalPercentage) * remainingDays;
+
+            totalIntrest = interest + remainingInterest;
+            // Obliczamy całkowitą cenę przedmiotu
+            decimal totalPrice = initialPrice + interest + remainingInterest;
+
+            return totalPrice;
+        }
+
+
+        private void FormType_ValueChanged(object sender, EventArgs e)
+        {
+            ChangeFormType();
+        }
+        private void ChangeFormType() 
+        {
+            String newFile = "error";
+
+            if (FormType.SelectedIndex == 0)
+            {
+                newFile = "uk";
+            }
+            else if (FormType.SelectedIndex == 1)
+            {
+                newFile = "uks";
+            }
+            else if (FormType.SelectedIndex == 2)
+            {
+                newFile = "uppz";
+            }
+
+            docxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/" + newFile + ".docx";
+            editedDocxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/" + newFile + "_new.docx";
+            pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/" + newFile + ".pdf";
+            savedpdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione/" + newFile + "_" + issueId + ".pdf";
+        }
+        private int GetFormTypeIndex(String text) 
+        {
+            if ("Umowa Komisowa" == text)
+            {
+                return 0;
+            }
+            else if ("Umowa Pożyczki z Przechowaniem" == text)  // 0 - Umowa Komisowa
+            {                                                   // 1 - Umowa Kupna-Sprzedaży
+                return 2;                                       // 2 - Umowa Pożyczki z Przechowaniem
+            }
+            else {
+                return 1;
+            }
+        }
+
+        private void Interest_ValueChanged()
+        {
+            decimal value = decimal.Parse(Value.Text);
+            totalBuyOut = CalculateTotalPrice(value, int.Parse(Days.Text), int.Parse(Percentage.Text));
+
+            Fee.Text = totalIntrest.ToString("F2");
+            BuyAmount.Text = totalBuyOut.ToString("F2");
+        }
+
     }
 }
