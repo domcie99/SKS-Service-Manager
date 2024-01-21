@@ -22,20 +22,20 @@ namespace SKS_Service_Manager
 
             WebClient webClient = new WebClient();
             var client = new WebClient();
-            if (!webClient.DownloadString("link to web host/Version.txt").Contains("1.0.0"))
+            if (!webClient.DownloadString("https://github.com/domcie99/SKS-Service-Manager/blob/master/SKS-Service-Manager/version.txt").Contains("1.0.0"))
             {
-                if (MessageBox.Show("A new update is available! Do you want to download it?", "Demo", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Nowa Aktualizacja jest dostêpna, czy chcesz j¹ pobraæ teraz", "Aktualizacja", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     try
                     {
-                        if (File.Exists(@".\MyAppSetup.msi")) { File.Delete(@".\MyAppSetup.msi"); }
-                        client.DownloadFile("link to web host/MyAppSetup.zip", @"MyAppSetup.zip");
-                        string zipPath = @".\MyAppSetup.zip";
+                        if (File.Exists(@".\SKS-Service-Manager.msi")) { File.Delete(@".\SKS-Service-Manager.msi"); }
+                        client.DownloadFile("https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.0/SKS-Service-Manager.zip", @"SKS-Service-Manager.zip");
+                        string zipPath = @".\SKS-Service-Manager.zip";
                         string extractPath = @".\";
                         ZipFile.ExtractToDirectory(zipPath, extractPath);
                         Process process = new Process();
                         process.StartInfo.FileName = "msiexec.exe";
-                        process.StartInfo.Arguments = string.Format("/i MyAppSetup.msi");
+                        process.StartInfo.Arguments = string.Format("/i SKS-Service-Manager.msi");
                         this.Close();
                         process.Start();
                     }
