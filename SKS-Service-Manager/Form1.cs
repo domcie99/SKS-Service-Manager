@@ -15,6 +15,8 @@ namespace SKS_Service_Manager
         private UksList uksListForm;
         private DataBase database;
 
+        private string version = "1.0.0";
+
         public Form1()
         {
             InitializeComponent();
@@ -22,14 +24,14 @@ namespace SKS_Service_Manager
 
             WebClient webClient = new WebClient();
             var client = new WebClient();
-            if (!webClient.DownloadString("https://github.com/domcie99/SKS-Service-Manager/blob/master/SKS-Service-Manager/version.txt").Contains("1.0.0"))
+            if (!webClient.DownloadString("https://github.com/domcie99/SKS-Service-Manager/blob/master/SKS-Service-Manager/version.txt").Contains(version))
             {
                 if (MessageBox.Show("Nowa Aktualizacja jest dostêpna, czy chcesz j¹ pobraæ teraz", "Aktualizacja", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     try
                     {
                         if (File.Exists(@".\SKS-Service-Manager.msi")) { File.Delete(@".\SKS-Service-Manager.msi"); }
-                        client.DownloadFile("https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.0/SKS-Service-Manager.zip", @"SKS-Service-Manager.zip");
+                        client.DownloadFile("https://github.com/domcie99/SKS-Service-Manager/releases/download/v" + version + "/SKS-Service-Manager.zip", @"SKS-Service-Manager.zip");
                         string zipPath = @".\SKS-Service-Manager.zip";
                         string extractPath = @".\";
                         ZipFile.ExtractToDirectory(zipPath, extractPath);
