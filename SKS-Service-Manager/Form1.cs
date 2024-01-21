@@ -17,8 +17,8 @@ namespace SKS_Service_Manager
         private DataBase database;
 
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
-        private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v{0}/SKS-Service-Manager.zip";
-        private string localVersion = "1.0.1"; // Wersja Twojej aplikacji
+        private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v{0}/SKS-Service-Manager.msi";
+        private string localVersion = "1.0.0"; // Wersja Twojej aplikacji
 
         
 
@@ -71,14 +71,18 @@ namespace SKS_Service_Manager
             {
                 WebClient client = new WebClient();
                 string updateUrlFormatted = string.Format(updateUrl, latestVersion);
-                string zipPath = Path.Combine(Path.GetTempPath(), "SKS-Service-Manager.zip");
-                string extractPath = Path.Combine(Path.GetTempPath(), "Update");
+                string msiPath = Path.Combine(Path.GetTempPath(), "SKS-Service-Manager.msi");
 
-                client.DownloadFile(updateUrlFormatted, zipPath);
+                client.DownloadFile(updateUrlFormatted, msiPath);
 
-                ZipFile.ExtractToDirectory(zipPath, extractPath);
-
-                Process.Start(Path.Combine(extractPath, "SKS-Service-Manager.msi"));
+                try
+                {
+                    Process.Start("cmd", $"/c start {msiPath}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("B³¹d podczas otwierania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
 
                 Application.Exit();
             }
