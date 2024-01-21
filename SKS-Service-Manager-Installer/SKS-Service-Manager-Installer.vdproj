@@ -198,15 +198,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SKS-Service-Manager"
-        "ProductCode" = "8:{F16CD541-F42B-4207-A394-5B288E28CDF5}"
-        "PackageCode" = "8:{B5251F74-B068-4291-8683-B0F674147D58}"
+        "ProductCode" = "8:{3E6051F0-DC18-4217-866A-BD8CB10A1818}"
+        "PackageCode" = "8:{56A1253C-8F2E-4BBF-AB5C-76057FE54105}"
         "UpgradeCode" = "8:{E0B1CF2E-2426-4BC8-809A-A41031EDD0C2}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.1"
+        "ProductVersion" = "8:"
         "Manufacturer" = "8:SKS"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -319,9 +319,9 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C4764AB163744060B1996F9BD52FF140"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D409E2D0E27D4B74BE8734A302B36C7C"
             {
-            "Name" = "8:SKS Service Management"
+            "Name" = "8:SKS-Service-Manager"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -330,7 +330,7 @@
             "Target" = "8:_5BD857627A144E609DE1FBEBF9094DC8"
             "Folder" = "8:_03066ED6AD794C9199BE7998B3D2CD7E"
             "WorkingFolder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"
-            "Icon" = "8:_82A46CDB15FE4B80BBD069D9230F63BC"
+            "Icon" = "8:"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_DAC4613A201D42A48E01AA8CC8700165"
@@ -748,7 +748,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_5BD857627A144E609DE1FBEBF9094DC8"
             {
-            "SourcePath" = "8:..\\SKS-Service-Manager\\obj\\Release\\net8.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\SKS-Service-Manager\\obj\\Debug\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"
