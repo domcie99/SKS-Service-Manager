@@ -18,7 +18,7 @@ namespace SKS_Service_Manager
 
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v{0}/SKS-Service-Manager.zip";
-        private string localVersion = "1.0.1"; // Wersja Twojej aplikacji
+        private string localVersion = "1.0.0"; // Wersja Twojej aplikacji
 
         
 
@@ -27,9 +27,6 @@ namespace SKS_Service_Manager
             InitializeComponent();
             CheckForUpdates();
             this.Text = "SKS-Service Manager v" + localVersion;
-
-            WebClient webClient = new WebClient();
-            var client = new WebClient();
 
             settingsForm = new Settings(this); // Inicjalizacja formularza ustawieñ
             database = new DataBase(this);
@@ -81,7 +78,7 @@ namespace SKS_Service_Manager
 
                 ZipFile.ExtractToDirectory(zipPath, extractPath);
 
-                Process.Start(Path.Combine(extractPath, "SKS-Service-Manager.exe"));
+                Process.Start(Path.Combine(extractPath, "SKS-Service-Manager.msi"));
 
                 Application.Exit();
             }
