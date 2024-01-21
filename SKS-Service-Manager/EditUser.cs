@@ -63,7 +63,8 @@ namespace SKS_Service_Manager
                     DocumentType.Text = row["DocumentType"].ToString();
                     DocumentNumber.Text = row["DocumentNumber"].ToString();
                     Pesel.Text = row["Pesel"].ToString();
-                    Nip.Text = row["NIP"].ToString(); // Nowe pole NIP
+                    Nip.Text = row["NIP"].ToString();
+                    CompanyName.Text = row["Name"].ToString();
                     Notes.Text = row["Notes"].ToString();
                 }
                 else
@@ -83,7 +84,7 @@ namespace SKS_Service_Manager
             // Pozostała część kodu jest taka sama jak wcześniej
 
             // Pobierz dane z kontrolek formularza
-            string name = FullName.Text;
+            string fullname = FullName.Text;
             string address = Adress.Text;
             string postalCode = Post_Code.Text;
             string city = City.Text;
@@ -92,7 +93,8 @@ namespace SKS_Service_Manager
             string documentType = DocumentType.Text;
             string documentNumber = DocumentNumber.Text;
             string pesel = Pesel.Text;
-            string nip = Nip.Text; // Nowe pole NIP
+            string nip = Nip.Text;
+            string name = CompanyName.Text;
             string notes = Notes.Text;
 
             try
@@ -101,7 +103,7 @@ namespace SKS_Service_Manager
                 bool userExists = database.CheckUserExistsByPesel(pesel);
 
                 // Wywołaj metodę UpdateUserInDatabase z klasy Database
-                database.UpdateUserInDatabase(userExists, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
+                database.UpdateUserInDatabase(userExists, fullname, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
 
                 MessageBox.Show("Dane zostały zapisane.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 parentForm.LoadUserData();

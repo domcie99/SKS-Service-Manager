@@ -25,7 +25,8 @@ namespace SKS_Service_Manager
 
         }
 
-        public void setDataBase() { 
+        public void setDataBase()
+        {
             database = new DataBase(this);
         }
         public DataBase getDataBase()
@@ -105,6 +106,20 @@ namespace SKS_Service_Manager
                 userlistForm = new UserList(this); // Tworzenie nowego formularza ustawieñ, jeœli nie istnieje lub zosta³ zamkniêty
             }
             userlistForm.Show(); // Wyœwietlenie formularza listy u¿ytkowników
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            OpenUppzForm();
+        }
+
+        private void OpenUppzForm()
+        {
+            if (uksListForm == null || uksListForm.IsDisposed)
+            {
+                uksListForm = new UksList(this);
+            }
+            uksListForm.ShowDialog(); // Wyœwietlanie formularza ustawieñ
         }
     }
 }

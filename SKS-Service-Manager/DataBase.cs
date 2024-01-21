@@ -95,11 +95,26 @@ namespace SKS_Service_Manager
             string createTableQuery = @"
                                     CREATE TABLE IF NOT EXISTS UKS (
                                     ID INT AUTO_INCREMENT PRIMARY KEY,
+                                    DocumentType VARCHAR(50),
                                     UserID INT,
                                     City VARCHAR(255),
                                     Description TEXT,
                                     TotalAmount DECIMAL(10, 2),
+
                                     InvoiceDate DATE,
+                                    BuyDate DATE,
+
+                                    Days INT,
+                                    Precentage INT,
+
+                                    Fee DECIMAL(10, 2),
+                                    LateFee DECIMAL(10, 2),
+                                    BuyAmount DECIMAL(10, 2),
+
+                                    DateOfReturn DATE,
+                                    SaleDate DATE,
+                                    SaleAmount DECIMAL(10, 2),
+
                                     Notes TEXT
                                     );";
             if (useMySQL)
@@ -124,6 +139,7 @@ namespace SKS_Service_Manager
                 try
                 {
                     sqliteConnection.Open();
+                    createTableQuery = createTableQuery.Replace("ID INT AUTO_INCREMENT PRIMARY KEY", "ID INTEGER PRIMARY KEY AUTOINCREMENT");
                     SQLiteCommand cmd = new SQLiteCommand(createTableQuery, sqliteConnection);
                     cmd.ExecuteNonQuery();
                 }
@@ -144,6 +160,7 @@ namespace SKS_Service_Manager
                             CREATE TABLE IF NOT EXISTS Users (
                             ID INT AUTO_INCREMENT PRIMARY KEY,
                             Name VARCHAR(255),
+                            FullName VARCHAR(255),
                             Nip VARCHAR(255),
                             Address VARCHAR(255),
                             PostalCode VARCHAR(10),
@@ -177,6 +194,7 @@ namespace SKS_Service_Manager
                 try
                 {
                     sqliteConnection.Open();
+                    createTableQuery = createTableQuery.Replace("ID INT AUTO_INCREMENT PRIMARY KEY", "ID INTEGER PRIMARY KEY AUTOINCREMENT");
                     SQLiteCommand cmd = new SQLiteCommand(createTableQuery, sqliteConnection);
                     cmd.ExecuteNonQuery();
                 }
@@ -202,13 +220,14 @@ namespace SKS_Service_Manager
                                 "UKS.InvoiceDate AS 'Data Wystawienia', " +
                                 "UKS.Notes AS 'Notatki', " +
 
-                                "Users.Name AS 'Imię Nazwisko', " +
+                                "Users.FullName AS 'Imię Nazwisko', " +
                                 "Users.Address AS 'Ulica Numer', " +
                                 "Users.PostalCode AS 'Kod Pocztowy', " +
                                 "Users.City AS 'Miasto', " +
                                 "Users.Phone AS 'Telefon', " +
                                 "Users.Pesel AS 'Pesel', " +
-                                "Users.NIP AS 'NIP'" +
+                                "Users.NIP AS 'NIP', " +
+                                "Users.Name AS 'Nazwa Firmy'" +
 
                                 "FROM UKS " +
                                 "INNER JOIN Users ON UKS.UserID = Users.ID;";
@@ -337,7 +356,7 @@ namespace SKS_Service_Manager
             {
                 string query = "SELECT " +
                     "ID, " +
-                    "Name AS 'Imię Nazwisko', " +
+                    "FullName AS 'Imię Nazwisko', " +
                     "Address AS 'Ulica Numer', " +
                     "PostalCode AS 'Kod Pocztowy', " +
                     "City AS 'Miasto', " +
@@ -345,6 +364,7 @@ namespace SKS_Service_Manager
                     "Email AS 'E-Mail', " +
                     "DocumentType AS 'Typ Dokumentu', " +
                     "NIP AS 'NIP', " +
+                    "Name AS 'Nazwa Firmy', " +
                     "Pesel AS 'Pesel', " +
                     "Notes AS 'Uwagi' " +
                     "FROM Users;";
@@ -493,7 +513,7 @@ namespace SKS_Service_Manager
             }
         }
 
-        public void UpdateUserInDatabase(bool exist, string fullName, string address, string postalCode, string city, string phone, string email, string documentType, string documentNumber, string pesel, string nip, string notes)
+        public void UpdateUserInDatabase(bool exist, string fullName, string name, string address, string postalCode, string city, string phone, string email, string documentType, string documentNumber, string pesel, string nip, string notes)
         {
             try
             {
@@ -503,22 +523,23 @@ namespace SKS_Service_Manager
                 {
                     query = @"
                 UPDATE Users
-                SET Name = @Name, Address = @Address, PostalCode = @PostalCode, City = @City, Phone = @Phone, Email = @Email,
+                SET FullName = @FullName, Name = @Name, Address = @Address, PostalCode = @PostalCode, City = @City, Phone = @Phone, Email = @Email,
                     DocumentType = @DocumentType, DocumentNumber = @DocumentNumber, NIP = @NIP, Notes = @Notes
                 WHERE Pesel = @Pesel;";
                 }
                 else
                 {
                     query = @"
-                INSERT INTO Users (Name, Address, PostalCode, City, Phone, Email, DocumentType, DocumentNumber, Pesel, NIP, Notes)
-                VALUES (@Name, @Address, @PostalCode, @City, @Phone, @Email, @DocumentType, @DocumentNumber, @Pesel, @NIP, @Notes);";
+                INSERT INTO Users (FullName, Name, Address, PostalCode, City, Phone, Email, DocumentType, DocumentNumber, Pesel, NIP, Notes)
+                VALUES (@FullName, @Name, @Address, @PostalCode, @City, @Phone, @Email, @DocumentType, @DocumentNumber, @Pesel, @NIP, @Notes);";
                 }
 
                 if (useMySQL)
                 {
                     mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
-                    cmd.Parameters.AddWithValue("@Name", fullName);
+                    cmd.Parameters.AddWithValue("@FullName", fullName);
+                    cmd.Parameters.AddWithValue("@Name", name);
                     cmd.Parameters.AddWithValue("@Address", address);
                     cmd.Parameters.AddWithValue("@PostalCode", postalCode);
                     cmd.Parameters.AddWithValue("@City", city);
@@ -535,7 +556,8 @@ namespace SKS_Service_Manager
                 {
                     sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
-                    cmd.Parameters.AddWithValue("@Name", fullName);
+                    cmd.Parameters.AddWithValue("@FullName", fullName);
+                    cmd.Parameters.AddWithValue("@Name", name);
                     cmd.Parameters.AddWithValue("@Address", address);
                     cmd.Parameters.AddWithValue("@PostalCode", postalCode);
                     cmd.Parameters.AddWithValue("@City", city);

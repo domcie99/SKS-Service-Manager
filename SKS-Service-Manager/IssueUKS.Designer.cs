@@ -30,8 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssueUKS));
             groupBox1 = new GroupBox();
-            label6 = new Label();
-            Load = new Button();
+            label1 = new Label();
+            CompanyName = new TextBox();
             label4 = new Label();
             Nip = new TextBox();
             Notes = new RichTextBox();
@@ -51,8 +51,10 @@
             Post_Code = new TextBox();
             label2 = new Label();
             Adress = new TextBox();
-            label1 = new Label();
+            label31 = new Label();
             FullName = new TextBox();
+            label6 = new Label();
+            Load = new Button();
             groupBox2 = new GroupBox();
             label19 = new Label();
             Value = new TextBox();
@@ -60,10 +62,26 @@
             Description = new RichTextBox();
             label9 = new Label();
             groupBox3 = new GroupBox();
+            label29 = new Label();
+            SaleAmount = new TextBox();
+            label30 = new Label();
+            SaleDate = new DateTimePicker();
+            label28 = new Label();
+            DateOfReturn = new DateTimePicker();
+            label27 = new Label();
+            label26 = new Label();
+            BuyAmount = new TextBox();
+            label25 = new Label();
+            LateFee = new TextBox();
+            label24 = new Label();
+            label23 = new Label();
+            label21 = new Label();
+            Fee = new TextBox();
+            label22 = new Label();
             label20 = new Label();
             Comments = new RichTextBox();
             label18 = new Label();
-            textBox1 = new TextBox();
+            Precentage = new TextBox();
             label17 = new Label();
             Days = new TextBox();
             label16 = new Label();
@@ -73,6 +91,8 @@
             label15 = new Label();
             Print = new Button();
             Save = new Button();
+            label32 = new Label();
+            comboBox1 = new ComboBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -81,8 +101,8 @@
             // groupBox1
             // 
             groupBox1.BackColor = Color.Transparent;
-            groupBox1.Controls.Add(label6);
-            groupBox1.Controls.Add(Load);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Controls.Add(CompanyName);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(Nip);
             groupBox1.Controls.Add(Notes);
@@ -102,14 +122,228 @@
             groupBox1.Controls.Add(Post_Code);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(Adress);
-            groupBox1.Controls.Add(label1);
+            groupBox1.Controls.Add(label31);
             groupBox1.Controls.Add(FullName);
+            groupBox1.Controls.Add(label6);
+            groupBox1.Controls.Add(Load);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(795, 225);
+            groupBox1.Size = new Size(787, 225);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Osoba Powierzająca";
+            // 
+            // label1
+            // 
+            label1.BackColor = Color.Transparent;
+            label1.Font = new Font("Segoe UI", 12F);
+            label1.Location = new Point(6, 199);
+            label1.Name = "label1";
+            label1.Size = new Size(150, 23);
+            label1.TabIndex = 114;
+            label1.Text = "Nazwa";
+            label1.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // CompanyName
+            // 
+            CompanyName.Location = new Point(182, 199);
+            CompanyName.Name = "CompanyName";
+            CompanyName.Size = new Size(200, 23);
+            CompanyName.TabIndex = 97;
+            // 
+            // label4
+            // 
+            label4.BackColor = Color.Transparent;
+            label4.Font = new Font("Segoe UI", 12F);
+            label4.Location = new Point(6, 170);
+            label4.Name = "label4";
+            label4.Size = new Size(150, 23);
+            label4.TabIndex = 113;
+            label4.Text = "NIP";
+            label4.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Nip
+            // 
+            Nip.Location = new Point(182, 170);
+            Nip.Name = "Nip";
+            Nip.Size = new Size(200, 23);
+            Nip.TabIndex = 96;
+            // 
+            // Notes
+            // 
+            Notes.Location = new Point(587, 109);
+            Notes.Name = "Notes";
+            Notes.Size = new Size(200, 55);
+            Notes.TabIndex = 101;
+            Notes.Text = "Brak Uwag";
+            // 
+            // label3
+            // 
+            label3.BackColor = Color.Transparent;
+            label3.Font = new Font("Segoe UI", 12F);
+            label3.Location = new Point(431, 22);
+            label3.Name = "label3";
+            label3.Size = new Size(150, 23);
+            label3.TabIndex = 112;
+            label3.Text = "Rodzaj Dokumentu";
+            label3.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // DocumentType
+            // 
+            DocumentType.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
+            DocumentType.DropDownStyle = ComboBoxStyle.DropDownList;
+            DocumentType.FormattingEnabled = true;
+            DocumentType.Location = new Point(587, 22);
+            DocumentType.Name = "DocumentType";
+            DocumentType.Size = new Size(200, 23);
+            DocumentType.TabIndex = 98;
+            // 
+            // label11
+            // 
+            label11.BackColor = Color.Transparent;
+            label11.Font = new Font("Segoe UI", 12F);
+            label11.Location = new Point(431, 109);
+            label11.Name = "label11";
+            label11.Size = new Size(150, 23);
+            label11.TabIndex = 111;
+            label11.Text = "Uwagi";
+            label11.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label12
+            // 
+            label12.BackColor = Color.Transparent;
+            label12.Font = new Font("Segoe UI", 12F);
+            label12.Location = new Point(431, 80);
+            label12.Name = "label12";
+            label12.Size = new Size(150, 23);
+            label12.TabIndex = 110;
+            label12.Text = "Pesel";
+            label12.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Pesel
+            // 
+            Pesel.Location = new Point(587, 80);
+            Pesel.Name = "Pesel";
+            Pesel.Size = new Size(200, 23);
+            Pesel.TabIndex = 100;
+            // 
+            // label13
+            // 
+            label13.BackColor = Color.Transparent;
+            label13.Font = new Font("Segoe UI", 12F);
+            label13.Location = new Point(431, 51);
+            label13.Name = "label13";
+            label13.Size = new Size(150, 23);
+            label13.TabIndex = 109;
+            label13.Text = "Numer Dokumentu";
+            label13.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // DocumentNumber
+            // 
+            DocumentNumber.Location = new Point(587, 51);
+            DocumentNumber.Name = "DocumentNumber";
+            DocumentNumber.Size = new Size(200, 23);
+            DocumentNumber.TabIndex = 99;
+            // 
+            // label8
+            // 
+            label8.BackColor = Color.Transparent;
+            label8.Font = new Font("Segoe UI", 12F);
+            label8.Location = new Point(6, 141);
+            label8.Name = "label8";
+            label8.Size = new Size(150, 23);
+            label8.TabIndex = 108;
+            label8.Text = "Email";
+            label8.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // EMail
+            // 
+            EMail.Location = new Point(182, 141);
+            EMail.Name = "EMail";
+            EMail.Size = new Size(200, 23);
+            EMail.TabIndex = 95;
+            // 
+            // City
+            // 
+            City.Location = new Point(248, 80);
+            City.Name = "City";
+            City.Size = new Size(134, 23);
+            City.TabIndex = 93;
+            // 
+            // label7
+            // 
+            label7.BackColor = Color.Transparent;
+            label7.Font = new Font("Segoe UI", 12F);
+            label7.Location = new Point(6, 112);
+            label7.Name = "label7";
+            label7.Size = new Size(150, 23);
+            label7.TabIndex = 107;
+            label7.Text = "Telefon";
+            label7.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Phone
+            // 
+            Phone.Location = new Point(182, 112);
+            Phone.Name = "Phone";
+            Phone.Size = new Size(200, 23);
+            Phone.TabIndex = 94;
+            // 
+            // label5
+            // 
+            label5.BackColor = Color.Transparent;
+            label5.Font = new Font("Segoe UI", 12F);
+            label5.Location = new Point(6, 80);
+            label5.Name = "label5";
+            label5.Size = new Size(150, 23);
+            label5.TabIndex = 106;
+            label5.Text = "Kod Pocztowy";
+            label5.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Post_Code
+            // 
+            Post_Code.Location = new Point(182, 80);
+            Post_Code.Name = "Post_Code";
+            Post_Code.PlaceholderText = "00-000";
+            Post_Code.Size = new Size(60, 23);
+            Post_Code.TabIndex = 92;
+            Post_Code.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label2
+            // 
+            label2.BackColor = Color.Transparent;
+            label2.Font = new Font("Segoe UI", 12F);
+            label2.Location = new Point(6, 51);
+            label2.Name = "label2";
+            label2.Size = new Size(150, 23);
+            label2.TabIndex = 105;
+            label2.Text = "Ulica Numer";
+            label2.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Adress
+            // 
+            Adress.Location = new Point(182, 51);
+            Adress.Name = "Adress";
+            Adress.Size = new Size(200, 23);
+            Adress.TabIndex = 91;
+            Adress.Text = "ul. ";
+            // 
+            // label31
+            // 
+            label31.BackColor = Color.Transparent;
+            label31.Font = new Font("Segoe UI", 12F);
+            label31.Location = new Point(6, 22);
+            label31.Name = "label31";
+            label31.Size = new Size(176, 23);
+            label31.TabIndex = 104;
+            label31.Text = "Imie Nazwisko";
+            label31.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // FullName
+            // 
+            FullName.Location = new Point(182, 22);
+            FullName.Name = "FullName";
+            FullName.Size = new Size(200, 23);
+            FullName.TabIndex = 90;
             // 
             // label6
             // 
@@ -133,201 +367,9 @@
             Load.Location = new Point(737, 167);
             Load.Name = "Load";
             Load.Size = new Size(50, 50);
-            Load.TabIndex = 88;
+            Load.TabIndex = 102;
             Load.UseVisualStyleBackColor = false;
             Load.Click += Load_Click;
-            // 
-            // label4
-            // 
-            label4.BackColor = Color.Transparent;
-            label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(0, 48);
-            label4.Name = "label4";
-            label4.Size = new Size(150, 23);
-            label4.TabIndex = 87;
-            label4.Text = "NIP";
-            label4.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // Nip
-            // 
-            Nip.Location = new Point(182, 48);
-            Nip.Name = "Nip";
-            Nip.Size = new Size(200, 23);
-            Nip.TabIndex = 68;
-            // 
-            // Notes
-            // 
-            Notes.Location = new Point(587, 106);
-            Notes.Name = "Notes";
-            Notes.Size = new Size(200, 55);
-            Notes.TabIndex = 77;
-            Notes.Text = "Brak Notatek";
-            // 
-            // label3
-            // 
-            label3.BackColor = Color.Transparent;
-            label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(431, 19);
-            label3.Name = "label3";
-            label3.Size = new Size(150, 23);
-            label3.TabIndex = 86;
-            label3.Text = "Rodzaj Dokumentu";
-            label3.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // DocumentType
-            // 
-            DocumentType.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
-            DocumentType.FormattingEnabled = true;
-            DocumentType.Location = new Point(587, 19);
-            DocumentType.Name = "DocumentType";
-            DocumentType.Size = new Size(200, 23);
-            DocumentType.TabIndex = 74;
-            // 
-            // label11
-            // 
-            label11.BackColor = Color.Transparent;
-            label11.Font = new Font("Segoe UI", 12F);
-            label11.Location = new Point(431, 106);
-            label11.Name = "label11";
-            label11.Size = new Size(150, 23);
-            label11.TabIndex = 85;
-            label11.Text = "Notatki";
-            label11.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // label12
-            // 
-            label12.BackColor = Color.Transparent;
-            label12.Font = new Font("Segoe UI", 12F);
-            label12.Location = new Point(431, 77);
-            label12.Name = "label12";
-            label12.Size = new Size(150, 23);
-            label12.TabIndex = 84;
-            label12.Text = "Pesel";
-            label12.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // Pesel
-            // 
-            Pesel.Location = new Point(587, 77);
-            Pesel.Name = "Pesel";
-            Pesel.Size = new Size(200, 23);
-            Pesel.TabIndex = 76;
-            // 
-            // label13
-            // 
-            label13.BackColor = Color.Transparent;
-            label13.Font = new Font("Segoe UI", 12F);
-            label13.Location = new Point(431, 48);
-            label13.Name = "label13";
-            label13.Size = new Size(150, 23);
-            label13.TabIndex = 83;
-            label13.Text = "Numer Dokumentu";
-            label13.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // DocumentNumber
-            // 
-            DocumentNumber.Location = new Point(587, 48);
-            DocumentNumber.Name = "DocumentNumber";
-            DocumentNumber.Size = new Size(200, 23);
-            DocumentNumber.TabIndex = 75;
-            // 
-            // label8
-            // 
-            label8.BackColor = Color.Transparent;
-            label8.Font = new Font("Segoe UI", 12F);
-            label8.Location = new Point(0, 167);
-            label8.Name = "label8";
-            label8.Size = new Size(150, 23);
-            label8.TabIndex = 82;
-            label8.Text = "Email";
-            label8.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // EMail
-            // 
-            EMail.Location = new Point(182, 167);
-            EMail.Name = "EMail";
-            EMail.Size = new Size(200, 23);
-            EMail.TabIndex = 73;
-            // 
-            // City
-            // 
-            City.Location = new Point(248, 106);
-            City.Name = "City";
-            City.Size = new Size(134, 23);
-            City.TabIndex = 71;
-            // 
-            // label7
-            // 
-            label7.BackColor = Color.Transparent;
-            label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(0, 138);
-            label7.Name = "label7";
-            label7.Size = new Size(150, 23);
-            label7.TabIndex = 81;
-            label7.Text = "Telefon";
-            label7.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // Phone
-            // 
-            Phone.Location = new Point(182, 138);
-            Phone.Name = "Phone";
-            Phone.Size = new Size(200, 23);
-            Phone.TabIndex = 72;
-            // 
-            // label5
-            // 
-            label5.BackColor = Color.Transparent;
-            label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(0, 106);
-            label5.Name = "label5";
-            label5.Size = new Size(150, 23);
-            label5.TabIndex = 80;
-            label5.Text = "Kod Pocztowy";
-            label5.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // Post_Code
-            // 
-            Post_Code.Location = new Point(182, 106);
-            Post_Code.Name = "Post_Code";
-            Post_Code.PlaceholderText = "00-000";
-            Post_Code.Size = new Size(60, 23);
-            Post_Code.TabIndex = 70;
-            Post_Code.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label2
-            // 
-            label2.BackColor = Color.Transparent;
-            label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(0, 77);
-            label2.Name = "label2";
-            label2.Size = new Size(150, 23);
-            label2.TabIndex = 79;
-            label2.Text = "Ulica Numer";
-            label2.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // Adress
-            // 
-            Adress.Location = new Point(182, 77);
-            Adress.Name = "Adress";
-            Adress.Size = new Size(200, 23);
-            Adress.TabIndex = 69;
-            // 
-            // label1
-            // 
-            label1.BackColor = Color.Transparent;
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(0, 19);
-            label1.Name = "label1";
-            label1.Size = new Size(176, 23);
-            label1.TabIndex = 78;
-            label1.Text = "Nazwa / Imie Nazwisko";
-            label1.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // FullName
-            // 
-            FullName.Location = new Point(182, 19);
-            FullName.Name = "FullName";
-            FullName.Size = new Size(200, 23);
-            FullName.TabIndex = 67;
             // 
             // groupBox2
             // 
@@ -360,10 +402,11 @@
             Value.Location = new Point(182, 81);
             Value.Name = "Value";
             Value.Size = new Size(60, 23);
-            Value.TabIndex = 90;
+            Value.TabIndex = 104;
             Value.Text = "0,00";
             Value.TextAlign = HorizontalAlignment.Right;
             Value.KeyPress += Value_KeyPress;
+            Value.Leave += Value_Validation;
             // 
             // label10
             // 
@@ -381,7 +424,7 @@
             Description.Location = new Point(182, 19);
             Description.Name = "Description";
             Description.Size = new Size(605, 56);
-            Description.TabIndex = 86;
+            Description.TabIndex = 103;
             Description.Text = "";
             // 
             // label9
@@ -398,10 +441,26 @@
             // groupBox3
             // 
             groupBox3.BackColor = Color.Transparent;
+            groupBox3.Controls.Add(label29);
+            groupBox3.Controls.Add(SaleAmount);
+            groupBox3.Controls.Add(label30);
+            groupBox3.Controls.Add(SaleDate);
+            groupBox3.Controls.Add(label28);
+            groupBox3.Controls.Add(DateOfReturn);
+            groupBox3.Controls.Add(label27);
+            groupBox3.Controls.Add(label26);
+            groupBox3.Controls.Add(BuyAmount);
+            groupBox3.Controls.Add(label25);
+            groupBox3.Controls.Add(LateFee);
+            groupBox3.Controls.Add(label24);
+            groupBox3.Controls.Add(label23);
+            groupBox3.Controls.Add(label21);
+            groupBox3.Controls.Add(Fee);
+            groupBox3.Controls.Add(label22);
             groupBox3.Controls.Add(label20);
             groupBox3.Controls.Add(Comments);
             groupBox3.Controls.Add(label18);
-            groupBox3.Controls.Add(textBox1);
+            groupBox3.Controls.Add(Precentage);
             groupBox3.Controls.Add(label17);
             groupBox3.Controls.Add(Days);
             groupBox3.Controls.Add(label16);
@@ -414,6 +473,178 @@
             groupBox3.Size = new Size(787, 216);
             groupBox3.TabIndex = 91;
             groupBox3.TabStop = false;
+            // 
+            // label29
+            // 
+            label29.BackColor = Color.Transparent;
+            label29.Font = new Font("Segoe UI", 12F);
+            label29.Location = new Point(759, 80);
+            label29.Name = "label29";
+            label29.Size = new Size(22, 23);
+            label29.TabIndex = 113;
+            label29.Text = "zł";
+            label29.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // SaleAmount
+            // 
+            SaleAmount.Location = new Point(681, 80);
+            SaleAmount.Name = "SaleAmount";
+            SaleAmount.Size = new Size(77, 23);
+            SaleAmount.TabIndex = 114;
+            SaleAmount.Text = "0,00";
+            SaleAmount.TextAlign = HorizontalAlignment.Right;
+            SaleAmount.KeyPress += Value_KeyPress;
+            SaleAmount.Leave += Value_Validation;
+            // 
+            // label30
+            // 
+            label30.BackColor = Color.Transparent;
+            label30.Font = new Font("Segoe UI", 12F);
+            label30.Location = new Point(528, 80);
+            label30.Name = "label30";
+            label30.Size = new Size(147, 23);
+            label30.TabIndex = 111;
+            label30.Text = "Kwota Sprzedaży";
+            label30.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // SaleDate
+            // 
+            SaleDate.CustomFormat = "dd-MM-yyyy";
+            SaleDate.Format = DateTimePickerFormat.Short;
+            SaleDate.Location = new Point(681, 51);
+            SaleDate.Name = "SaleDate";
+            SaleDate.Size = new Size(100, 23);
+            SaleDate.TabIndex = 113;
+            // 
+            // label28
+            // 
+            label28.BackColor = Color.Transparent;
+            label28.Font = new Font("Segoe UI", 12F);
+            label28.Location = new Point(528, 51);
+            label28.Name = "label28";
+            label28.Size = new Size(147, 23);
+            label28.TabIndex = 109;
+            label28.Text = "Data sprzedaży";
+            label28.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // DateOfReturn
+            // 
+            DateOfReturn.CustomFormat = "dd-MM-yyyy";
+            DateOfReturn.Format = DateTimePickerFormat.Short;
+            DateOfReturn.Location = new Point(681, 22);
+            DateOfReturn.Name = "DateOfReturn";
+            DateOfReturn.Size = new Size(100, 23);
+            DateOfReturn.TabIndex = 112;
+            // 
+            // label27
+            // 
+            label27.BackColor = Color.Transparent;
+            label27.Font = new Font("Segoe UI", 12F);
+            label27.Location = new Point(528, 22);
+            label27.Name = "label27";
+            label27.Size = new Size(110, 23);
+            label27.TabIndex = 107;
+            label27.Text = "Data zwrotu";
+            label27.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label26
+            // 
+            label26.BackColor = Color.Transparent;
+            label26.Font = new Font("Segoe UI", 12F);
+            label26.Location = new Point(500, 80);
+            label26.Name = "label26";
+            label26.Size = new Size(22, 23);
+            label26.TabIndex = 106;
+            label26.Text = "zł";
+            label26.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // BuyAmount
+            // 
+            BuyAmount.Location = new Point(422, 80);
+            BuyAmount.Name = "BuyAmount";
+            BuyAmount.Size = new Size(77, 23);
+            BuyAmount.TabIndex = 111;
+            BuyAmount.Text = "0,00";
+            BuyAmount.TextAlign = HorizontalAlignment.Right;
+            BuyAmount.KeyPress += Value_KeyPress;
+            BuyAmount.Leave += Value_Validation;
+            // 
+            // label25
+            // 
+            label25.BackColor = Color.Transparent;
+            label25.Font = new Font("Segoe UI", 12F);
+            label25.Location = new Point(500, 51);
+            label25.Name = "label25";
+            label25.Size = new Size(22, 23);
+            label25.TabIndex = 104;
+            label25.Text = "zł";
+            label25.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // LateFee
+            // 
+            LateFee.Location = new Point(422, 51);
+            LateFee.Name = "LateFee";
+            LateFee.Size = new Size(77, 23);
+            LateFee.TabIndex = 110;
+            LateFee.Text = "0,00";
+            LateFee.TextAlign = HorizontalAlignment.Right;
+            LateFee.KeyPress += Value_KeyPress;
+            LateFee.Leave += Value_Validation;
+            // 
+            // label24
+            // 
+            label24.BackColor = Color.Transparent;
+            label24.Font = new Font("Segoe UI", 12F);
+            label24.Location = new Point(288, 80);
+            label24.Name = "label24";
+            label24.Size = new Size(123, 23);
+            label24.TabIndex = 102;
+            label24.Text = "Kwota Wykupu";
+            label24.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label23
+            // 
+            label23.BackColor = Color.Transparent;
+            label23.Font = new Font("Segoe UI", 12F);
+            label23.Location = new Point(288, 51);
+            label23.Name = "label23";
+            label23.Size = new Size(123, 23);
+            label23.TabIndex = 101;
+            label23.Text = "Opłata za opoź.";
+            label23.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label21
+            // 
+            label21.BackColor = Color.Transparent;
+            label21.Font = new Font("Segoe UI", 12F);
+            label21.Location = new Point(500, 22);
+            label21.Name = "label21";
+            label21.Size = new Size(22, 23);
+            label21.TabIndex = 100;
+            label21.Text = "zł";
+            label21.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Fee
+            // 
+            Fee.Location = new Point(422, 22);
+            Fee.Name = "Fee";
+            Fee.Size = new Size(77, 23);
+            Fee.TabIndex = 109;
+            Fee.Text = "0,00";
+            Fee.TextAlign = HorizontalAlignment.Right;
+            Fee.KeyPress += Value_KeyPress;
+            Fee.Leave += Value_Validation;
+            // 
+            // label22
+            // 
+            label22.BackColor = Color.Transparent;
+            label22.Font = new Font("Segoe UI", 12F);
+            label22.Location = new Point(288, 22);
+            label22.Name = "label22";
+            label22.Size = new Size(94, 23);
+            label22.TabIndex = 98;
+            label22.Text = "Opłata";
+            label22.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label20
             // 
@@ -431,7 +662,7 @@
             Comments.Location = new Point(182, 138);
             Comments.Name = "Comments";
             Comments.Size = new Size(585, 56);
-            Comments.TabIndex = 96;
+            Comments.TabIndex = 115;
             Comments.Text = "Brak Uwag";
             // 
             // label18
@@ -445,14 +676,16 @@
             label18.Text = "%";
             label18.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // textBox1
+            // Precentage
             // 
-            textBox1.Location = new Point(182, 109);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(60, 23);
-            textBox1.TabIndex = 94;
-            textBox1.Text = "0";
-            textBox1.TextAlign = HorizontalAlignment.Right;
+            Precentage.Location = new Point(182, 109);
+            Precentage.Name = "Precentage";
+            Precentage.Size = new Size(60, 23);
+            Precentage.TabIndex = 108;
+            Precentage.Text = "0";
+            Precentage.TextAlign = HorizontalAlignment.Right;
+            Precentage.KeyPress += IsInt_KeyPress;
+            Precentage.Leave += Percentage_Leave;
             // 
             // label17
             // 
@@ -470,9 +703,10 @@
             Days.Location = new Point(182, 80);
             Days.Name = "Days";
             Days.Size = new Size(60, 23);
-            Days.TabIndex = 92;
+            Days.TabIndex = 107;
             Days.Text = "0";
             Days.TextAlign = HorizontalAlignment.Right;
+            Days.KeyPress += IsInt_KeyPress;
             // 
             // label16
             // 
@@ -492,7 +726,8 @@
             Pickup_Date.Location = new Point(182, 51);
             Pickup_Date.Name = "Pickup_Date";
             Pickup_Date.Size = new Size(100, 23);
-            Pickup_Date.TabIndex = 90;
+            Pickup_Date.TabIndex = 106;
+            Pickup_Date.ValueChanged += Issue_Date_ValueChanged;
             // 
             // label14
             // 
@@ -512,7 +747,8 @@
             Issue_Date.Location = new Point(182, 22);
             Issue_Date.Name = "Issue_Date";
             Issue_Date.Size = new Size(100, 23);
-            Issue_Date.TabIndex = 88;
+            Issue_Date.TabIndex = 105;
+            Issue_Date.ValueChanged += Issue_Date_ValueChanged;
             // 
             // label15
             // 
@@ -536,7 +772,7 @@
             Print.Location = new Point(749, 583);
             Print.Name = "Print";
             Print.Size = new Size(50, 50);
-            Print.TabIndex = 92;
+            Print.TabIndex = 117;
             Print.UseVisualStyleBackColor = false;
             Print.Click += Print_Click;
             // 
@@ -551,9 +787,31 @@
             Save.Location = new Point(693, 583);
             Save.Name = "Save";
             Save.Size = new Size(50, 50);
-            Save.TabIndex = 93;
+            Save.TabIndex = 116;
             Save.UseVisualStyleBackColor = false;
             Save.Click += Save_Click;
+            // 
+            // label32
+            // 
+            label32.BackColor = Color.Transparent;
+            label32.Font = new Font("Segoe UI", 12F);
+            label32.Location = new Point(18, 595);
+            label32.Name = "label32";
+            label32.Size = new Size(150, 23);
+            label32.TabIndex = 119;
+            label32.Text = "Rodzaj Umowy";
+            label32.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // comboBox1
+            // 
+            comboBox1.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            comboBox1.Location = new Point(174, 595);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(220, 23);
+            comboBox1.TabIndex = 118;
             // 
             // IssueUKS
             // 
@@ -561,6 +819,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(818, 650);
+            Controls.Add(label32);
+            Controls.Add(comboBox1);
             Controls.Add(Save);
             Controls.Add(Print);
             Controls.Add(groupBox3);
@@ -581,6 +841,46 @@
         #endregion
 
         private GroupBox groupBox1;
+        private Button Load;
+        private Label label6;
+        private GroupBox groupBox2;
+        private TextBox Value;
+        private Label label10;
+        private RichTextBox Description;
+        private Label label9;
+        private GroupBox groupBox3;
+        private DateTimePicker Pickup_Date;
+        private Label label15;
+        private DateTimePicker Issue_Date;
+        private Label label14;
+        private Label label19;
+        private Label label20;
+        private RichTextBox Comments;
+        private Label label18;
+        private TextBox Precentage;
+        private Label label17;
+        private TextBox Days;
+        private Label label16;
+        private Button Print;
+        private Button Save;
+        private Label label21;
+        private TextBox Fee;
+        private Label label22;
+        private Label label26;
+        private TextBox BuyAmount;
+        private Label label25;
+        private TextBox LateFee;
+        private Label label24;
+        private Label label23;
+        private Label label29;
+        private TextBox SaleAmount;
+        private Label label30;
+        private DateTimePicker SaleDate;
+        private Label label28;
+        private DateTimePicker DateOfReturn;
+        private Label label27;
+        private Label label1;
+        private TextBox CompanyName;
         private Label label4;
         private TextBox Nip;
         private RichTextBox Notes;
@@ -600,29 +900,9 @@
         private TextBox Post_Code;
         private Label label2;
         private TextBox Adress;
-        private Label label1;
+        private Label label31;
         private TextBox FullName;
-        private Button Load;
-        private Label label6;
-        private GroupBox groupBox2;
-        private TextBox Value;
-        private Label label10;
-        private RichTextBox Description;
-        private Label label9;
-        private GroupBox groupBox3;
-        private DateTimePicker Pickup_Date;
-        private Label label15;
-        private DateTimePicker Issue_Date;
-        private Label label14;
-        private Label label19;
-        private Label label20;
-        private RichTextBox Comments;
-        private Label label18;
-        private TextBox textBox1;
-        private Label label17;
-        private TextBox Days;
-        private Label label16;
-        private Button Print;
-        private Button Save;
+        private Label label32;
+        private ComboBox comboBox1;
     }
 }
