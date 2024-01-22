@@ -1,10 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Humanizer;
 using Microsoft.Office.Interop.Word;
 using MySqlConnector;
 using System.Data;
-using System.Data.Entity;
 using System.Diagnostics;
 using Body = DocumentFormat.OpenXml.Wordprocessing.Body;
 using DataTable = System.Data.DataTable;
@@ -33,6 +31,8 @@ namespace SKS_Service_Manager
         private string editedDocxFilePath;
         private string pdfFilePath;
         private string savedpdfFilePath;
+        private string folderFilePath;
+        private string libreOfficePath;
 
 
         public IssueUKS(int Id, Form1 form1)
@@ -51,10 +51,14 @@ namespace SKS_Service_Manager
             Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione");
             Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/umowy/backup");
 
-            docxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/" + newFile + ".docx";
-            editedDocxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/" + newFile + "_new.docx";
-            pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/" + newFile + ".pdf";
-            savedpdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione/" + newFile + "_" + issueId + ".pdf";
+            folderFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/";
+
+            docxFilePath = folderFilePath + newFile + ".docx";
+            editedDocxFilePath = folderFilePath + "backup/" + newFile + "_new.docx";
+            pdfFilePath = folderFilePath + "backup/" + newFile + "_new.pdf";
+            savedpdfFilePath = folderFilePath + "Wystawione/" + newFile + "_" + issueId + ".pdf";
+
+            libreOfficePath = "C:\\Program Files\\LibreOffice";
 
             if (issueId > 0)
             {
@@ -252,7 +256,7 @@ namespace SKS_Service_Manager
             }
         }
 
-        private void ConvertDocxToPdf(string docxFilePath, string pdfFilePath)
+        private void MicrosoftConvertDocxToPdf(string docxFilePath, string pdfFilePath)
         {
             // Create an instance of Word.exe
             _Application oWord = new Word.Application
@@ -289,6 +293,34 @@ namespace SKS_Service_Manager
 
             // Always close Word.exe.
             oWord.Quit(ref oMissing, ref oMissing, ref oMissing);
+        }
+
+        public void ConvertDocxToPdf(string inputDocxFile, string outputPdfFile)
+        {
+            // Przykład użycia soffice.exe do konwersji DOCX do PDF
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = $"{libreOfficePath}\\program\\soffice.exe",
+
+                Arguments = $"--headless --convert-to pdf \"{inputDocxFile}\" --outdir \"{folderFilePath + "/backup/"}\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+
+            try
+            {
+                using (Process process = new Process())
+                {
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    process.WaitForExit();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void SaveInvoiceToDatabase(int userId)
@@ -356,7 +388,7 @@ namespace SKS_Service_Manager
                 if (result == DialogResult.Yes)
                 {
                     DialogResult result2 = MessageBox.Show("Czy chcesz zapisać plik pdf w katalogu?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (result == DialogResult.Yes)
+                    if (result2 == DialogResult.Yes) // Poprawiony warunek na result2
                     {
                         File.Copy(pdfFilePath, savedpdfFilePath, true);
                     }
@@ -365,7 +397,7 @@ namespace SKS_Service_Manager
                     {
                         // Aktualizuj dane faktury w bazie danych
                         UpdateUserInDatabase(dataBase.CheckUserExistsByPesel(Pesel.Text));
-                        SaveInvoiceToDatabase(issueUserId); ;
+                        SaveInvoiceToDatabase(issueUserId);
                     }
 
                     try
@@ -386,6 +418,7 @@ namespace SKS_Service_Manager
                 MessageBox.Show("Musisz pierw wygenerować dokument guzikiem Zapisz", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void UpdateUserInDatabase(bool exist)
         {
@@ -573,10 +606,12 @@ namespace SKS_Service_Manager
                 newFile = "uppz";
             }
 
-            docxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/" + newFile + ".docx";
-            editedDocxFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/" + newFile + "_new.docx";
-            pdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/" + newFile + ".pdf";
-            savedpdfFilePath = AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione/" + newFile + "_" + issueId + ".pdf";
+            folderFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/";
+
+            docxFilePath = folderFilePath + newFile + ".docx";
+            editedDocxFilePath = folderFilePath + "backup/" + newFile + "_new.docx";
+            pdfFilePath = folderFilePath + "backup/" + newFile + "_new.pdf";
+            savedpdfFilePath = folderFilePath + "Wystawione/" + newFile + "_" + issueId + ".pdf";
         }
         private int GetFormTypeIndex(String text) 
         {

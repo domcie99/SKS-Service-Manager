@@ -87,30 +87,49 @@ namespace SKS_Service_Manager
 
         public static void CheckAndShowOfficeMessage()
         {
+            bool officeInstalled = IsOfficeInstalled();
+            bool libreOfficeInstalled = IsLibreOfficeInstalled();
+
+            if (!officeInstalled && !libreOfficeInstalled)
+            {
+                DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego programu Microsoft Office lub LibreOffice. Kliknij 'OK', aby pobraæ jedno z tych oprogramowañ.", "Brak zainstalowanego Office lub LibreOffice", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Spróbuj otworzyæ stronê do pobrania Microsoft Office
+                        Process.Start("cmd", $"/c start https://pl.libreoffice.org/pobieranie/");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("B³¹d podczas otwierania strony do pobrania Office: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        public static bool IsOfficeInstalled()
+        {
             try
             {
                 using (RegistryKey key = Registry.ClassesRoot.OpenSubKey("Word.Application"))
                 {
-                    if (key == null)
-                    {
-                        DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego programu Microsoft Office. Kliknij 'OK', aby pobraæ Office.", "Brak zainstalowanego Office", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-
-                        if (result == DialogResult.OK)
-                        {
-                            try
-                            {
-                                Process.Start("cmd", $"/c start https://www.microsoft.com/pl-pl/microsoft-365/get-started-with-office-2019");
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show("B³¹d podczas otwierania pliku uks: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                    }
+                    return key != null;
                 }
             }
-            catch (Exception){}
+            catch (Exception)
+            {
+                return false;
+            }
         }
+
+        public static bool IsLibreOfficeInstalled()
+        {
+            string libreOfficeExecutablePath = "C:\\Program Files\\LibreOffice\\program\\soffice.exe"; // Œcie¿ka do pliku wykonywalnego LibreOffice
+            return File.Exists(libreOfficeExecutablePath);
+        }
+
 
         public void setDataBase()
         {
