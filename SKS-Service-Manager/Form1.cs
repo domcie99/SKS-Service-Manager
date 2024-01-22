@@ -15,8 +15,8 @@ namespace SKS_Service_Manager
         private DataBase database;
 
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
-        private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/blob/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
-        private string localVersion = "1.0.1.0"; // Wersja Twojej aplikacji
+        private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
+        private string localVersion = "1.0.2.0"; // Wersja Twojej aplikacji
 
         
 
