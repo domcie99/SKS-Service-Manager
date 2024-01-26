@@ -37,6 +37,8 @@
             dataGridView1 = new DataGridView();
             label1 = new Label();
             button1 = new Button();
+            label2 = new Label();
+            search = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -137,12 +139,32 @@
             button1.Visible = false;
             button1.Click += button1_Click;
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.BackColor = Color.Transparent;
+            label2.Location = new Point(534, 67);
+            label2.Name = "label2";
+            label2.Size = new Size(59, 15);
+            label2.TabIndex = 32;
+            label2.Text = "Wyszukaj:";
+            // 
+            // search
+            // 
+            search.Location = new Point(599, 64);
+            search.Name = "search";
+            search.Size = new Size(189, 23);
+            search.TabIndex = 31;
+            search.TextChanged += SearchUserValueChange;
+            // 
             // UserList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(800, 450);
+            Controls.Add(label2);
+            Controls.Add(search);
             Controls.Add(label1);
             Controls.Add(button1);
             Controls.Add(dataGridView1);
@@ -165,5 +187,7 @@
         private DataGridView dataGridView1;
         private Label label1;
         private Button button1;
+        private Label label2;
+        private TextBox search;
     }
 }

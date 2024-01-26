@@ -107,6 +107,10 @@ namespace SKS_Service_Manager
         public string GetPhone() => Properties.Settings.Default.phone;
         public string GetEmail() => Properties.Settings.Default.email;
 
+        public int GetPercentage() => Properties.Settings.Default.percentage;
+
+        public void SetPercentage(int i) => Properties.Settings.Default.percentage = i;
+
         // Gettery dla ustawień MySQL
         public string GetMySQLHost() => Properties.Settings.Default.mysql_host;
         public string GetMySQLUser() => Properties.Settings.Default.mysql_user;
@@ -129,10 +133,11 @@ namespace SKS_Service_Manager
             OpenFileToEdit("uppz");
         }
 
-        private void OpenFileToEdit(String file) {
+        private void OpenFileToEdit(String file)
+        {
 
-            string docxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/"+ file + ".docx";
-            string copydocxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/"+ file + ".docx";
+            string docxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/" + file + ".docx";
+            string copydocxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/" + file + ".docx";
 
             Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "umowy/backup");
             File.Copy(docxFile, copydocxFile, true);
@@ -144,6 +149,20 @@ namespace SKS_Service_Manager
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd podczas otwierania pliku uks: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string docxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/";
+
+            try
+            {
+                Process.Start("cmd", $"/c start {docxFile}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas otwierania folderu: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

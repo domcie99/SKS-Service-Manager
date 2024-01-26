@@ -53,7 +53,7 @@
             label4 = new Label();
             Nip = new TextBox();
             label6 = new Label();
-            CompanyName = new TextBox();
+            Company_Name = new TextBox();
             SuspendLayout();
             // 
             // label11
@@ -289,15 +289,15 @@
             label6.Name = "label6";
             label6.Size = new Size(150, 23);
             label6.TabIndex = 68;
-            label6.Text = "Nazwa";
+            label6.Text = "Nazwa Firmy";
             label6.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // CompanyName
+            // Company_Name
             // 
-            CompanyName.Location = new Point(194, 257);
-            CompanyName.Name = "CompanyName";
-            CompanyName.Size = new Size(200, 23);
-            CompanyName.TabIndex = 8;
+            Company_Name.Location = new Point(194, 257);
+            Company_Name.Name = "Company_Name";
+            Company_Name.Size = new Size(200, 23);
+            Company_Name.TabIndex = 8;
             // 
             // EditUser
             // 
@@ -306,7 +306,7 @@
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(826, 315);
             Controls.Add(label6);
-            Controls.Add(CompanyName);
+            Controls.Add(Company_Name);
             Controls.Add(label4);
             Controls.Add(Nip);
             Controls.Add(Notes);
@@ -362,6 +362,6 @@
         private Label label4;
         private TextBox Nip;
         private Label label6;
-        private TextBox CompanyName;
+        private TextBox Company_Name;
     }
 }

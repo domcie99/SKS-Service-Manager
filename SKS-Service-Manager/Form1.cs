@@ -1,8 +1,7 @@
-using Microsoft.Win32;
+
 using System.Diagnostics;
 using System.Net;
-using System.Reflection;
-
+using Ionic.Zip;
 
 namespace SKS_Service_Manager
 {
@@ -14,11 +13,18 @@ namespace SKS_Service_Manager
         private UksList uksListForm;
         private DataBase database;
 
+        string remoteUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.1/PDFConvert.zip";
+
+        string localPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        string localPathZip = AppDomain.CurrentDomain.BaseDirectory + "/PDFConvert.zip";
+        string libreOfficeInst = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+        string libreOfficePort = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\LibreOfficePortable\\App\\libreoffice\\program\\soffice.exe";
+
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
-        private string localVersion = "1.0.2.0"; // Wersja Twojej aplikacji
+        private string localVersion = "1.0.3.0"; // Wersja Twojej aplikacji
 
-        
+
 
         public Form1()
         {
@@ -29,11 +35,9 @@ namespace SKS_Service_Manager
             database = new DataBase(this);
 
             CheckMySQLConnection();
-            CheckForUpdates();
-            CheckAndShowOfficeMessage();
         }
 
-        private void CheckForUpdates()
+        private async void CheckForUpdates()
         {
             try
             {
@@ -58,15 +62,19 @@ namespace SKS_Service_Manager
         }
 
 
-        private void DownloadAndInstallUpdate(string latestVersion)
+        private async void DownloadAndInstallUpdate(string latestVersion)
         {
+            label2.Invoke(new Action(() => label2.Visible = true));
+            progressBar1.Invoke(new Action(() => progressBar1.Visible = true));
             try
             {
                 WebClient client = new WebClient();
                 string updateUrlFormatted = string.Format(updateUrl, latestVersion);
                 string msiPath = Path.Combine(Path.GetTempPath(), "SKS-Service-Manager.msi");
 
-                client.DownloadFile(updateUrlFormatted, msiPath);
+                client.DownloadProgressChanged += Client_DownloadProgressChanged; // Dodajemy obs³ugê zdarzenia postêpu pobierania
+
+                await client.DownloadFileTaskAsync(new Uri(updateUrlFormatted), msiPath);
 
                 try
                 {
@@ -85,21 +93,27 @@ namespace SKS_Service_Manager
             }
         }
 
-        public static void CheckAndShowOfficeMessage()
+        private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            bool officeInstalled = IsOfficeInstalled();
-            bool libreOfficeInstalled = IsLibreOfficeInstalled();
+            // Aktualizujemy progressBar2 na podstawie postêpu pobierania
+            progressBar1.Invoke(new Action(() => progressBar1.Value = e.ProgressPercentage));
+            // Aktualizujemy label2
+            label2.Invoke(new Action(() => label2.Text = $"Pobieranie {e.ProgressPercentage}%"));
+        }
 
-            if (!officeInstalled && !libreOfficeInstalled)
+
+        public async void CheckAndShowOfficeMessage()
+        {
+            if (!File.Exists(libreOfficeInst) && !File.Exists(libreOfficePort))
             {
-                DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego programu Microsoft Office lub LibreOffice. Kliknij 'OK', aby pobraæ jedno z tych oprogramowañ.", "Brak zainstalowanego Office lub LibreOffice", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego LibreOffice. Kliknij 'OK', aby automatycznie pobrac i zainstalowaæ pakiet.", "Brak zainstalowanego LibreOffice", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.OK)
                 {
                     try
                     {
                         // Spróbuj otworzyæ stronê do pobrania Microsoft Office
-                        Process.Start("cmd", $"/c start https://pl.libreoffice.org/pobieranie/");
+                        await DownloadFileAsync();
                     }
                     catch (Exception ex)
                     {
@@ -109,25 +123,10 @@ namespace SKS_Service_Manager
             }
         }
 
-        public static bool IsOfficeInstalled()
+        private async void buttonDownload_Click(object sender, EventArgs e)
         {
-            try
-            {
-                using (RegistryKey key = Registry.ClassesRoot.OpenSubKey("Word.Application"))
-                {
-                    return key != null;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public static bool IsLibreOfficeInstalled()
-        {
-            string libreOfficeExecutablePath = "C:\\Program Files\\LibreOffice\\program\\soffice.exe"; // Œcie¿ka do pliku wykonywalnego LibreOffice
-            return File.Exists(libreOfficeExecutablePath);
+            // Wywo³aj metodê DownloadFileAsync
+            await DownloadFileAsync();
         }
 
 
@@ -212,6 +211,122 @@ namespace SKS_Service_Manager
                 issueUksForm = new IssueUKS(Id, this);
             }
             issueUksForm.ShowDialog();
+        }
+
+        private async Task DownloadFileAsync()
+        {
+            label2.Invoke(new Action(() => label2.Visible = true));
+            progressBar1.Invoke(new Action(() => progressBar1.Visible = true));
+
+
+            label2.Invoke(new Action(() => label2.Text = "Pobieranie 0%"));
+            progressBar1.Invoke(new Action(() => progressBar1.Value = 0));
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await httpClient.GetAsync(remoteUrl, HttpCompletionOption.ResponseHeadersRead);
+                    response.EnsureSuccessStatusCode();
+
+                    long? totalBytes = response.Content.Headers.ContentLength;
+                    long bytesRead = 0;
+
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        using (var fileStream = new FileStream(localPathZip, FileMode.Create, FileAccess.Write, FileShare.None))
+                        {
+                            var buffer = new byte[4096];
+                            int bytesReadThisChunk;
+                            double progressPercentage;
+
+                            while ((bytesReadThisChunk = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                            {
+                                await fileStream.WriteAsync(buffer, 0, bytesReadThisChunk);
+                                bytesRead += bytesReadThisChunk;
+
+                                if (totalBytes.HasValue)
+                                {
+                                    progressPercentage = (double)bytesRead / totalBytes.Value * 100;
+                                    UpdateProgressBar((int)progressPercentage);
+                                    label2.Invoke(new Action(() => label2.Text = $"Pobieranie {progressPercentage:F1}%"));
+                                }
+                            }
+                        }
+                    }
+
+                    label2.Invoke(new Action(() => label2.Text = "Wypakowywanie... To mo¿e chwilê zaj¹æ"));
+                    // Plik zosta³ pomyœlnie pobrany, teraz mo¿esz go rozpakowaæ lub podj¹æ inne dzia³ania
+                    ExtractZipFile(localPathZip, localPath);
+                }
+                catch (HttpRequestException ex)
+                {
+                    // Obs³u¿ b³¹d ¿¹dania HTTP
+                    MessageBox.Show("B³¹d podczas pobierania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    // Obs³u¿ inne b³êdy
+                    MessageBox.Show("B³¹d: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void UpdateProgressBar(int value)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<int>(UpdateProgressBar), value);
+            }
+            else
+            {
+                progressBar1.Value = value;
+            }
+        }
+
+        private async void ExtractZipFile(string zipFilePath, string extractPath)
+        {
+            try
+            {
+                using (Ionic.Zip.ZipFile zip = Ionic.Zip.ZipFile.Read(zipFilePath))
+                {
+                    int totalEntries = zip.Entries.Count;
+                    int entriesExtracted = 0;
+
+                    foreach (var entry in zip)
+                    {
+                        entry.Extract(extractPath, ExtractExistingFileAction.OverwriteSilently);
+
+                        entriesExtracted++;
+                        double progressPercentage = (double)entriesExtracted / totalEntries * 100;
+                        UpdateProgressBar((int)progressPercentage);
+                        label2.Invoke(new Action(() => label2.Text = $"Wypakowywanie {progressPercentage:F1}%"));
+                    }
+
+                    // Po zakoñczeniu wypakowywania pliku, zaktualizuj pasek postêpu na 100% (pe³ny postêp)
+                    UpdateProgressBar(100);
+
+                    progressBar1.Invoke(new Action(() => progressBar1.Visible = false));
+                    label2.Invoke(new Action(() => label2.Visible = false));
+
+                    MessageBox.Show("Zainstalowano pakiet LibreOffice", "MSG", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("B³¹d podczas wypakowywania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
+
+
+
+        private async void Form1_Shown(object sender, EventArgs e)
+        {
+            await Task.Run(() => CheckForUpdates());
+            await Task.Run(() => CheckAndShowOfficeMessage());
         }
     }
 }

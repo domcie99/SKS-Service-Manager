@@ -41,6 +41,8 @@
             label12 = new Label();
             pictureBox1 = new PictureBox();
             timer1 = new System.Windows.Forms.Timer(components);
+            progressBar1 = new ProgressBar();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -158,7 +160,7 @@
             label12.AutoSize = true;
             label12.BackColor = Color.Transparent;
             label12.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            label12.Location = new Point(457, 200);
+            label12.Location = new Point(457, 201);
             label12.Name = "label12";
             label12.Size = new Size(207, 21);
             label12.TabIndex = 25;
@@ -168,19 +170,41 @@
             // 
             pictureBox1.BackColor = Color.Transparent;
             pictureBox1.Image = Properties.Resources.no_connection;
-            pictureBox1.Location = new Point(670, 200);
+            pictureBox1.Location = new Point(670, 201);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(25, 25);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 26;
             pictureBox1.TabStop = false;
             // 
+            // progressBar1
+            // 
+            progressBar1.Location = new Point(12, 204);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new Size(247, 22);
+            progressBar1.TabIndex = 27;
+            progressBar1.Visible = false;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.BackColor = Color.Transparent;
+            label2.Font = new Font("Segoe UI", 10F);
+            label2.Location = new Point(12, 182);
+            label2.Name = "label2";
+            label2.Size = new Size(81, 19);
+            label2.TabIndex = 28;
+            label2.Text = "Pobieranie...";
+            label2.Visible = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
-            ClientSize = new Size(735, 260);
+            ClientSize = new Size(735, 238);
+            Controls.Add(label2);
+            Controls.Add(progressBar1);
             Controls.Add(pictureBox1);
             Controls.Add(label12);
             Controls.Add(label11);
@@ -194,6 +218,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "SKS-Service Manager";
+            Shown += Form1_Shown;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -212,5 +237,7 @@
         private Label label12;
         private PictureBox pictureBox1;
         private System.Windows.Forms.Timer timer1;
+        private ProgressBar progressBar1;
+        private Label label2;
     }
 }

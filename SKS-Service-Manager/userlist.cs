@@ -5,12 +5,11 @@ namespace SKS_Service_Manager
 {
     public partial class UserList : Form
     {
-        private MySqlConnection connection;
-        private string connectionString;
         private Form1 mainForm;
         private Settings settingsForm;
         public int issueUserId;
         private DataBase database;
+        DataTable userData;
 
         public UserList(Form1 Form1)
         {
@@ -32,7 +31,7 @@ namespace SKS_Service_Manager
 
         public void LoadUserData()
         {
-            DataTable userData = database.LoadAllUserData();
+            userData = database.LoadAllUserData();
 
             if (userData != null)
             {
@@ -40,6 +39,30 @@ namespace SKS_Service_Manager
             }
         }
 
+        public void SearchUserValueChange(object sender, EventArgs e)
+        {
+            string searchPhrase = search.Text.Trim(); // Pobierz frazę do wyszukiwania
+            DataTable filteredUserData = userData.Clone(); // Utwórz kopię struktury userData
+
+            foreach (DataRow row in userData.Rows)
+            {
+                DataRow newRow = filteredUserData.NewRow(); // Utwórz nowy wiersz w wynikowej tabeli
+
+                foreach (DataColumn column in userData.Columns)
+                {
+                    if (row[column].ToString().IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // Jeśli znaleziono dopasowanie, dodaj dane z tego wiersza do nowego wiersza w wynikowej tabeli
+                        newRow.ItemArray = row.ItemArray;
+                        filteredUserData.Rows.Add(newRow);
+                        break; // Przeszukuj wszystkie komórki w danym wierszu
+                    }
+                }
+            }
+
+            // Wyświetl wyniki w DataGridView
+            dataGridView1.DataSource = filteredUserData;
+        }
 
         private void Add_Click(object sender, EventArgs e)
         {
@@ -118,5 +141,7 @@ namespace SKS_Service_Manager
                 MessageBox.Show("Wybierz użytkownika do edycji.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
     }
 }

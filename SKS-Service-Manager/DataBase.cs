@@ -270,6 +270,125 @@ namespace SKS_Service_Manager
             return null;
         }
 
+        public DataTable uksLoadDataByDateRange(DateTime fromDate, DateTime toDate, string city, string documentType)
+        {
+            try
+            {
+                string query = "SELECT DATE(UKS.InvoiceDate) AS 'Data Przyjęcia', " +
+                                "Users.FullName || ', ' || Users.Address || ', ' || Users.PostalCode || ' ' || Users.City AS 'Imię i Nazwisko oraz adres sprzedającego', " +
+                                "CAST(UKS.TotalAmount AS decimal(10, 2)) AS 'Kwota zapłacona sprzedającemu', " +
+                                "UKS.Description AS 'Dokładny opis kupionych (używanych) rzeczy', " +
+                                "CAST(UKS.BuyAmount AS decimal(10, 2)) AS 'Wartość sprzedaży minus zużycie', " +
+                                "DATE(UKS.BuyDate) AS 'Ostateczny termin do odkupu', " +
+                                "DATE(UKS.DateOfReturn) || ', ' || CAST(UKS.SaleAmount AS decimal(10, 2)) AS 'Zwrot rzeczy z odkupem (Data, Kwota)', " +
+                                "DATE(UKS.SaleDate) || ', ' || CAST(UKS.SaleAmount AS decimal(10, 2)) AS 'Zwrot rzeczy z odkupem (Data, Kwota)', " +
+                                "UKS.Notes AS 'Uwagi' " +
+                                "FROM UKS " +
+                                "INNER JOIN Users ON UKS.UserID = Users.ID " +
+                                "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
+
+
+
+                if (!string.IsNullOrEmpty(city) && city != "Wszystko") { query += "AND UKS.City = @City"; }
+                if (!string.IsNullOrEmpty(documentType) && documentType != "Wszystko") { query += "AND UKS.DocumentType = @DocumentType"; }
+
+
+                DataTable dt = new DataTable();
+
+                if (useMySQL)
+                {
+                    mySqlConnection.Open();
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                    cmd.Parameters.AddWithValue("@ToDate", toDate);
+
+                    if (!string.IsNullOrEmpty(city) && city != "Wszystko") { cmd.Parameters.AddWithValue("@City", city); }
+                    if (!string.IsNullOrEmpty(documentType) && documentType != "Wszystko") { cmd.Parameters.AddWithValue("@DocumentType", documentType); }
+
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                }
+                else
+                {
+                    sqliteConnection.Open();
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                    cmd.Parameters.AddWithValue("@ToDate", toDate);
+
+                    if (!string.IsNullOrEmpty(city) && city != "Wszystko") { cmd.Parameters.AddWithValue("@City", city); }
+                    if (!string.IsNullOrEmpty(documentType) && documentType != "Wszystko") { cmd.Parameters.AddWithValue("@DocumentType", documentType); }
+
+                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                    adapter.Fill(dt);
+                }
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas odczytu danych uksLoadDataByDateRange: " + ex.Message);
+            }
+            finally
+            {
+                if (useMySQL)
+                {
+                    mySqlConnection.Close();
+                }
+                else
+                {
+                    sqliteConnection.Close();
+                }
+            }
+            return null;
+        }
+
+        public List<string> GetUniqueCities()
+        {
+            List<string> cities = new List<string>();
+            try
+            {
+                string query = "SELECT DISTINCT City FROM UKS";
+
+                DataTable dt = new DataTable();
+
+                if (useMySQL)
+                {
+                    mySqlConnection.Open();
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                }
+                else
+                {
+                    sqliteConnection.Open();
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                    adapter.Fill(dt);
+                }
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    cities.Add(row["City"].ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas pobierania unikalnych miast: " + ex.Message);
+            }
+            finally
+            {
+                if (useMySQL)
+                {
+                    mySqlConnection.Close();
+                }
+                else
+                {
+                    sqliteConnection.Close();
+                }
+            }
+            return cities;
+        }
+
         public bool DeleteUks(int uksId)
         {
             try
@@ -500,7 +619,6 @@ namespace SKS_Service_Manager
                 CloseConnection();
             }
         }
-
 
         public bool CheckUserExistsByPesel(string pesel)
         {

@@ -1,13 +1,12 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Humanizer;
-using Microsoft.Office.Interop.Word;
-using MySqlConnector;
 using System.Data;
 using System.Diagnostics;
 using Body = DocumentFormat.OpenXml.Wordprocessing.Body;
 using DataTable = System.Data.DataTable;
 using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
-using Word = Microsoft.Office.Interop.Word;
 
 namespace SKS_Service_Manager
 {
@@ -16,10 +15,7 @@ namespace SKS_Service_Manager
         private Form1 mainForm;
         private int issueUserId;
         private int issueId;
-        private Form1 Form1;
         private Settings settingsForm;
-        private MySqlConnection connection;
-        private string connectionString;
         private bool generated = false;
         private DataBase dataBase;
 
@@ -34,6 +30,9 @@ namespace SKS_Service_Manager
         private string folderFilePath;
         private string libreOfficePath;
 
+        string libreOfficeInst = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+        string libreOfficePort = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\LibreOfficePortable\\App\\libreoffice\\program\\soffice.exe";
+
 
         public IssueUKS(int Id, Form1 form1)
         {
@@ -44,6 +43,8 @@ namespace SKS_Service_Manager
 
             dataBase = mainForm.getDataBase();
             dataBase.CreateInvoicesTableIfNotExists();
+
+            LoadLibreOffive();
 
             DocumentType.SelectedIndex = 0;
             FormType.SelectedIndex = 1;
@@ -58,7 +59,8 @@ namespace SKS_Service_Manager
             pdfFilePath = folderFilePath + "backup/" + newFile + "_new.pdf";
             savedpdfFilePath = folderFilePath + "Wystawione/" + newFile + "_" + issueId + ".pdf";
 
-            libreOfficePath = "C:\\Program Files\\LibreOffice";
+
+            Percentage.Text = settingsForm.GetPercentage().ToString();
 
             if (issueId > 0)
             {
@@ -93,7 +95,7 @@ namespace SKS_Service_Manager
                     DataRow row = userData.Rows[0]; // Assuming there is only one result row
 
                     FullName.Text = row["FullName"].ToString();
-                    CompanyName.Text = row["Name"].ToString();
+                    Company_Name.Text = row["Name"].ToString();
                     Adress.Text = row["Address"].ToString();
                     Post_Code.Text = row["PostalCode"].ToString();
                     City.Text = row["City"].ToString();
@@ -155,7 +157,7 @@ namespace SKS_Service_Manager
 
         private void Save_Click(object sender, EventArgs e)
         {
-            Load.Enabled = false;
+            LoadUser.Enabled = false;
             Save.Enabled = false;
             Print.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
@@ -184,7 +186,7 @@ namespace SKS_Service_Manager
                     ReplaceText(body, "#[data-wystawienia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
 
                     ReplaceText(body, "#[sprzedajacy-imie-nazwisko]", FullName.Text);
-                    ReplaceText(body, "#[sprzedajacy-nazwa-firmy]", CompanyName.Text);
+                    ReplaceText(body, "#[sprzedajacy-nazwa-firmy]", Company_Name.Text);
                     ReplaceText(body, "#[sprzedajacy-adres]", Adress.Text);
                     ReplaceText(body, "#[sprzedajacy-kod]", Post_Code.Text);
                     ReplaceText(body, "#[sprzedajacy-miasto]", City.Text);
@@ -200,7 +202,7 @@ namespace SKS_Service_Manager
                     ReplaceText(body, "#[przedmiot-wartosc]", value.ToString());
                     ReplaceText(body, "#[przedmiot-wartosc-slownie]", GetValueAsText(value));
 
-                    ReplaceText(body, "#[przedmiot-wartosc-odestki]", totalIntrest.ToString()) ;
+                    ReplaceText(body, "#[przedmiot-wartosc-odestki]", totalIntrest.ToString());
                     ReplaceText(body, "#[przedmiot-wartosc-calkowita]", total.ToString());
                     ReplaceText(body, "#[przedmiot-wartosc-calkowita-slownie]", GetValueAsText(value));
 
@@ -232,7 +234,7 @@ namespace SKS_Service_Manager
             finally
             {
                 this.Cursor = Cursors.Default;
-                Load.Enabled = true;
+                LoadUser.Enabled = true;
                 Save.Enabled = true;
                 Print.Enabled = true;
                 generated = true;
@@ -256,56 +258,17 @@ namespace SKS_Service_Manager
             }
         }
 
-        private void MicrosoftConvertDocxToPdf(string docxFilePath, string pdfFilePath)
-        {
-            // Create an instance of Word.exe
-            _Application oWord = new Word.Application
-            {
-
-                // Make this instance of word invisible (Can still see it in the taskmgr).
-                Visible = false
-            };
-
-            // Interop requires objects.
-            object oMissing = System.Reflection.Missing.Value;
-            object isVisible = true;
-            object readOnly = true;     // Does not cause any word dialog to show up
-            //object readOnly = false;  // Causes a word object dialog to show at the end of the conversion
-            object oInput = docxFilePath;
-            object oOutput = pdfFilePath;
-            object oFormat = WdSaveFormat.wdFormatPDF;
-
-            // Load a document into our instance of word.exe
-            _Document oDoc = oWord.Documents.Open(
-                ref oInput, ref oMissing, ref readOnly, ref oMissing, ref oMissing,
-                ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing,
-                ref oMissing, ref isVisible, ref oMissing, ref oMissing, ref oMissing, ref oMissing
-                );
-
-            // Make this document the active document.
-            oDoc.Activate();
-
-            // Save this document using Word
-            oDoc.SaveAs(ref oOutput, ref oFormat, ref oMissing, ref oMissing,
-                ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing,
-                ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing
-                );
-
-            // Always close Word.exe.
-            oWord.Quit(ref oMissing, ref oMissing, ref oMissing);
-        }
-
         public void ConvertDocxToPdf(string inputDocxFile, string outputPdfFile)
         {
             // Przykład użycia soffice.exe do konwersji DOCX do PDF
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                FileName = $"{libreOfficePath}\\program\\soffice.exe",
+                FileName = libreOfficePath,
 
                 Arguments = $"--headless --convert-to pdf \"{inputDocxFile}\" --outdir \"{folderFilePath + "/backup/"}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
-                CreateNoWindow = true
+                CreateNoWindow = false
             };
 
             try
@@ -320,6 +283,59 @@ namespace SKS_Service_Manager
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void CreateDocxFromData(DataTable data, string outputDocxFile)
+        {
+            using (WordprocessingDocument doc = WordprocessingDocument.Create(outputDocxFile, WordprocessingDocumentType.Document))
+            {
+                // Tworzenie głównego dokumentu Word
+                MainDocumentPart mainPart = doc.AddMainDocumentPart();
+                mainPart.Document = new Document();
+
+                // Tworzenie sekcji
+                Body body = mainPart.Document.AppendChild(new Body());
+
+                // Ustawianie orientacji na poziomą
+                SectionProperties sectionProperties = new SectionProperties();
+                PageSize pageSize = new PageSize() { Width = 15840U, Height = 12240U }; // Ustaw rozmiar na poziomy (landscape)
+                sectionProperties.Append(pageSize);
+                body.Append(sectionProperties);
+
+                // Tworzenie tabelki
+                Table table = new Table();
+
+                // Tworzenie nagłówków kolumn
+                TableRow headerRow = new TableRow();
+                foreach (DataColumn column in data.Columns)
+                {
+                    TableCell cell = new TableCell();
+                    Paragraph paragraph = new Paragraph(new Run(new Text(column.ColumnName)));
+                    cell.Append(paragraph);
+                    headerRow.Append(cell);
+                }
+                table.Append(headerRow);
+
+                // Dodawanie danych z DataTable
+                foreach (DataRow row in data.Rows)
+                {
+                    TableRow dataRow = new TableRow();
+                    foreach (object item in row.ItemArray)
+                    {
+                        TableCell cell = new TableCell();
+                        Paragraph paragraph = new Paragraph(new Run(new Text(item.ToString())));
+                        cell.Append(paragraph);
+                        dataRow.Append(cell);
+                    }
+                    table.Append(dataRow);
+                }
+
+                // Dodawanie tabelki do sekcji
+                body.Append(table);
+
+                // Zapisywanie dokumentu DOCX
+                mainPart.Document.Save();
             }
         }
 
@@ -424,7 +440,7 @@ namespace SKS_Service_Manager
         {
             // Pobierz dane z pól formularza, które chcesz zaktualizować
             string fullName = FullName.Text;
-            string name = CompanyName.Text;
+            string name = Company_Name.Text;
             string address = Adress.Text;
             string postalCode = Post_Code.Text;
             string city = City.Text;
@@ -541,7 +557,7 @@ namespace SKS_Service_Manager
             TimeSpan span = pickupDate - issueDate;
             int daysDifference = span.Days + 1;
 
-            if(pickupDate==issueDate)
+            if (pickupDate == issueDate)
             {
                 daysDifference = 0;
             }
@@ -549,7 +565,8 @@ namespace SKS_Service_Manager
             Days.Text = daysDifference.ToString();
         }
 
-        private string GetValueAsText(decimal value) {
+        private string GetValueAsText(decimal value)
+        {
 
             int wholePart = (int)value;
             int fractionalPart = (int)((value - wholePart) * 100); // Przekształć ułamek na grosze
@@ -589,7 +606,7 @@ namespace SKS_Service_Manager
         {
             ChangeFormType();
         }
-        private void ChangeFormType() 
+        private void ChangeFormType()
         {
             String newFile = "error";
 
@@ -613,7 +630,7 @@ namespace SKS_Service_Manager
             pdfFilePath = folderFilePath + "backup/" + newFile + "_new.pdf";
             savedpdfFilePath = folderFilePath + "Wystawione/" + newFile + "_" + issueId + ".pdf";
         }
-        private int GetFormTypeIndex(String text) 
+        private int GetFormTypeIndex(String text)
         {
             if ("Umowa Komisowa" == text)
             {
@@ -623,7 +640,8 @@ namespace SKS_Service_Manager
             {                                                   // 1 - Umowa Kupna-Sprzedaży
                 return 2;                                       // 2 - Umowa Pożyczki z Przechowaniem
             }
-            else {
+            else
+            {
                 return 1;
             }
         }
@@ -637,5 +655,27 @@ namespace SKS_Service_Manager
             BuyAmount.Text = totalBuyOut.ToString("F2");
         }
 
+
+        private void PercentageChanged(object sender, EventArgs e)
+        {
+            settingsForm.SetPercentage(int.Parse(Percentage.Text.ToString()));
+        }
+
+        private void IssueUKS_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoadLibreOffive() {
+            if (File.Exists(libreOfficeInst))
+            {
+                libreOfficePath = libreOfficeInst;
+            }
+            else
+            {
+                libreOfficePath = libreOfficePort;
+            }
+
+        }
     }
 }

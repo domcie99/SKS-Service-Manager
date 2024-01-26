@@ -190,5 +190,17 @@ namespace SKS_Service_Manager.Properties {
                 this["mysql_port"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int percentage {
+            get {
+                return ((int)(this["percentage"]));
+            }
+            set {
+                this["percentage"] = value;
+            }
+        }
     }
 }

@@ -5,7 +5,6 @@ namespace SKS_Service_Manager
     public partial class EditUser : Form
     {
 
-        private string connectionString;
         private int userIdToEdit; // Identyfikator użytkownika do edycji
         private Settings settingsForm;
         private Form1 mainForm;
@@ -59,7 +58,7 @@ namespace SKS_Service_Manager
                     DocumentNumber.Text = row["DocumentNumber"].ToString();
                     Pesel.Text = row["Pesel"].ToString();
                     Nip.Text = row["NIP"].ToString();
-                    CompanyName.Text = row["Name"].ToString();
+                    Company_Name.Text = row["Name"].ToString();
                     Notes.Text = row["Notes"].ToString();
                 }
                 else
@@ -89,7 +88,7 @@ namespace SKS_Service_Manager
             string documentNumber = DocumentNumber.Text;
             string pesel = Pesel.Text;
             string nip = Nip.Text;
-            string name = CompanyName.Text;
+            string name = Company_Name.Text;
             string notes = Notes.Text;
 
             try

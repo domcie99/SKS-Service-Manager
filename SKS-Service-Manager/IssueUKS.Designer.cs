@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssueUKS));
             groupBox1 = new GroupBox();
             label1 = new Label();
-            CompanyName = new TextBox();
+            Company_Name = new TextBox();
             label4 = new Label();
             Nip = new TextBox();
             Notes = new RichTextBox();
@@ -54,7 +54,7 @@
             label31 = new Label();
             FullName = new TextBox();
             label6 = new Label();
-            Load = new Button();
+            LoadUser = new Button();
             groupBox2 = new GroupBox();
             label19 = new Label();
             Value = new TextBox();
@@ -102,7 +102,7 @@
             // 
             groupBox1.BackColor = Color.Transparent;
             groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(CompanyName);
+            groupBox1.Controls.Add(Company_Name);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(Nip);
             groupBox1.Controls.Add(Notes);
@@ -125,7 +125,7 @@
             groupBox1.Controls.Add(label31);
             groupBox1.Controls.Add(FullName);
             groupBox1.Controls.Add(label6);
-            groupBox1.Controls.Add(Load);
+            groupBox1.Controls.Add(LoadUser);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(787, 225);
@@ -144,12 +144,12 @@
             label1.Text = "Nazwa";
             label1.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // CompanyName
+            // Company_Name
             // 
-            CompanyName.Location = new Point(182, 199);
-            CompanyName.Name = "CompanyName";
-            CompanyName.Size = new Size(200, 23);
-            CompanyName.TabIndex = 97;
+            Company_Name.Location = new Point(182, 199);
+            Company_Name.Name = "Company_Name";
+            Company_Name.Size = new Size(200, 23);
+            Company_Name.TabIndex = 97;
             // 
             // label4
             // 
@@ -357,20 +357,20 @@
             label6.Text = "Wybierz z bazy";
             label6.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // Load
+            // LoadUser
             // 
-            Load.BackColor = Color.Transparent;
-            Load.BackgroundImage = Properties.Resources.add;
-            Load.BackgroundImageLayout = ImageLayout.Zoom;
-            Load.Cursor = Cursors.Hand;
-            Load.FlatAppearance.BorderSize = 0;
-            Load.FlatStyle = FlatStyle.Flat;
-            Load.Location = new Point(737, 167);
-            Load.Name = "Load";
-            Load.Size = new Size(50, 50);
-            Load.TabIndex = 102;
-            Load.UseVisualStyleBackColor = false;
-            Load.Click += Load_Click;
+            LoadUser.BackColor = Color.Transparent;
+            LoadUser.BackgroundImage = Properties.Resources.add;
+            LoadUser.BackgroundImageLayout = ImageLayout.Zoom;
+            LoadUser.Cursor = Cursors.Hand;
+            LoadUser.FlatAppearance.BorderSize = 0;
+            LoadUser.FlatStyle = FlatStyle.Flat;
+            LoadUser.Location = new Point(737, 167);
+            LoadUser.Name = "LoadUser";
+            LoadUser.Size = new Size(50, 50);
+            LoadUser.TabIndex = 102;
+            LoadUser.UseVisualStyleBackColor = false;
+            LoadUser.Click += Load_Click;
             // 
             // groupBox2
             // 
@@ -685,6 +685,7 @@
             Percentage.TabIndex = 108;
             Percentage.Text = "0";
             Percentage.TextAlign = HorizontalAlignment.Right;
+            Percentage.TextChanged += PercentageChanged;
             Percentage.KeyPress += IsInt_KeyPress;
             Percentage.Leave += Percentage_Leave;
             // 
@@ -843,7 +844,7 @@
         #endregion
 
         private GroupBox groupBox1;
-        private Button Load;
+        private Button LoadUser;
         private Label label6;
         private GroupBox groupBox2;
         private TextBox Value;
@@ -882,7 +883,7 @@
         private DateTimePicker DateOfReturn;
         private Label label27;
         private Label label1;
-        private TextBox CompanyName;
+        private TextBox Company_Name;
         private Label label4;
         private TextBox Nip;
         private RichTextBox Notes;

@@ -11,6 +11,9 @@ namespace SKS_Service_Manager
         private IssueUKS issueUksForm;
         private Form1 mainForm;
         private DataBase dataBase;
+        private PrintRecords printRecords;
+
+        DataTable dt;
 
         public UksList(Form1 form1)
         {
@@ -22,17 +25,44 @@ namespace SKS_Service_Manager
 
             dataBase.CreateInvoicesTableIfNotExists();
 
+            printRecords = new PrintRecords(mainForm);
+
             LoadData();
         }
 
         public void LoadData()
         {
-            DataTable dt = dataBase.uksLoadData();
+            dt = dataBase.uksLoadData();
 
             if (dt != null)
             {
                 dataGridView1.DataSource = dt;
             }
+        }
+
+        public void SearchUserValueChange(object sender, EventArgs e)
+        {
+            string searchPhrase = search.Text.Trim(); // Pobierz frazę do wyszukiwania
+            DataTable filteredUserData = dt.Clone(); // Utwórz kopię struktury userData
+
+            foreach (DataRow row in dt.Rows)
+            {
+                DataRow newRow = filteredUserData.NewRow(); // Utwórz nowy wiersz w wynikowej tabeli
+
+                foreach (DataColumn column in dt.Columns)
+                {
+                    if (row[column].ToString().IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // Jeśli znaleziono dopasowanie, dodaj dane z tego wiersza do nowego wiersza w wynikowej tabeli
+                        newRow.ItemArray = row.ItemArray;
+                        filteredUserData.Rows.Add(newRow);
+                        break; // Przeszukuj wszystkie komórki w danym wierszu
+                    }
+                }
+            }
+
+            // Wyświetl wyniki w DataGridView
+            dataGridView1.DataSource = filteredUserData;
         }
 
         private void Add_Click(object sender, EventArgs e)
@@ -102,6 +132,20 @@ namespace SKS_Service_Manager
             {
                 MessageBox.Show("Proszę najpierw wybrać fakturę UKS do usunięcia.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void print_Click(object sender, EventArgs e)
+        {
+            OpenPrintRecordsForm();
+        }
+
+        private void OpenPrintRecordsForm()
+        {
+            if (printRecords == null || printRecords.IsDisposed)
+            {
+                printRecords = new PrintRecords(mainForm);
+            }
+            printRecords.ShowDialog();
         }
     }
 }

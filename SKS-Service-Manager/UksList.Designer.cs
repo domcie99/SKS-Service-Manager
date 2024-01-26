@@ -35,6 +35,9 @@
             Edit = new Button();
             Add = new Button();
             dataGridView1 = new DataGridView();
+            search = new TextBox();
+            label1 = new Label();
+            print = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -109,6 +112,39 @@
             dataGridView1.Size = new Size(1119, 375);
             dataGridView1.TabIndex = 28;
             // 
+            // search
+            // 
+            search.Location = new Point(942, 64);
+            search.Name = "search";
+            search.Size = new Size(189, 23);
+            search.TabIndex = 29;
+            search.TextChanged += SearchUserValueChange;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.BackColor = Color.Transparent;
+            label1.Location = new Point(877, 67);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 15);
+            label1.TabIndex = 30;
+            label1.Text = "Wyszukaj:";
+            // 
+            // print
+            // 
+            print.BackColor = Color.Transparent;
+            print.BackgroundImage = Properties.Resources.printer;
+            print.BackgroundImageLayout = ImageLayout.Zoom;
+            print.Cursor = Cursors.Hand;
+            print.FlatAppearance.BorderSize = 0;
+            print.FlatStyle = FlatStyle.Flat;
+            print.Location = new Point(180, 25);
+            print.Name = "print";
+            print.Size = new Size(50, 50);
+            print.TabIndex = 118;
+            print.UseVisualStyleBackColor = false;
+            print.Click += print_Click;
+            // 
             // UksList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -116,6 +152,9 @@
             BackgroundImage = Properties.Resources.background;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1143, 480);
+            Controls.Add(print);
+            Controls.Add(label1);
+            Controls.Add(search);
             Controls.Add(dataGridView1);
             Controls.Add(delete);
             Controls.Add(Edit);
@@ -126,6 +165,7 @@
             Text = "Umowy Kupna-Sprzedaży";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -133,5 +173,8 @@
         private Button Edit;
         private Button Add;
         private DataGridView dataGridView1;
+        private TextBox search;
+        private Label label1;
+        private Button print;
     }
 }
