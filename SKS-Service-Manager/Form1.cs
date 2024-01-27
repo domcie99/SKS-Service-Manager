@@ -57,7 +57,7 @@ namespace SKS_Service_Manager
             catch (Exception ex)
             {
                 // Obs³uga b³êdów
-                Console.WriteLine("B³¹d podczas sprawdzania aktualizacji: " + ex.Message);
+                MessageBox.Show($"B³¹d sprawdzania aktualizacji:"+ ex, "Aktualizacja", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             }
         }
 
