@@ -22,7 +22,7 @@ namespace SKS_Service_Manager
 
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
-        private string localVersion = "1.0.4.0"; // Wersja Twojej aplikacji
+        private string localVersion = "1.0.5.0"; // Wersja Twojej aplikacji
 
 
 
@@ -31,10 +31,10 @@ namespace SKS_Service_Manager
             InitializeComponent();
             this.Text = "SKS-Service Manager v" + localVersion;
 
-            settingsForm = new Settings(this); // Inicjalizacja formularza ustawieñ
-            database = new DataBase(this);
-
-            CheckMySQLConnection();
+            button1.Enabled = false;
+            button2.Enabled = false;
+            button7.Enabled = false;
+            button8.Enabled = false;
         }
 
         private async void CheckForUpdates()
@@ -150,7 +150,7 @@ namespace SKS_Service_Manager
         }
 
         // Metoda do sprawdzania po³¹czenia z baz¹ danych MySQL
-        public void CheckMySQLConnection()
+        public async void CheckMySQLConnection()
         {
             if (database.useMySQL)
             {
@@ -165,10 +165,14 @@ namespace SKS_Service_Manager
                 pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             }
 
-            database = new DataBase(this);
             issueUksForm = new IssueUKS(-1, this);
             uksListForm = new UksList(this);
             userlistForm = new UserList(this);
+
+            button1.Invoke(new Action(() => button1.Enabled = true));
+            button2.Invoke(new Action(() => button1.Enabled = true));
+            button7.Invoke(new Action(() => button1.Enabled = true));
+            button8.Invoke(new Action(() => button1.Enabled = true));
         }
 
         private void OpenSettingsForm()
@@ -318,13 +322,11 @@ namespace SKS_Service_Manager
             }
         }
 
-
-
-
-
-
         private async void Form1_Shown(object sender, EventArgs e)
         {
+            settingsForm = new Settings(this);
+            database = new DataBase(this);
+            await Task.Run(() => CheckMySQLConnection());
             await Task.Run(() => CheckForUpdates());
             await Task.Run(() => CheckAndShowOfficeMessage());
         }

@@ -15,6 +15,7 @@ namespace SKS_Service_Manager
         private MySqlConnection mySqlConnection;
         private SQLiteConnection sqliteConnection;
         private Settings settingsForm;
+        private Form1 mainForms;
         public bool useMySQL;
         private string connectionString;
 
@@ -22,6 +23,8 @@ namespace SKS_Service_Manager
         {
             settingsForm = new Settings(mainForm);
             connectionString = $"Server={settingsForm.GetMySQLHost()};Port={settingsForm.GetMySQLPort()};Database={settingsForm.GetMySQLDatabase()};User ID={settingsForm.GetMySQLUser()};Password={settingsForm.GetMySQLPassword()};";
+
+            mainForms = mainForm;
 
             useMySQL = IsMySQLConnectionAvailable(mainForm); // Sprawdzamy dostępność połączenia MySQL
 
@@ -42,7 +45,6 @@ namespace SKS_Service_Manager
         {
             try
             {
-                
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
