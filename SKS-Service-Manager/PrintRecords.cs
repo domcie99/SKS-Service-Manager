@@ -24,6 +24,10 @@ namespace SKS_Service_Manager
         public PrintRecords(Form1 form1)
         {
             InitializeComponent();
+
+            FromDate.Value = DateTime.Now.Date.AddDays(-29);
+            ToDate.Value = DateTime.Now.Date;
+
             this.Form1 = form1;
             dataBase = Form1.getDataBase();
             issueUKS = new IssueUKS(-1, Form1);
@@ -40,24 +44,23 @@ namespace SKS_Service_Manager
             string issuedCity = IssuedCity.Text.ToString();
             string documentType = DocumentType.Text.ToString();
 
-            DateTime invoiceDate = IssuedDate.Value.Date;
-            DateTime pickupDate = PickupDate.Value.Date;
+            DateTime fromDate = FromDate.Value.Date;
+            DateTime toDate = ToDate.Value.Date;
 
-            if (pickupDate <= invoiceDate)
+            if (toDate <= fromDate)
             {
                 MessageBox.Show("Data odbioru musi być większa niż data faktury.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                PickupDate.Focus();
+                ToDate.Focus();
                 return;
             }
 
-            inputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + invoiceDate.ToShortDateString().ToString() + "-" + pickupDate.ToShortDateString().ToString() + ".docx";
-            outputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + invoiceDate.ToShortDateString().ToString() + "-" + pickupDate.ToShortDateString().ToString() + ".pdf";
-            DataTable dt = dataBase.uksLoadDataByDateRange(invoiceDate, pickupDate, issuedCity, documentType);
+            inputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + fromDate.ToShortDateString().ToString() + "-" + toDate.ToShortDateString().ToString() + ".docx";
+            outputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + fromDate.ToShortDateString().ToString() + "-" + toDate.ToShortDateString().ToString() + ".pdf";
+            DataTable dt = dataBase.uksLoadDataByDateRange(fromDate, toDate, issuedCity, documentType);
 
-            dataGridView1.DataSource = dt;
             try
             {
-                issueUKS.CreateDocxFromData(dt, inputRaportFile);
+                issueUKS.CreateDocxFromData(dt, inputRaportFile, fromDate, toDate);
                 issueUKS.ConvertDocxToPdf(inputRaportFile, outputRaportFile);
             }
             catch (Exception ex)

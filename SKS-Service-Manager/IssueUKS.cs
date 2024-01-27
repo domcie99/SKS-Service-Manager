@@ -4,7 +4,9 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using Humanizer;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using Body = DocumentFormat.OpenXml.Wordprocessing.Body;
+using Color = DocumentFormat.OpenXml.Wordprocessing.Color;
 using DataTable = System.Data.DataTable;
 using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 
@@ -37,6 +39,9 @@ namespace SKS_Service_Manager
         public IssueUKS(int Id, Form1 form1)
         {
             InitializeComponent();
+            Issue_Date.Value = DateTime.Now.Date;
+            Pickup_Date.Value = DateTime.Now.Date.AddDays(29);
+
             mainForm = form1;
             settingsForm = new Settings(mainForm);
             issueId = Id;
@@ -58,7 +63,6 @@ namespace SKS_Service_Manager
             editedDocxFilePath = folderFilePath + "backup/" + newFile + "_new.docx";
             pdfFilePath = folderFilePath + "backup/" + newFile + "_new.pdf";
             savedpdfFilePath = folderFilePath + "Wystawione/" + newFile + "_" + issueId + ".pdf";
-
 
             Percentage.Text = settingsForm.GetPercentage().ToString();
 
@@ -143,7 +147,7 @@ namespace SKS_Service_Manager
                 {
                     // Formatuj tekst w kontrolce TextBox zawsze z dwiema cyframi po przecinku
                     textBox.Text = value.ToString("0.00");
-                    Interest_ValueChanged();
+                    Interest_ValueChanged(sender, e);
                 }
                 else
                 {
@@ -286,7 +290,7 @@ namespace SKS_Service_Manager
             }
         }
 
-        public void CreateDocxFromData(DataTable data, string outputDocxFile)
+        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate)
         {
             using (WordprocessingDocument doc = WordprocessingDocument.Create(outputDocxFile, WordprocessingDocumentType.Document))
             {
@@ -297,46 +301,190 @@ namespace SKS_Service_Manager
                 // Tworzenie sekcji
                 Body body = mainPart.Document.AppendChild(new Body());
 
+                // Dodawanie nagłówka strony z informacją o okresie
+                Paragraph headerParagraph = new Paragraph();
+                Run headerRun = new Run();
+                Text headerText = new Text($"Ewidencja kupna sprzedaży w okresie od {fromDate.ToShortDateString()} do {toDate.ToShortDateString()}");
+
+                // Ustawianie czcionki
+                RunProperties runProperties = new RunProperties();
+                Bold bold = new Bold();
+                FontSize fontSize = new FontSize() { Val = "34" }; // Ustawienie rozmiaru trzcionki na 24 punkty
+                Justification justification2 = new Justification() { Val = JustificationValues.Center }; // Wyśrodkowanie tekstu
+                ParagraphProperties paragraphProperties2 = new ParagraphProperties();
+                paragraphProperties2.Append(justification2);
+
+                runProperties.Append(bold);
+                runProperties.Append(fontSize);
+
+                headerRun.Append(runProperties);
+                headerRun.Append(headerText);
+
+                headerParagraph.Append(paragraphProperties2);
+                headerParagraph.Append(headerRun);
+
+                body.Append(headerParagraph);
+
                 // Ustawianie orientacji na poziomą
                 SectionProperties sectionProperties = new SectionProperties();
-                PageSize pageSize = new PageSize() { Width = 15840U, Height = 12240U }; // Ustaw rozmiar na poziomy (landscape)
+                PageSize pageSize = new PageSize() { Width = 19840U, Height = 12240U }; // Ustaw rozmiar na poziomy (landscape)
                 sectionProperties.Append(pageSize);
+
+                // Ustawianie marginesów
+                PageMargin pageMargin = new PageMargin()
+                {
+                    Left = 720,     // 720 jednostek to 0,5 cala (połowa lewego marginesu)
+                    Right = 720,    // 720 jednostek to 0,5 cala (połowa prawego marginesu)
+                    Top = 720,      // 720 jednostek to 0,5 cala (połowa górnego marginesu)
+                    Bottom = 720    // 720 jednostek to 0,5 cala (połowa dolnego marginesu)
+                };
+                sectionProperties.Append(pageMargin);
+
                 body.Append(sectionProperties);
 
                 // Tworzenie tabelki
                 Table table = new Table();
+
+                // Dostosowanie szerokości tabeli do rozmiaru strony A4
+                TableWidth tableWidth = new TableWidth() { Width = "19840U", Type = TableWidthUnitValues.Dxa };
+                table.Append(tableWidth);
+
+                // Dodawanie stylu z obramowaniem do tabeli
+                TableProperties tableProperties = new TableProperties(
+                    new TableBorders(
+                        new TopBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                        new BottomBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                        new LeftBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                        new RightBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                        new InsideHorizontalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                        new InsideVerticalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 }
+                    )
+                );
+                table.Append(tableProperties);
 
                 // Tworzenie nagłówków kolumn
                 TableRow headerRow = new TableRow();
                 foreach (DataColumn column in data.Columns)
                 {
                     TableCell cell = new TableCell();
-                    Paragraph paragraph = new Paragraph(new Run(new Text(column.ColumnName)));
+                    Paragraph paragraph = new Paragraph();
+
+                    // Ustawianie właściwości justowania tekstu na środek
+                    ParagraphProperties paragraphProperties = new ParagraphProperties();
+                    Justification justification = new Justification() { Val = JustificationValues.Center };
+                    paragraphProperties.Append(justification);
+
+                    Shading shading = new Shading()
+                    {
+                        Val = ShadingPatternValues.Clear,
+                        Color = "auto",
+                        Fill = "D9D9D9" // Kolor "D9D9D9" reprezentuje szary kolor
+                    };
+
+                    paragraph.Append(paragraphProperties);
+                    paragraph.Append(new Run(new Text(column.ColumnName)));
                     cell.Append(paragraph);
+                    cell.Append(new TableCellProperties(shading));
                     headerRow.Append(cell);
                 }
                 table.Append(headerRow);
 
-                // Dodawanie danych z DataTable
                 foreach (DataRow row in data.Rows)
                 {
                     TableRow dataRow = new TableRow();
+                    int columnIndex = 0;
+
                     foreach (object item in row.ItemArray)
                     {
                         TableCell cell = new TableCell();
-                        Paragraph paragraph = new Paragraph(new Run(new Text(item.ToString())));
+                        Paragraph paragraph = new Paragraph();
+
+                        // Ustawianie właściwości justowania tekstu na środek
+                        ParagraphProperties paragraphProperties = new ParagraphProperties();
+                        Justification justification = new Justification() { Val = JustificationValues.Center };
+                        paragraphProperties.Append(justification);
+
+                        paragraph.Append(paragraphProperties);
+
+
+
+                        // Formatowanie wartości jako liczba z dwoma miejscami po przecinku, jeśli to możliwe
+                        if (TryFormatAsDecimal(item, out string formattedValue))
+                        {
+                            if (columnIndex == 8)
+                            {
+                                // Tworzenie nowego Run z właściwościami koloru tekstu
+                                Run run = new Run();
+                                RunProperties runProperties2 = new RunProperties();
+
+                                Color color = new Color() { Val = "000000" }; // Kolor czerwony
+                                if (decimal.Parse(formattedValue) < 0) { color = new Color() { Val = "CC0000" }; } // Kolor czerwony
+                                if (decimal.Parse(formattedValue) > 0) { color = new Color() { Val = "00CC00" }; } // Kolor zielony
+
+                                runProperties2.Append(color);
+                                run.Append(runProperties2);
+
+                                // Ustawienie tekstu sformatowanego Run
+                                run.AppendChild(new Text(formattedValue));
+
+                                // Dodanie Run do akapitu
+                                paragraph.Append(run);
+                            }
+                            else
+                            {
+                                paragraph.Append(new Run(new Text(formattedValue)));
+                            }
+                        }
+                        else if (columnIndex == 6 || columnIndex == 7)
+                        {
+                            string[] parts = item.ToString().Split(':'); // Rozdziel tekst na część przed i po dwukropku
+                            if (parts.Length == 2) // Upewnij się, że są dwie części
+                            {
+                                string valuePart = parts[1].Trim(); // Pobierz część z wartością
+                                decimal numericValue;
+                                if (decimal.TryParse(valuePart, out numericValue)) // Sprawdź, czy wartość jest liczbą
+                                {
+                                    string formattedNumericValue = numericValue.ToString("0.00"); // Formatuj wartość do dwóch miejsc po przecinku
+                                    parts[1] = formattedNumericValue; // Zaktualizuj część z wartością
+
+                                    // Połącz ponownie części tekstu i ustaw sformatowany tekst
+                                    paragraph.Append(new Run(new Text(string.Join(" : ", parts))));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            paragraph.Append(new Run(new Text(item.ToString())));
+                        }
+
+
                         cell.Append(paragraph);
                         dataRow.Append(cell);
+                        columnIndex++;
                     }
                     table.Append(dataRow);
                 }
 
-                // Dodawanie tabelki do sekcji
                 body.Append(table);
 
                 // Zapisywanie dokumentu DOCX
                 mainPart.Document.Save();
             }
+        }
+
+        private bool TryFormatAsDecimal(object obj, out string formattedValue)
+        {
+            formattedValue = null;
+            if (obj == null) return false;
+
+            CultureInfo cultureInfo = new CultureInfo("pl-PL"); // Ustaw polską kulturę, która używa przecinka jako separatora dziesiętnego
+            if (decimal.TryParse(obj.ToString(), NumberStyles.Any, cultureInfo, out decimal decimalValue))
+            {
+                formattedValue = decimalValue.ToString("0.00", cultureInfo);
+                return true;
+            }
+
+            return false;
         }
 
         private void SaveInvoiceToDatabase(int userId)
@@ -579,24 +727,18 @@ namespace SKS_Service_Manager
 
         public decimal CalculateTotalPrice(decimal initialPrice, int days, int percentage)
         {
-            // Określamy, ile pełnych okresów 30 dni mieści się w podanej ilości dni
-            int fullPeriods = days / 30;
-
-            // Określamy pozostałą ilość dni po pełnych okresach 30 dni
-            int remainingDays = days % 30;
-
             // Konwertujemy procent na decimal
             decimal decimalPercentage = (decimal)percentage / 100;
 
             // Obliczamy wartość odsetek za pełne okresy 30 dni
-            decimal interest = (initialPrice * decimalPercentage) * fullPeriods;
+            decimal interest = initialPrice * decimalPercentage;
 
             // Obliczamy wartość odsetek za pozostałe dni
-            decimal remainingInterest = (initialPrice * decimalPercentage) * remainingDays;
+            decimal intrestByDay = interest / 30;
 
-            totalIntrest = interest + remainingInterest;
+            totalIntrest = intrestByDay * days;
             // Obliczamy całkowitą cenę przedmiotu
-            decimal totalPrice = initialPrice + interest + remainingInterest;
+            decimal totalPrice = initialPrice + totalIntrest;
 
             return totalPrice;
         }
@@ -646,10 +788,17 @@ namespace SKS_Service_Manager
             }
         }
 
-        private void Interest_ValueChanged()
+        private void Interest_ValueChanged(object sender, EventArgs e)
         {
             decimal value = decimal.Parse(Value.Text);
-            totalBuyOut = CalculateTotalPrice(value, int.Parse(Days.Text), int.Parse(Percentage.Text));
+            int days = int.Parse(Days.Text.ToString());
+            int perc = int.Parse(Percentage.Text);
+
+            if (value < 0) { value = 0; }
+            if (days < 0) { days = 0; }
+            if (perc < 0) { perc = 0; }
+
+            totalBuyOut = CalculateTotalPrice(value, days, perc);
 
             Fee.Text = totalIntrest.ToString("F2");
             BuyAmount.Text = totalBuyOut.ToString("F2");

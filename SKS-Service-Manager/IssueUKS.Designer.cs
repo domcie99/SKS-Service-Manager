@@ -406,6 +406,7 @@
             Value.TabIndex = 104;
             Value.Text = "0,00";
             Value.TextAlign = HorizontalAlignment.Right;
+            Value.TextChanged += Value_Validation;
             Value.KeyPress += Value_KeyPress;
             Value.Leave += Value_Validation;
             // 
@@ -510,12 +511,13 @@
             // 
             // SaleDate
             // 
-            SaleDate.CustomFormat = "dd-MM-yyyy";
+            SaleDate.CustomFormat = "dd.MM.yyyy";
             SaleDate.Format = DateTimePickerFormat.Short;
             SaleDate.Location = new Point(681, 51);
             SaleDate.Name = "SaleDate";
             SaleDate.Size = new Size(100, 23);
             SaleDate.TabIndex = 113;
+            SaleDate.Value = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             // 
             // label28
             // 
@@ -530,12 +532,13 @@
             // 
             // DateOfReturn
             // 
-            DateOfReturn.CustomFormat = "dd-MM-yyyy";
+            DateOfReturn.CustomFormat = "dd.MM.yyyy";
             DateOfReturn.Format = DateTimePickerFormat.Short;
             DateOfReturn.Location = new Point(681, 22);
             DateOfReturn.Name = "DateOfReturn";
             DateOfReturn.Size = new Size(100, 23);
             DateOfReturn.TabIndex = 112;
+            DateOfReturn.Value = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             // 
             // label27
             // 
@@ -685,7 +688,7 @@
             Percentage.TabIndex = 108;
             Percentage.Text = "0";
             Percentage.TextAlign = HorizontalAlignment.Right;
-            Percentage.TextChanged += PercentageChanged;
+            Percentage.TextChanged += Interest_ValueChanged;
             Percentage.KeyPress += IsInt_KeyPress;
             Percentage.Leave += Percentage_Leave;
             // 
@@ -695,9 +698,9 @@
             label17.Font = new Font("Segoe UI", 12F);
             label17.Location = new Point(6, 109);
             label17.Name = "label17";
-            label17.Size = new Size(150, 23);
+            label17.Size = new Size(176, 23);
             label17.TabIndex = 93;
-            label17.Text = "Procent zwyżki";
+            label17.Text = "Procent zwyżki/Miesiąc";
             label17.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // Days
@@ -708,6 +711,7 @@
             Days.TabIndex = 107;
             Days.Text = "0";
             Days.TextAlign = HorizontalAlignment.Right;
+            Days.TextChanged += Interest_ValueChanged;
             Days.KeyPress += IsInt_KeyPress;
             // 
             // label16
@@ -723,12 +727,13 @@
             // 
             // Pickup_Date
             // 
-            Pickup_Date.CustomFormat = "dd-MM-yyyy";
+            Pickup_Date.CustomFormat = "dd.MM.yyyy";
             Pickup_Date.Format = DateTimePickerFormat.Short;
             Pickup_Date.Location = new Point(182, 51);
             Pickup_Date.Name = "Pickup_Date";
             Pickup_Date.Size = new Size(100, 23);
             Pickup_Date.TabIndex = 106;
+            Pickup_Date.Value = new DateTime(2024, 2, 26, 0, 0, 0, 0);
             Pickup_Date.ValueChanged += Issue_Date_ValueChanged;
             // 
             // label14
@@ -744,7 +749,7 @@
             // 
             // Issue_Date
             // 
-            Issue_Date.CustomFormat = "dd-MM-yyyy";
+            Issue_Date.CustomFormat = "dd.MM.yyyy";
             Issue_Date.Format = DateTimePickerFormat.Short;
             Issue_Date.Location = new Point(182, 22);
             Issue_Date.Name = "Issue_Date";

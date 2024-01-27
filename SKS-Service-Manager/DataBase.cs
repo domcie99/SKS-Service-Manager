@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Office.Word;
 using MySqlConnector;
 using System;
@@ -280,8 +281,11 @@ namespace SKS_Service_Manager
                                 "UKS.Description AS 'Dokładny opis kupionych (używanych) rzeczy', " +
                                 "CAST(UKS.BuyAmount AS decimal(10, 2)) AS 'Wartość sprzedaży minus zużycie', " +
                                 "DATE(UKS.BuyDate) AS 'Ostateczny termin do odkupu', " +
-                                "DATE(UKS.DateOfReturn) || ', ' || CAST(UKS.SaleAmount AS decimal(10, 2)) AS 'Zwrot rzeczy z odkupem (Data, Kwota)', " +
-                                "DATE(UKS.SaleDate) || ', ' || CAST(UKS.SaleAmount AS decimal(10, 2)) AS 'Zwrot rzeczy z odkupem (Data, Kwota)', " +
+
+                                "CASE WHEN(DATE(UKS.DateOfReturn) >= '1800-01-01') THEN DATE(UKS.DateOfReturn) || ' : ' || CAST(UKS.SaleAmount AS decimal(10, 2)) ELSE NULL END AS 'Zwrot rzeczy z odkupem \n\n(Data : Kwota)'," +
+                                "CASE WHEN(DATE(UKS.SaleDate) >= '1800-01-01') THEN DATE(UKS.SaleDate) || ' : ' || CAST(UKS.SaleAmount AS decimal(10, 2)) ELSE NULL END AS 'Sprzedaż kupionej rzeczy \n\n(Data : Kwota)'," +
+
+                                "CAST((UKS.SaleAmount - UKS.TotalAmount) AS decimal(10, 2)) AS 'Kwota uzyskanej prowizji albo odkupu'," +
                                 "UKS.Notes AS 'Uwagi' " +
                                 "FROM UKS " +
                                 "INNER JOIN Users ON UKS.UserID = Users.ID " +

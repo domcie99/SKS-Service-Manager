@@ -28,23 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PrintRecords));
             print = new Button();
             DocumentType = new ComboBox();
-            PickupDate = new DateTimePicker();
+            ToDate = new DateTimePicker();
             label14 = new Label();
-            IssuedDate = new DateTimePicker();
+            FromDate = new DateTimePicker();
             label15 = new Label();
             label1 = new Label();
             label2 = new Label();
             IssuedCity = new ComboBox();
             mySqlCommand1 = new MySqlConnector.MySqlCommand();
-            dataGridView1 = new DataGridView();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // print
@@ -73,14 +67,14 @@
             DocumentType.Size = new Size(220, 23);
             DocumentType.TabIndex = 120;
             // 
-            // PickupDate
+            // ToDate
             // 
-            PickupDate.CustomFormat = "dd-MM-yyyy";
-            PickupDate.Format = DateTimePickerFormat.Short;
-            PickupDate.Location = new Point(201, 133);
-            PickupDate.Name = "PickupDate";
-            PickupDate.Size = new Size(100, 23);
-            PickupDate.TabIndex = 124;
+            ToDate.CustomFormat = "dd-MM-yyyy";
+            ToDate.Format = DateTimePickerFormat.Short;
+            ToDate.Location = new Point(201, 133);
+            ToDate.Name = "ToDate";
+            ToDate.Size = new Size(100, 23);
+            ToDate.TabIndex = 124;
             // 
             // label14
             // 
@@ -90,18 +84,18 @@
             label14.Name = "label14";
             label14.Size = new Size(150, 23);
             label14.TabIndex = 122;
-            label14.Text = "Termin Odbioru";
+            label14.Text = "Zakres do";
             label14.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // IssuedDate
+            // FromDate
             // 
-            IssuedDate.CustomFormat = "dd-MM-yyyy";
-            IssuedDate.Format = DateTimePickerFormat.Short;
-            IssuedDate.Location = new Point(201, 104);
-            IssuedDate.Name = "IssuedDate";
-            IssuedDate.Size = new Size(100, 23);
-            IssuedDate.TabIndex = 123;
-            IssuedDate.Value = new DateTime(2024, 1, 23, 17, 7, 29, 0);
+            FromDate.CustomFormat = "dd-MM-yyyy";
+            FromDate.Format = DateTimePickerFormat.Short;
+            FromDate.Location = new Point(201, 104);
+            FromDate.Name = "FromDate";
+            FromDate.Size = new Size(100, 23);
+            FromDate.TabIndex = 123;
+            FromDate.Value = new DateTime(2024, 1, 23, 17, 7, 29, 0);
             // 
             // label15
             // 
@@ -111,7 +105,7 @@
             label15.Name = "label15";
             label15.Size = new Size(150, 23);
             label15.TabIndex = 121;
-            label15.Text = "Data Przyjęcia";
+            label15.Text = "Zakres Od";
             label15.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label1
@@ -153,67 +147,24 @@
             mySqlCommand1.Transaction = null;
             mySqlCommand1.UpdatedRowSource = System.Data.UpdateRowSource.None;
             // 
-            // dataGridView1
-            // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.Format = "N2";
-            dataGridViewCellStyle1.NullValue = null;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.Format = "N2";
-            dataGridViewCellStyle2.NullValue = null;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
-            dataGridView1.Location = new Point(27, 275);
-            dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.Format = "N2";
-            dataGridViewCellStyle3.NullValue = null;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            dataGridViewCellStyle4.Format = "N2";
-            dataGridViewCellStyle4.NullValue = null;
-            dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle4;
-            dataGridView1.Size = new Size(1388, 520);
-            dataGridView1.TabIndex = 128;
-            // 
             // PrintRecords
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
-            ClientSize = new Size(1440, 807);
-            Controls.Add(dataGridView1);
+            ClientSize = new Size(486, 193);
             Controls.Add(IssuedCity);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(PickupDate);
+            Controls.Add(ToDate);
             Controls.Add(label14);
-            Controls.Add(IssuedDate);
+            Controls.Add(FromDate);
             Controls.Add(label15);
             Controls.Add(DocumentType);
             Controls.Add(print);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "PrintRecords";
             Text = "Ewidencja Kupna Sprzedaży";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
 
@@ -221,14 +172,13 @@
 
         private Button print;
         private ComboBox DocumentType;
-        private DateTimePicker PickupDate;
+        private DateTimePicker ToDate;
         private Label label14;
-        private DateTimePicker IssuedDate;
+        private DateTimePicker FromDate;
         private Label label15;
         private Label label1;
         private Label label2;
         private ComboBox IssuedCity;
         private MySqlConnector.MySqlCommand mySqlCommand1;
-        private DataGridView dataGridView1;
     }
 }
