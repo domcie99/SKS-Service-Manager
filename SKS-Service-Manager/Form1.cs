@@ -22,7 +22,7 @@ namespace SKS_Service_Manager
 
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
-        private string localVersion = "1.0.5.0"; // Wersja Twojej aplikacji
+        private string localVersion = "1.0.6.0"; // Wersja Twojej aplikacji
 
 
 
@@ -170,9 +170,9 @@ namespace SKS_Service_Manager
             userlistForm = new UserList(this);
 
             button1.Invoke(new Action(() => button1.Enabled = true));
-            button2.Invoke(new Action(() => button1.Enabled = true));
-            button7.Invoke(new Action(() => button1.Enabled = true));
-            button8.Invoke(new Action(() => button1.Enabled = true));
+            button2.Invoke(new Action(() => button2.Enabled = true));
+            button7.Invoke(new Action(() => button7.Enabled = true));
+            button8.Invoke(new Action(() => button8.Enabled = true));
         }
 
         private void OpenSettingsForm()
