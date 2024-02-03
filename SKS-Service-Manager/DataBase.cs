@@ -1,13 +1,8 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using DocumentFormat.OpenXml.Math;
-using DocumentFormat.OpenXml.Office.Word;
-using MySqlConnector;
-using System;
+﻿using MySqlConnector;
 using System.Data;
 using System.Data.SQLite;
-using System.Windows.Forms;
 
+#pragma warning disable
 namespace SKS_Service_Manager
 {
     public class DataBase
@@ -217,11 +212,11 @@ namespace SKS_Service_Manager
             try
             {
                 string query = "SELECT UKS.ID, " +
+                                "UKS.InvoiceDate AS 'Data Wystawienia', " +
                                 "UKS.DocumentType AS 'Typ Umowy', " +
                                 "UKS.City AS 'Miasto Wystawienia', " +
                                 "UKS.Description AS 'Opis', " +
                                 "UKS.TotalAmount AS 'Wartość', " +
-                                "UKS.InvoiceDate AS 'Data Wystawienia', " +
                                 "UKS.Notes AS 'Notatki', " +
 
                                 "Users.FullName AS 'Imię Nazwisko', " +
@@ -234,7 +229,8 @@ namespace SKS_Service_Manager
                                 "Users.Name AS 'Nazwa Firmy'" +
 
                                 "FROM UKS " +
-                                "INNER JOIN Users ON UKS.UserID = Users.ID;";
+                                "INNER JOIN Users ON UKS.UserID = Users.ID " +
+                                "ORDER BY UKS.InvoiceDate DESC;";
 
                 DataTable dt = new DataTable();
 
@@ -634,7 +630,10 @@ namespace SKS_Service_Manager
 
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
+                    if (mySqlConnection.State == ConnectionState.Closed)
+                    {
+                        mySqlConnection.Open();
+                    }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@Pesel", pesel);
                     int count = Convert.ToInt32(cmd.ExecuteScalar());
@@ -642,9 +641,94 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
+                    if (sqliteConnection.State == ConnectionState.Closed)
+                    {
+                        sqliteConnection.Open();
+                    }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@Pesel", pesel);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych Pesel: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
+        public bool CheckUserExistsByDokNr(string dokNr)
+        {
+            try
+            {
+                string query = "SELECT COUNT(*) FROM Users WHERE DocumentNumber = @DokNr;";
+
+                if (useMySQL)
+                {
+                    if (mySqlConnection.State == ConnectionState.Closed)
+                    {
+                        mySqlConnection.Open();
+                    }
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@DokNr", dokNr);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+                else
+                {
+                    if (sqliteConnection.State == ConnectionState.Closed)
+                    {
+                        sqliteConnection.Open();
+                    }
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    cmd.Parameters.AddWithValue("@DokNr", dokNr);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych DokNr: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
+        public bool CheckUserExistsByNameAndAdress(string Address, string FullName)
+        {
+            try
+            {
+                string query = "SELECT COUNT(*) FROM Users WHERE FullName = @FullName AND Address = @Address;";
+
+                if (useMySQL)
+                {
+                    if (mySqlConnection.State == ConnectionState.Closed)
+                    {
+                        mySqlConnection.Open();
+                    }
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@FullName", FullName);
+                    cmd.Parameters.AddWithValue("@Address", Address);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+                else
+                {
+                    if (sqliteConnection.State == ConnectionState.Closed)
+                    {
+                        sqliteConnection.Open();
+                    }
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    cmd.Parameters.AddWithValue("@FullName", FullName);
+                    cmd.Parameters.AddWithValue("@Address", Address);
                     int count = Convert.ToInt32(cmd.ExecuteScalar());
                     return count > 0;
                 }
@@ -660,6 +744,69 @@ namespace SKS_Service_Manager
             }
         }
 
+
+        public bool CheckUserExists(string Pesel, string docNumber, string Adress, string FullName) {
+            if (!string.IsNullOrEmpty(Pesel)) {
+                return CheckUserExistsByPesel(Pesel);
+            }
+            if (!string.IsNullOrEmpty(docNumber)) {
+                return CheckUserExistsByDokNr(docNumber);
+            }
+            if (!string.IsNullOrEmpty(Adress) && !string.IsNullOrEmpty(FullName))
+            {
+                return CheckUserExistsByNameAndAdress(Adress, FullName);
+            }
+            return false;
+        }
+
+        public int GetUserId(string peselOrDocNum)
+        {
+            try
+            {
+                string query = "SELECT ID FROM Users WHERE Pesel = @Pesel OR DocumentNumber = @DocNum;";
+
+                if (useMySQL)
+                {
+                    if (mySqlConnection.State == ConnectionState.Closed)
+                    {
+                        mySqlConnection.Open();
+                    }
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@Pesel", peselOrDocNum);
+                    cmd.Parameters.AddWithValue("@DocNum", peselOrDocNum);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+                else
+                {
+                    if (sqliteConnection.State == ConnectionState.Closed)
+                    {
+                        sqliteConnection.Open();
+                    }
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    cmd.Parameters.AddWithValue("@Pesel", peselOrDocNum);
+                    cmd.Parameters.AddWithValue("@DocNum", peselOrDocNum);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas pobierania użytkownika z bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+
+            return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
+        }
         public void UpdateUserInDatabase(bool exist, string fullName, string name, string address, string postalCode, string city, string phone, string email, string documentType, string documentNumber, string pesel, string nip, string notes)
         {
             try
@@ -672,7 +819,7 @@ namespace SKS_Service_Manager
                 UPDATE Users
                 SET FullName = @FullName, Name = @Name, Address = @Address, PostalCode = @PostalCode, City = @City, Phone = @Phone, Email = @Email,
                     DocumentType = @DocumentType, DocumentNumber = @DocumentNumber, NIP = @NIP, Notes = @Notes
-                WHERE Pesel = @Pesel;";
+                WHERE Pesel = @Pesel OR DocumentNumber = @DocumentNumber;";
                 }
                 else
                 {
@@ -683,7 +830,10 @@ namespace SKS_Service_Manager
 
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
+                    if (mySqlConnection.State == ConnectionState.Closed)
+                    {
+                        mySqlConnection.Open();
+                    }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@FullName", fullName);
                     cmd.Parameters.AddWithValue("@Name", name);
@@ -701,7 +851,10 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
+                    if (sqliteConnection.State == ConnectionState.Closed)
+                    {
+                        sqliteConnection.Open();
+                    }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@FullName", fullName);
                     cmd.Parameters.AddWithValue("@Name", name);
@@ -845,6 +998,200 @@ namespace SKS_Service_Manager
             }
         }
 
+        public bool CheckInvoiceExists(int id)
+        {
+            try
+            {
+                string query = "SELECT COUNT(*) FROM UKS WHERE ID = @ID;";
 
+                if (useMySQL)
+                {
+                    mySqlConnection.Open();
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+                else
+                {
+                    sqliteConnection.Open();
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas sprawdzania umów w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
+        public bool CheckInvoiceExists(string description, decimal totalAmount)
+        {
+            try
+            {
+                string query = "SELECT COUNT(*) FROM UKS WHERE Description = @Description AND TotalAmount = @TotalAmount;";
+
+                if (useMySQL)
+                {
+                    mySqlConnection.Open();
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@Description", description);
+                    cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+                else
+                {
+                    sqliteConnection.Open();
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    cmd.Parameters.AddWithValue("@Description", description);
+                    cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas sprawdzania umów w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
+        public void AddUsersFromGeneratedDatabase(string generatedDatabaseFilePath)
+        {
+            try
+            {
+                // Tworzenie połączenia do wygenerowanej bazy danych SQLite
+                string generatedDatabaseConnectionString = $"Data Source={generatedDatabaseFilePath};Version=3;";
+                SQLiteConnection generatedDatabaseConnection = new SQLiteConnection(generatedDatabaseConnectionString);
+                generatedDatabaseConnection.Open();
+
+                // Przygotowanie zapytania do pobrania użytkowników z wygenerowanej bazy
+                string query = "SELECT KLIENT_NAZWISKO_IMIE, KLIENT_KOD_POCZT, KLIENT_MIEJSCOW, KLIENT_ULICA, KLIENT_TEL_KONTAKT, KLIENT_DOK_TYP, KLIENT_DOK_NR, KLIENT_PESEL, FIRMA_MIEJSCOW, PRZEDMIOT_OPIS, PRZEDMIOT_WARTOSC, DATA_PRZYJECIA, TERMIN_ODBIORU, UMOWA_ILOSC_DNI, UMOWA_PROCENT, OPLATA, OPLATA_OPOZNIENIE, KWOTA_WYKUPU, FAKT_ODBIOR_DATA, SPRZEDAZ_DATA, SPRZEDAZ_KWOTA, UWAGI FROM lombard";
+
+                // Wykonanie zapytania
+                SQLiteCommand command = new SQLiteCommand(query, generatedDatabaseConnection);
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                // Otwarcie połączenia do Twojej bazy danych
+                //sqliteConnection.Open();
+
+                // Iteracja przez wyniki zapytania i dodawanie użytkowników do Twojej bazy danych
+                while (reader.Read())
+                {
+                    string nazwiskoImie = reader["KLIENT_NAZWISKO_IMIE"].ToString();
+                    string[] parts = nazwiskoImie.Split(' ');
+                    string odwroconeImieNazwisko = parts[1] + " " + parts[0];
+
+                    string kodPocztowy = reader["KLIENT_KOD_POCZT"].ToString();
+                    string miejscowosc = reader["KLIENT_MIEJSCOW"].ToString();
+                    string ulica = reader["KLIENT_ULICA"].ToString();
+                    string telefon = reader["KLIENT_TEL_KONTAKT"].ToString();
+                    string dokumentTyp = reader["KLIENT_DOK_TYP"].ToString();
+                    string dokumentNumer = reader["KLIENT_DOK_NR"].ToString();
+
+                    string pesel = reader["KLIENT_PESEL"].ToString();
+
+                    string City = reader["FIRMA_MIEJSCOW"].ToString();
+
+                    string Description = reader["PRZEDMIOT_OPIS"].ToString();
+                    string TotalAmount = reader["PRZEDMIOT_WARTOSC"].ToString().Replace(".", ",");
+
+                    string InvoiceDate = reader["DATA_PRZYJECIA"].ToString();
+                    string BuyDate = reader["TERMIN_ODBIORU"].ToString();
+                    string Days = reader["UMOWA_ILOSC_DNI"].ToString();
+                    string Percentage = reader["UMOWA_PROCENT"].ToString();
+
+
+                    string Fee = reader["OPLATA"].ToString().Replace(".", ",");
+                    string LateFee = reader["OPLATA_OPOZNIENIE"].ToString().Replace(".", ",");
+                    string BuyAmount = reader["KWOTA_WYKUPU"].ToString().Replace(".", ",");
+
+                    string DateOfReturn = reader["FAKT_ODBIOR_DATA"].ToString();
+                    string SaleDate = reader["SPRZEDAZ_DATA"].ToString();
+                    string SaleAmount = reader["SPRZEDAZ_KWOTA"].ToString().Replace(".", ",");
+
+                    string Notes = reader["UWAGI"].ToString();
+
+                    bool userExists = CheckUserExists(pesel, dokumentNumer, ulica, odwroconeImieNazwisko);
+
+                    if (!userExists)
+                    {
+                        UpdateUserInDatabase(false, odwroconeImieNazwisko, "", ulica, kodPocztowy, miejscowosc, telefon, "", "Dowód Osobisty", dokumentNumer, "", "", "");
+                    }
+
+                    int userid = -1;
+                    userid = GetUserId(dokumentNumer);
+                    if (userid < 0) { userid = GetUserId(pesel); }
+
+                    if (userid > 0 && !CheckInvoiceExists(Description, string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount)))
+                    {
+                        System.Data.DataTable invoiceData = new System.Data.DataTable();
+                        invoiceData.Columns.Add("UserID", typeof(int));
+                        invoiceData.Columns.Add("DocumentType", typeof(string));
+                        invoiceData.Columns.Add("City", typeof(string));
+                        invoiceData.Columns.Add("Description", typeof(string));
+                        invoiceData.Columns.Add("TotalAmount", typeof(decimal));
+                        invoiceData.Columns.Add("InvoiceDate", typeof(DateTime));
+                        invoiceData.Columns.Add("BuyDate", typeof(DateTime));
+                        invoiceData.Columns.Add("Notes", typeof(string));
+                        invoiceData.Columns.Add("Days", typeof(int));
+                        invoiceData.Columns.Add("Percentage", typeof(int));
+                        invoiceData.Columns.Add("Fee", typeof(decimal));
+                        invoiceData.Columns.Add("LateFee", typeof(decimal));
+                        invoiceData.Columns.Add("BuyAmount", typeof(decimal));
+                        invoiceData.Columns.Add("DateOfReturn", typeof(DateTime));
+                        invoiceData.Columns.Add("SaleDate", typeof(DateTime));
+                        invoiceData.Columns.Add("SaleAmount", typeof(decimal));
+
+                        DataRow newRow = invoiceData.NewRow();
+                        newRow["UserID"] = userid;
+                        newRow["City"] = City;
+                        newRow["DocumentType"] = "Umowa Kupna-Sprzedaży"; // Pobierz rodzaj dokumentu
+                        newRow["Description"] = Description;
+                        newRow["TotalAmount"] = string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount);
+                        newRow["InvoiceDate"] = DateTime.TryParse(InvoiceDate, out DateTime invoiceDateTime) ? (object)invoiceDateTime : (object)new DateTime(1753, 1, 1);
+                        newRow["BuyDate"] = DateTime.TryParse(BuyDate, out DateTime buyDateTime) ? (object)buyDateTime : (object)new DateTime(1753, 1, 1);
+                        newRow["Notes"] = Notes;
+                        newRow["Days"] = string.IsNullOrEmpty(Days) ? 0 : int.Parse(Days);
+                        newRow["Percentage"] = string.IsNullOrEmpty(Percentage) ? 0 : int.Parse(Percentage);
+                        newRow["Fee"] = string.IsNullOrEmpty(Fee) ? 0 : decimal.Parse(Fee);
+                        newRow["LateFee"] = string.IsNullOrEmpty(LateFee) ? 0 : decimal.Parse(LateFee);
+                        newRow["BuyAmount"] = string.IsNullOrEmpty(BuyAmount) ? 0 : decimal.Parse(BuyAmount);
+                        newRow["DateOfReturn"] = DateTime.TryParse(DateOfReturn, out DateTime dateOfReturnDateTime) ? (object)dateOfReturnDateTime : (object)new DateTime(1753, 1, 1);
+                        newRow["SaleDate"] = DateTime.TryParse(SaleDate, out DateTime saleDateTime) ? (object)saleDateTime : (object)new DateTime(1753, 1, 1);
+                        newRow["SaleAmount"] = string.IsNullOrEmpty(SaleAmount) ? 0 : decimal.Parse(SaleAmount);
+
+                        invoiceData.Rows.Add(newRow);
+
+                        SaveInvoiceToDatabase(invoiceData);
+                    }
+
+                }
+
+                // Zamknięcie połączenia z wygenerowaną bazą danych
+                generatedDatabaseConnection.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas importu użytkowników: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // Zamknięcie połączenia z Twoją bazą danych
+                CloseConnection();
+            }
+        }
     }
 }

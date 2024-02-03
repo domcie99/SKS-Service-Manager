@@ -10,6 +10,8 @@ using Color = DocumentFormat.OpenXml.Wordprocessing.Color;
 using DataTable = System.Data.DataTable;
 using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 
+
+#pragma warning disable
 namespace SKS_Service_Manager
 {
     public partial class IssueUKS : Form
@@ -39,6 +41,8 @@ namespace SKS_Service_Manager
         public IssueUKS(int Id, Form1 form1)
         {
             InitializeComponent();
+            CenterToScreen();
+
             Issue_Date.Value = DateTime.Now.Date;
             Pickup_Date.Value = DateTime.Now.Date.AddDays(29);
 
@@ -78,6 +82,7 @@ namespace SKS_Service_Manager
             using (UserList userListForm = new UserList(mainForm))
             {
                 userListForm.setIssueVisible(true);
+                userListForm.selectUser = true;
                 if (userListForm.ShowDialog() == DialogResult.OK)
                 {
                     // Retrieve the selected user data from userlist form
@@ -227,7 +232,7 @@ namespace SKS_Service_Manager
 
                     doc.Save();
                 }
-
+                MessageBox.Show("Generowanie PDF", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ConvertDocxToPdf(editedDocxFilePath, pdfFilePath);
                 MessageBox.Show("Dokument został wygenerowany, można drukować", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -242,11 +247,22 @@ namespace SKS_Service_Manager
                 Save.Enabled = true;
                 Print.Enabled = true;
                 generated = true;
-                if (issueId > 0)
+
+                bool userExists = dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, FullName.Text);
+
+                UpdateUserInDatabase(userExists);
+
+                if (dataBase.CheckInvoiceExists(issueId))
                 {
-                    // Aktualizuj dane faktury w bazie danych
                     UpdateInvoiceInDatabase(issueId);
-                    UpdateUserInDatabase(dataBase.CheckUserExistsByPesel(Pesel.Text)); ;
+
+                }
+                else
+                {
+                    int userid = -1;
+                    userid = dataBase.GetUserId(DocumentNumber.Text);
+                    if (userid < 0) { userid = dataBase.GetUserId(Pesel.Text); }
+                    SaveInvoiceToDatabase(userid);
                 }
             }
         }
@@ -557,12 +573,12 @@ namespace SKS_Service_Manager
                         File.Copy(pdfFilePath, savedpdfFilePath, true);
                     }
 
-                    if (issueId < 0)
+/*                    if (issueId < 0)
                     {
                         // Aktualizuj dane faktury w bazie danych
                         UpdateUserInDatabase(dataBase.CheckUserExistsByPesel(Pesel.Text));
                         SaveInvoiceToDatabase(issueUserId);
-                    }
+                    }*/
 
                     try
                     {
@@ -815,7 +831,8 @@ namespace SKS_Service_Manager
 
         }
 
-        private void LoadLibreOffive() {
+        private void LoadLibreOffive()
+        {
             if (File.Exists(libreOfficeInst))
             {
                 libreOfficePath = libreOfficeInst;
@@ -824,6 +841,11 @@ namespace SKS_Service_Manager
             {
                 libreOfficePath = libreOfficePort;
             }
+
+        }
+
+        private void FormType_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }

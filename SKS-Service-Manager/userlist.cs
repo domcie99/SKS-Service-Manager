@@ -1,6 +1,7 @@
 ﻿using MySqlConnector;
 using System.Data;
 
+#pragma warning disable
 namespace SKS_Service_Manager
 {
     public partial class UserList : Form
@@ -10,17 +11,17 @@ namespace SKS_Service_Manager
         public int issueUserId;
         private DataBase database;
         DataTable userData;
+        public bool selectUser = false;
 
         public UserList(Form1 Form1)
         {
             InitializeComponent();
+            CenterToScreen();
+
             mainForm = Form1;
             settingsForm = new Settings(mainForm);
 
             UpdateReference();
-
-            // Inicjalizacja połączenia z bazą danych
-
             LoadUserData();
         }
 
@@ -138,10 +139,53 @@ namespace SKS_Service_Manager
             }
             else
             {
-                MessageBox.Show("Wybierz użytkownika do edycji.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Wybierz użytkownika.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        private void UserList_SizeChanged(object sender, EventArgs e)
+        {
+            int margin = 20; // Możesz dostosować marginesy i inne wartości
+            dataGridView1.Width = this.ClientSize.Width - margin;
+            dataGridView1.Height = this.ClientSize.Height - 100;
+        }
 
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (selectUser) {
+                // Sprawdź, czy użytkownik wybrał wiersz w DataGridView
+                if (dataGridView1.SelectedRows.Count > 0)
+                {
+                    // Pobierz ID wybranego wiersza
+                    string dataID = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
+                    issueUserId = int.Parse(dataID);
+
+                    setIssueVisible(false);
+                    selectUser = false;
+                    DialogResult = DialogResult.OK;
+                }
+                else
+                {
+                    MessageBox.Show("Wybierz użytkownika.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                if (dataGridView1.SelectedRows.Count > 0)
+                {
+                    // Pobierz ID wybranego wiersza
+                    int selectedUserID = int.Parse(dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString());
+
+                    // Otwórz formularz EditUser w trybie edycji (przekazując ID użytkownika i referencję do formularza userlist)
+                    EditUser editUserForm = new EditUser(selectedUserID, this, mainForm);
+                    editUserForm.ShowDialog();
+                    LoadUserData();
+                }
+                else
+                {
+                    MessageBox.Show("Wybierz użytkownika do edycji.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
     }
 }

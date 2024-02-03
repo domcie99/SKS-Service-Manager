@@ -123,9 +123,9 @@
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label9.Location = new Point(210, 124);
             label9.Name = "label9";
-            label9.Size = new Size(100, 21);
+            label9.Size = new Size(100, 42);
             label9.TabIndex = 21;
-            label9.Text = "Lista";
+            label9.Text = "Lista\r\nUmowy\r\n";
             label9.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label11

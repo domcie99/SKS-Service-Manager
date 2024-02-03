@@ -819,6 +819,7 @@
             FormType.Name = "FormType";
             FormType.Size = new Size(220, 23);
             FormType.TabIndex = 118;
+            FormType.SelectedIndexChanged += FormType_SelectedIndexChanged;
             FormType.SelectedValueChanged += FormType_ValueChanged;
             // 
             // IssueUKS

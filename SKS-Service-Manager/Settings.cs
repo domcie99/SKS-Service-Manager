@@ -1,19 +1,13 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using System;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
+﻿using System.Diagnostics;
 
+#pragma warning disable
 namespace SKS_Service_Manager
 {
     partial class Settings : Form
     {
 
         private Form1 mainForm;
-        private DataBase dataBase;
+        private DataBaseInsert dataInsert;
 
         public Settings(Form1 form1)
         {
@@ -164,6 +158,20 @@ namespace SKS_Service_Manager
             {
                 MessageBox.Show("Błąd podczas otwierania folderu: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            OpenDataBaseInsert();
+        }
+
+        private void OpenDataBaseInsert()
+        {
+            if (dataInsert == null || dataInsert.IsDisposed)
+            {
+                dataInsert = new DataBaseInsert(mainForm); // Tworzenie nowego formularza ustawień, jeśli nie istnieje lub został zamknięty
+            }
+            dataInsert.ShowDialog(); // Wyświetlanie formularza ustawień
         }
     }
 }

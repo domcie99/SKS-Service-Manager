@@ -1,9 +1,11 @@
-﻿using MySqlConnector;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using MySqlConnector;
 using System;
 using System.Data;
 using System.Data.Entity;
 using System.Windows.Forms;
 
+#pragma warning disable
 namespace SKS_Service_Manager
 {
     public partial class UksList : Form
@@ -18,6 +20,8 @@ namespace SKS_Service_Manager
         public UksList(Form1 form1)
         {
             InitializeComponent();
+            CenterToScreen();
+
             mainForm = form1;
             dataBase = mainForm.getDataBase();
 
@@ -28,6 +32,9 @@ namespace SKS_Service_Manager
             printRecords = new PrintRecords(mainForm);
 
             LoadData();
+
+            dataGridView1.Columns[4].Width = 200;
+            dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
         }
 
         public void LoadData()
@@ -146,6 +153,35 @@ namespace SKS_Service_Manager
                 printRecords = new PrintRecords(mainForm);
             }
             printRecords.ShowDialog();
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Sprawdź, czy użytkownik wybrał fakturę UKS do edycji
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                // Tworzymy nowy formularz IssueUKS w trybie edycji
+                string cellValue = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
+
+                int selectedissueID = int.Parse(cellValue);
+
+                IssueUKS editForm = new IssueUKS(selectedissueID, mainForm);
+
+                // Otwieramy formularz w trybie edycji
+                editForm.ShowDialog();
+                LoadData();
+            }
+            else
+            {
+                MessageBox.Show("Proszę najpierw wybrać fakturę UKS do edycji.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void UksList_SizeChanged(object sender, EventArgs e)
+        {
+            int margin = 20; // Możesz dostosować marginesy i inne wartości
+            dataGridView1.Width = this.ClientSize.Width - margin;
+            dataGridView1.Height = this.ClientSize.Height - 100;
         }
     }
 }

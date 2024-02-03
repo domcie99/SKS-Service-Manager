@@ -112,6 +112,7 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(776, 345);
             dataGridView1.TabIndex = 22;
+            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             // 
             // label1
             // 
@@ -174,6 +175,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "UserList";
             Text = "Lista Użytkowników";
+            SizeChanged += UserList_SizeChanged;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();

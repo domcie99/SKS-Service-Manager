@@ -86,7 +86,7 @@
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
             dataGridView1.BackgroundColor = Color.Gainsboro;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
@@ -108,9 +108,11 @@
             dataGridView1.Location = new Point(12, 93);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
+            dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(1119, 375);
             dataGridView1.TabIndex = 28;
+            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             // 
             // search
             // 
@@ -163,6 +165,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "UksList";
             Text = "Umowy Kupna-Sprzedaży";
+            SizeChanged += UksList_SizeChanged;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();

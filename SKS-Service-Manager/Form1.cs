@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using Ionic.Zip;
 
+#pragma warning disable
 namespace SKS_Service_Manager
 {
     public partial class Form1 : Form
@@ -25,11 +26,10 @@ namespace SKS_Service_Manager
         private string localVersion = "1.0.6.0"; // Wersja Twojej aplikacji
         private string latestVersion;
 
-
-
         public Form1()
         {
             InitializeComponent();
+            CenterToScreen();
             this.Text = "SKS-Service Manager v" + localVersion;
 
             button1.Enabled = false;
@@ -166,14 +166,56 @@ namespace SKS_Service_Manager
                 pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             }
 
-            issueUksForm = new IssueUKS(-1, this);
-            uksListForm = new UksList(this);
-            userlistForm = new UserList(this);
+            CreateIssueUKSForm();
+            CreateUksListForm();
+            CreateUserListForm();
 
             button1.Invoke(new Action(() => button1.Enabled = true));
             button2.Invoke(new Action(() => button2.Enabled = true));
             button7.Invoke(new Action(() => button7.Enabled = true));
             button8.Invoke(new Action(() => button8.Enabled = true));
+        }
+
+        private void CreateIssueUKSForm()
+        {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate {
+                    issueUksForm = new IssueUKS(-1, this);
+                });
+            }
+            else
+            {
+                issueUksForm = new IssueUKS(-1, this);
+            }
+        }
+
+        private void CreateUksListForm()
+        {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate {
+                    uksListForm = new UksList(this);
+                });
+            }
+            else
+            {
+                uksListForm = new UksList(this);
+            }
+        }
+
+        private void CreateUserListForm()
+        {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate {
+                    userlistForm = new UserList(this);
+                });
+            }
+            else
+            {
+                userlistForm = new UserList(this);
+            }
         }
 
         private void OpenSettingsForm()
@@ -197,12 +239,21 @@ namespace SKS_Service_Manager
 
         private void button7_Click(object sender, EventArgs e)
         {
-            // Tworzenie nowego formularza listy u¿ytkowników i przekazanie do niego referencji do formy Settings
             if (userlistForm == null || userlistForm.IsDisposed)
             {
-                userlistForm = new UserList(this); // Tworzenie nowego formularza ustawieñ, jeœli nie istnieje lub zosta³ zamkniêty
+                userlistForm = new UserList(this);
             }
-            userlistForm.Show(); // Wyœwietlenie formularza listy u¿ytkowników
+
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate {
+                    userlistForm.Show();
+                });
+            }
+            else
+            {
+                userlistForm.Show();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)

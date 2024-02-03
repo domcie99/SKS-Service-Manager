@@ -14,7 +14,7 @@ namespace SKS_Service_Manager
         public EditUser(int userID, UserList parentForm, Form1 form1)
         {
             InitializeComponent();
-
+            CenterToScreen();
             mainForm = form1;
             database = mainForm.getDataBase();
 
@@ -48,7 +48,7 @@ namespace SKS_Service_Manager
                 {
                     DataRow row = userData.Rows[0]; // Pobierz pierwszy wiersz (powinien być tylko jeden)
 
-                    FullName.Text = row["Name"].ToString();
+                    FullName.Text = row["FullName"].ToString();
                     Adress.Text = row["Address"].ToString();
                     Post_Code.Text = row["PostalCode"].ToString();
                     City.Text = row["City"].ToString();

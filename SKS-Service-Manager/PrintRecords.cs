@@ -24,6 +24,7 @@ namespace SKS_Service_Manager
         public PrintRecords(Form1 form1)
         {
             InitializeComponent();
+            CenterToScreen();
 
             FromDate.Value = DateTime.Now.Date.AddDays(-29);
             ToDate.Value = DateTime.Now.Date;
