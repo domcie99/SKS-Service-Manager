@@ -13,6 +13,7 @@ namespace SKS_Service_Manager
         private UserList userlistForm;
         private UksList uksListForm;
         private DataBase database;
+        private System.Timers.Timer syncTimer;
 
         string remoteUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.1/PDFConvert.zip";
 
@@ -23,7 +24,7 @@ namespace SKS_Service_Manager
 
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
-        private string localVersion = "1.0.6.0"; // Wersja Twojej aplikacji
+        private string localVersion = "1.0.7.0"; // Wersja Twojej aplikacji
         private string latestVersion;
 
         public Form1()
@@ -31,6 +32,12 @@ namespace SKS_Service_Manager
             InitializeComponent();
             CenterToScreen();
             this.Text = "SKS-Service Manager v" + localVersion;
+
+            syncTimer = new System.Timers.Timer();
+            syncTimer.Interval = 5 * 60 * 1000; // 5 minut w milisekundach
+            syncTimer.AutoReset = true;
+            syncTimer.Elapsed += async (sender, e) => await CompareAndSyncDataAsync(); // Pod³¹cz funkcjê wywo³ywan¹ po up³ywie interwa³u
+            syncTimer.Start(); // Rozpocznij dzia³anie Timera
 
             button1.Enabled = false;
             button2.Enabled = false;
@@ -381,6 +388,11 @@ namespace SKS_Service_Manager
             await Task.Run(() => CheckMySQLConnection());
             await Task.Run(() => CheckForUpdates());
             await Task.Run(() => CheckAndShowOfficeMessage());
+        }
+
+        private async Task CompareAndSyncDataAsync()
+        {
+            await Task.Run(() => CheckMySQLConnection());
         }
     }
 }

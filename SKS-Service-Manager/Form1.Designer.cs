@@ -40,7 +40,7 @@
             button8 = new Button();
             label12 = new Label();
             pictureBox1 = new PictureBox();
-            timer1 = new System.Windows.Forms.Timer(components);
+            syncTimerrr = new System.Windows.Forms.Timer(components);
             progressBar1 = new ProgressBar();
             label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -177,6 +177,10 @@
             pictureBox1.TabIndex = 26;
             pictureBox1.TabStop = false;
             // 
+            // syncTimerrr
+            // 
+            syncTimerrr.Interval = 300000;
+            // 
             // progressBar1
             // 
             progressBar1.Location = new Point(12, 204);
@@ -236,7 +240,7 @@
         private Button button8;
         private Label label12;
         private PictureBox pictureBox1;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer syncTimerrr;
         private ProgressBar progressBar1;
         private Label label2;
     }

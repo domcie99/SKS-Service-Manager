@@ -1,6 +1,8 @@
 ﻿using MySqlConnector;
 using System.Data;
+using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 
 #pragma warning disable
 namespace SKS_Service_Manager
@@ -52,7 +54,8 @@ namespace SKS_Service_Manager
             }
         }
 
-        private void CloseConnection() {
+        private void CloseConnection()
+        {
             if (useMySQL)
             {
                 mySqlConnection.Close();
@@ -744,12 +747,14 @@ namespace SKS_Service_Manager
             }
         }
 
-
-        public bool CheckUserExists(string Pesel, string docNumber, string Adress, string FullName) {
-            if (!string.IsNullOrEmpty(Pesel)) {
+        public bool CheckUserExists(string Pesel, string docNumber, string Adress, string FullName)
+        {
+            if (!string.IsNullOrEmpty(Pesel))
+            {
                 return CheckUserExistsByPesel(Pesel);
             }
-            if (!string.IsNullOrEmpty(docNumber)) {
+            if (!string.IsNullOrEmpty(docNumber))
+            {
                 return CheckUserExistsByDokNr(docNumber);
             }
             if (!string.IsNullOrEmpty(Adress) && !string.IsNullOrEmpty(FullName))
@@ -807,6 +812,7 @@ namespace SKS_Service_Manager
 
             return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
         }
+
         public void UpdateUserInDatabase(bool exist, string fullName, string name, string address, string postalCode, string city, string phone, string email, string documentType, string documentNumber, string pesel, string nip, string notes)
         {
             try
@@ -1191,6 +1197,83 @@ namespace SKS_Service_Manager
             {
                 // Zamknięcie połączenia z Twoją bazą danych
                 CloseConnection();
+            }
+        }
+
+        private string sqliteConnectionString = "Data Source=your_sqlite_database.db";
+        private string mysqlConnectionString = "Your_MySQL_Connection_String";
+
+        public async Task SynchronizeDataAsync()
+        {
+            try
+            {
+                await SynchronizeTableAsync("UKS");
+                await SynchronizeTableAsync("Users");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Błąd podczas synchronizacji danych: " + ex.Message);
+            }
+        }
+
+        private async Task SynchronizeTableAsync(string tableName)
+        {
+            DataTable localData = await Task.Run(() => GetLocalData(tableName));
+            DataTable remoteData = await Task.Run(() => GetRemoteData(tableName));
+
+            SynchronizeData(localData, remoteData, tableName);
+
+            await Task.Run(() => SaveChangesToLocalDatabase(localData, tableName));
+        }
+
+        private DataTable GetLocalData(string tableName)
+        {
+            DataTable localData = new DataTable();
+            using (SQLiteConnection connection = new SQLiteConnection(sqliteConnectionString))
+            {
+                connection.Open();
+                string query = $"SELECT * FROM {tableName}";
+                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, connection))
+                {
+                    adapter.Fill(localData);
+                }
+            }
+            return localData;
+        }
+
+        private DataTable GetRemoteData(string tableName)
+        {
+            DataTable remoteData = new DataTable();
+            using (SqlConnection connection = new SqlConnection(mysqlConnectionString))
+            {
+                connection.Open();
+                string query = $"SELECT * FROM {tableName}";
+                using (SqlDataAdapter adapter = new SqlDataAdapter(query, connection))
+                {
+                    adapter.Fill(remoteData);
+                }
+            }
+            return remoteData;
+        }
+
+        private void SynchronizeData(DataTable localData, DataTable remoteData, string tableName)
+        {
+            // Logika synchronizacji między lokalną i zdalną bazą danych
+        }
+
+        private void SaveChangesToLocalDatabase(DataTable localData, string tableName)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(sqliteConnectionString))
+            {
+                connection.Open();
+                using (SQLiteTransaction transaction = connection.BeginTransaction())
+                {
+                    // Zapisz zmiany w tabeli do bazy danych SQLite
+                    // Użyj adapterów i poleceń INSERT, UPDATE, DELETE
+                    // Możesz również zaimplementować transakcje, aby zapewnić spójność danych
+
+                    transaction.Commit();
+                }
             }
         }
     }
