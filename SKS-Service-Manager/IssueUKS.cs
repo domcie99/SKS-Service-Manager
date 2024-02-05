@@ -248,9 +248,7 @@ namespace SKS_Service_Manager
                 Print.Enabled = true;
                 generated = true;
 
-                bool userExists = dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, FullName.Text);
-
-                UpdateUserInDatabase(userExists);
+                UpdateUserInDatabase(dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, FullName.Text));
 
                 if (dataBase.CheckInvoiceExists(issueId))
                 {
@@ -259,9 +257,7 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    int userid = -1;
-                    userid = dataBase.GetUserId(DocumentNumber.Text);
-                    if (userid < 0) { userid = dataBase.GetUserId(Pesel.Text); }
+                    int userid = dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, FullName.Text);
                     SaveInvoiceToDatabase(userid);
                 }
             }
@@ -573,13 +569,6 @@ namespace SKS_Service_Manager
                         File.Copy(pdfFilePath, savedpdfFilePath, true);
                     }
 
-/*                    if (issueId < 0)
-                    {
-                        // Aktualizuj dane faktury w bazie danych
-                        UpdateUserInDatabase(dataBase.CheckUserExistsByPesel(Pesel.Text));
-                        SaveInvoiceToDatabase(issueUserId);
-                    }*/
-
                     try
                     {
                         Process.Start("cmd", $"/c start {pdfFilePath}");
@@ -600,7 +589,7 @@ namespace SKS_Service_Manager
         }
 
 
-        private void UpdateUserInDatabase(bool exist)
+        private void UpdateUserInDatabase(int userId)
         {
             // Pobierz dane z pól formularza, które chcesz zaktualizować
             string fullName = FullName.Text;
@@ -616,11 +605,8 @@ namespace SKS_Service_Manager
             string nip = Nip.Text;
             string notes = Notes.Text;
 
-            // Sprawdź, czy użytkownik o danym numerze PESEL istnieje
-            bool userExists = dataBase.CheckUserExistsByPesel(pesel);
-
             // Wywołaj funkcję UpdateUserInDatabase, przekazując odpowiednie parametry
-            dataBase.UpdateUserInDatabase(userExists, fullName, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
+            dataBase.UpdateUserInDatabase(userId, fullName, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
 
         }
 

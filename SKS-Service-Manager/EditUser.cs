@@ -94,10 +94,10 @@ namespace SKS_Service_Manager
             try
             {
                 // Ustal, czy użytkownik istnieje w bazie danych
-                bool userExists = database.CheckUserExistsByPesel(pesel);
+                int userId = database.CheckUserExists(pesel, documentNumber, address, fullname);
 
                 // Wywołaj metodę UpdateUserInDatabase z klasy Database
-                database.UpdateUserInDatabase(userExists, fullname, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
+                database.UpdateUserInDatabase(userId, fullname, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
 
                 MessageBox.Show("Dane zostały zapisane.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 parentForm.LoadUserData();

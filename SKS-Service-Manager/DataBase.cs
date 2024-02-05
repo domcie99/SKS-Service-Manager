@@ -625,11 +625,11 @@ namespace SKS_Service_Manager
             }
         }
 
-        public bool CheckUserExistsByPesel(string pesel)
+        public int CheckUserExistsByPesel(string pesel)
         {
             try
             {
-                string query = "SELECT COUNT(*) FROM Users WHERE Pesel = @Pesel;";
+                string query = "SELECT ID FROM Users WHERE Pesel = @Pesel;";
 
                 if (useMySQL)
                 {
@@ -639,8 +639,11 @@ namespace SKS_Service_Manager
                     }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@Pesel", pesel);
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
-                    return count > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
                 }
                 else
                 {
@@ -650,26 +653,29 @@ namespace SKS_Service_Manager
                     }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@Pesel", pesel);
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
-                    return count > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych Pesel: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
             }
             finally
             {
                 CloseConnection();
             }
+            return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
         }
 
-        public bool CheckUserExistsByDokNr(string dokNr)
+        public int CheckUserExistsByDokNr(string dokNr)
         {
             try
             {
-                string query = "SELECT COUNT(*) FROM Users WHERE DocumentNumber = @DokNr;";
+                string query = "SELECT ID FROM Users WHERE DocumentNumber = @DokNr;";
 
                 if (useMySQL)
                 {
@@ -679,8 +685,11 @@ namespace SKS_Service_Manager
                     }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@DokNr", dokNr);
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
-                    return count > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
                 }
                 else
                 {
@@ -690,26 +699,29 @@ namespace SKS_Service_Manager
                     }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@DokNr", dokNr);
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
-                    return count > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych DokNr: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
             }
             finally
             {
                 CloseConnection();
             }
+            return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
         }
 
-        public bool CheckUserExistsByNameAndAdress(string Address, string FullName)
+        public int CheckUserExistsByNameAndAdress(string Address, string FullName)
         {
             try
             {
-                string query = "SELECT COUNT(*) FROM Users WHERE FullName = @FullName AND Address = @Address;";
+                string query = "SELECT ID FROM Users WHERE FullName = @FullName AND Address = @Address;";
 
                 if (useMySQL)
                 {
@@ -720,8 +732,11 @@ namespace SKS_Service_Manager
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@FullName", FullName);
                     cmd.Parameters.AddWithValue("@Address", Address);
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
-                    return count > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
                 }
                 else
                 {
@@ -732,22 +747,25 @@ namespace SKS_Service_Manager
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@FullName", FullName);
                     cmd.Parameters.AddWithValue("@Address", Address);
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
-                    return count > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
             }
             finally
             {
                 CloseConnection();
             }
+            return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
         }
 
-        public bool CheckUserExists(string Pesel, string docNumber, string Adress, string FullName)
+        public int CheckUserExists(string Pesel, string docNumber, string Adress, string FullName)
         {
             if (!string.IsNullOrEmpty(Pesel))
             {
@@ -761,71 +779,22 @@ namespace SKS_Service_Manager
             {
                 return CheckUserExistsByNameAndAdress(Adress, FullName);
             }
-            return false;
-        }
-
-        public int GetUserId(string peselOrDocNum)
-        {
-            try
-            {
-                string query = "SELECT ID FROM Users WHERE Pesel = @Pesel OR DocumentNumber = @DocNum;";
-
-                if (useMySQL)
-                {
-                    if (mySqlConnection.State == ConnectionState.Closed)
-                    {
-                        mySqlConnection.Open();
-                    }
-                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
-                    cmd.Parameters.AddWithValue("@Pesel", peselOrDocNum);
-                    cmd.Parameters.AddWithValue("@DocNum", peselOrDocNum);
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
-                    {
-                        return Convert.ToInt32(result);
-                    }
-                }
-                else
-                {
-                    if (sqliteConnection.State == ConnectionState.Closed)
-                    {
-                        sqliteConnection.Open();
-                    }
-                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
-                    cmd.Parameters.AddWithValue("@Pesel", peselOrDocNum);
-                    cmd.Parameters.AddWithValue("@DocNum", peselOrDocNum);
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
-                    {
-                        return Convert.ToInt32(result);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd podczas pobierania użytkownika z bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                CloseConnection();
-            }
-
             return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
         }
 
-        public void UpdateUserInDatabase(bool exist, string fullName, string name, string address, string postalCode, string city, string phone, string email, string documentType, string documentNumber, string pesel, string nip, string notes)
+        public void UpdateUserInDatabase(int userId, string fullName, string name, string address, string postalCode, string city, string phone, string email, string documentType, string documentNumber, string pesel, string nip, string notes)
         {
             try
             {
                 string query = "";
 
-                if (exist)
+                if (userId != -1)
                 {
                     query = @"
                 UPDATE Users
                 SET FullName = @FullName, Name = @Name, Address = @Address, PostalCode = @PostalCode, City = @City, Phone = @Phone, Email = @Email,
                     DocumentType = @DocumentType, DocumentNumber = @DocumentNumber, NIP = @NIP, Notes = @Notes
-                WHERE Pesel = @Pesel OR DocumentNumber = @DocumentNumber;";
+                WHERE ID = @UserID;";
                 }
                 else
                 {
@@ -841,6 +810,7 @@ namespace SKS_Service_Manager
                         mySqlConnection.Open();
                     }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@FullName", fullName);
                     cmd.Parameters.AddWithValue("@Name", name);
                     cmd.Parameters.AddWithValue("@Address", address);
@@ -862,6 +832,7 @@ namespace SKS_Service_Manager
                         sqliteConnection.Open();
                     }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@FullName", fullName);
                     cmd.Parameters.AddWithValue("@Name", name);
                     cmd.Parameters.AddWithValue("@Address", address);
@@ -1130,18 +1101,14 @@ namespace SKS_Service_Manager
 
                     string Notes = reader["UWAGI"].ToString();
 
-                    bool userExists = CheckUserExists(pesel, dokumentNumer, ulica, odwroconeImieNazwisko);
 
-                    if (!userExists)
-                    {
-                        UpdateUserInDatabase(false, odwroconeImieNazwisko, "", ulica, kodPocztowy, miejscowosc, telefon, "", "Dowód Osobisty", dokumentNumer, "", "", "");
-                    }
+                    int userid = CheckUserExists(pesel, dokumentNumer, ulica, odwroconeImieNazwisko);
 
-                    int userid = -1;
-                    userid = GetUserId(dokumentNumer);
-                    if (userid < 0) { userid = GetUserId(pesel); }
+                    UpdateUserInDatabase(userid, odwroconeImieNazwisko, "", ulica, kodPocztowy, miejscowosc, telefon, "", "Dowód Osobisty", dokumentNumer, "", "", "");
 
-                    if (userid > 0 && !CheckInvoiceExists(Description, string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount)))
+                    userid = CheckUserExists(pesel, dokumentNumer, ulica, odwroconeImieNazwisko);
+
+                    if (userid != -1 && !CheckInvoiceExists(Description, string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount)))
                     {
                         System.Data.DataTable invoiceData = new System.Data.DataTable();
                         invoiceData.Columns.Add("UserID", typeof(int));
