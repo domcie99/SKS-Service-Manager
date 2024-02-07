@@ -19,6 +19,7 @@ namespace SKS_Service_Manager
         private IssueUKS issueUKS;
 
         private string inputRaportFile;
+        private string outputRaportPath;
         private string outputRaportFile;
 
         public PrintRecords(Form1 form1)
@@ -56,13 +57,14 @@ namespace SKS_Service_Manager
             }
 
             inputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + fromDate.ToShortDateString().ToString() + "-" + toDate.ToShortDateString().ToString() + ".docx";
-            outputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + fromDate.ToShortDateString().ToString() + "-" + toDate.ToShortDateString().ToString() + ".pdf";
+            outputRaportPath = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\Wystawione";
+            outputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\Wystawione\\ewidencja_" + fromDate.ToShortDateString().ToString() + "-" + toDate.ToShortDateString().ToString() + ".pdf";
             DataTable dt = dataBase.uksLoadDataByDateRange(fromDate, toDate, issuedCity, documentType);
 
             try
             {
                 issueUKS.CreateDocxFromData(dt, inputRaportFile, fromDate, toDate);
-                issueUKS.ConvertDocxToPdf(inputRaportFile, outputRaportFile);
+                issueUKS.ConvertDocxToPdf(inputRaportFile, outputRaportPath);
             }
             catch (Exception ex)
             {

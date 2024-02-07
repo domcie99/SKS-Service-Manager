@@ -133,7 +133,7 @@ namespace SKS_Service_Manager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
+        [global::System.Configuration.DefaultSettingValueAttribute("83.15.62.46")]
         public string mysql_host {
             get {
                 return ((string)(this["mysql_host"]));
@@ -145,7 +145,7 @@ namespace SKS_Service_Manager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("admin")]
+        [global::System.Configuration.DefaultSettingValueAttribute("sks")]
         public string mysql_user {
             get {
                 return ((string)(this["mysql_user"]));
@@ -157,7 +157,7 @@ namespace SKS_Service_Manager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("admin")]
+        [global::System.Configuration.DefaultSettingValueAttribute("sks")]
         public string mysql_password {
             get {
                 return ((string)(this["mysql_password"]));
@@ -181,7 +181,7 @@ namespace SKS_Service_Manager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("22")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3306")]
         public int mysql_port {
             get {
                 return ((int)(this["mysql_port"]));

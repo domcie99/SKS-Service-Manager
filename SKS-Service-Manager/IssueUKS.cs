@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Humanizer;
@@ -32,10 +33,11 @@ namespace SKS_Service_Manager
         private string pdfFilePath;
         private string savedpdfFilePath;
         private string folderFilePath;
+        private string backupPath;
         private string libreOfficePath;
+        private string ewidPath;
 
-        string libreOfficeInst = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
-        string libreOfficePort = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\LibreOfficePortable\\App\\libreoffice\\program\\soffice.exe";
+        private string word2Pdf = AppDomain.CurrentDomain.BaseDirectory + "convert\\word2pdf.exe";
 
 
         public IssueUKS(int Id, Form1 form1)
@@ -53,20 +55,20 @@ namespace SKS_Service_Manager
             dataBase = mainForm.getDataBase();
             dataBase.CreateInvoicesTableIfNotExists();
 
-            LoadLibreOffive();
-
             DocumentType.SelectedIndex = 0;
             FormType.SelectedIndex = 1;
 
-            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/umowy/Wystawione");
-            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/umowy/backup");
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "umowy\\Wystawione");
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "umowy\\backup");
 
-            folderFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/";
+            folderFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy\\";
+            backupPath = AppDomain.CurrentDomain.BaseDirectory + "umowy\\backup";
 
             docxFilePath = folderFilePath + newFile + ".docx";
-            editedDocxFilePath = folderFilePath + "backup/" + newFile + "_new.docx";
-            pdfFilePath = folderFilePath + "backup/" + newFile + "_new.pdf";
-            savedpdfFilePath = folderFilePath + "Wystawione/" + newFile + "_" + issueId + ".pdf";
+            editedDocxFilePath = folderFilePath + "backup\\" + newFile + "_new.docx";
+            pdfFilePath = folderFilePath + "backup\\" + newFile + "_new.pdf";
+            savedpdfFilePath = folderFilePath + "Wystawione\\" + newFile + "_" + issueId + ".pdf";
+            ewidPath = folderFilePath + "ewidencja.docx";
 
             Percentage.Text = settingsForm.GetPercentage().ToString();
 
@@ -163,7 +165,6 @@ namespace SKS_Service_Manager
             }
         }
 
-
         private void Save_Click(object sender, EventArgs e)
         {
             LoadUser.Enabled = false;
@@ -232,8 +233,7 @@ namespace SKS_Service_Manager
 
                     doc.Save();
                 }
-                MessageBox.Show("Generowanie PDF", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ConvertDocxToPdf(editedDocxFilePath, pdfFilePath);
+                ConvertDocxToPdf(editedDocxFilePath, backupPath);
                 MessageBox.Show("Dokument został wygenerowany, można drukować", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -276,12 +276,10 @@ namespace SKS_Service_Manager
 
         public void ConvertDocxToPdf(string inputDocxFile, string outputPdfFile)
         {
-            // Przykład użycia soffice.exe do konwersji DOCX do PDF
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                FileName = libreOfficePath,
-
-                Arguments = $"--headless --convert-to pdf \"{inputDocxFile}\" --outdir \"{folderFilePath + "/backup/"}\"",
+                FileName = word2Pdf,
+                Arguments = $"/source \"{inputDocxFile}\" /target \"{outputPdfFile}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = false
@@ -304,183 +302,154 @@ namespace SKS_Service_Manager
 
         public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate)
         {
-            using (WordprocessingDocument doc = WordprocessingDocument.Create(outputDocxFile, WordprocessingDocumentType.Document))
+            // Skopiowanie istniejącego dokumentu DOCX jako wzorca
+            File.Copy(ewidPath, outputDocxFile, true);
+
+            // Otwarcie skopiowanego dokumentu
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(outputDocxFile, true))
             {
-                // Tworzenie głównego dokumentu Word
-                MainDocumentPart mainPart = doc.AddMainDocumentPart();
-                mainPart.Document = new Document();
+                // Otrzymaj dostęp do głównego dokumentu
+                MainDocumentPart mainPart = doc.MainDocumentPart;
 
-                // Tworzenie sekcji
-                Body body = mainPart.Document.AppendChild(new Body());
+                // Otrzymaj dostęp do treści dokumentu
+                Body body = mainPart.Document.Body;
 
-                // Dodawanie nagłówka strony z informacją o okresie
-                Paragraph headerParagraph = new Paragraph();
-                Run headerRun = new Run();
-                Text headerText = new Text($"Ewidencja kupna sprzedaży w okresie od {fromDate.ToShortDateString()} do {toDate.ToShortDateString()}");
-
-                // Ustawianie czcionki
-                RunProperties runProperties = new RunProperties();
-                Bold bold = new Bold();
-                FontSize fontSize = new FontSize() { Val = "34" }; // Ustawienie rozmiaru trzcionki na 24 punkty
-                Justification justification2 = new Justification() { Val = JustificationValues.Center }; // Wyśrodkowanie tekstu
-                ParagraphProperties paragraphProperties2 = new ParagraphProperties();
-                paragraphProperties2.Append(justification2);
-
-                runProperties.Append(bold);
-                runProperties.Append(fontSize);
-
-                headerRun.Append(runProperties);
-                headerRun.Append(headerText);
-
-                headerParagraph.Append(paragraphProperties2);
-                headerParagraph.Append(headerRun);
-
-                body.Append(headerParagraph);
-
-                // Ustawianie orientacji na poziomą
-                SectionProperties sectionProperties = new SectionProperties();
-                PageSize pageSize = new PageSize() { Width = 19840U, Height = 12240U }; // Ustaw rozmiar na poziomy (landscape)
-                sectionProperties.Append(pageSize);
-
-                // Ustawianie marginesów
-                PageMargin pageMargin = new PageMargin()
+                // Znajdź i zaktualizuj tekst nagłówka
+                var headerText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-title]"));
+                if (headerText != null)
                 {
-                    Left = 720,     // 720 jednostek to 0,5 cala (połowa lewego marginesu)
-                    Right = 720,    // 720 jednostek to 0,5 cala (połowa prawego marginesu)
-                    Top = 720,      // 720 jednostek to 0,5 cala (połowa górnego marginesu)
-                    Bottom = 720    // 720 jednostek to 0,5 cala (połowa dolnego marginesu)
-                };
-                sectionProperties.Append(pageMargin);
-
-                body.Append(sectionProperties);
-
-                // Tworzenie tabelki
-                Table table = new Table();
-
-                // Dostosowanie szerokości tabeli do rozmiaru strony A4
-                TableWidth tableWidth = new TableWidth() { Width = "19840U", Type = TableWidthUnitValues.Dxa };
-                table.Append(tableWidth);
-
-                // Dodawanie stylu z obramowaniem do tabeli
-                TableProperties tableProperties = new TableProperties(
-                    new TableBorders(
-                        new TopBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
-                        new BottomBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
-                        new LeftBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
-                        new RightBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
-                        new InsideHorizontalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
-                        new InsideVerticalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 }
-                    )
-                );
-                table.Append(tableProperties);
-
-                // Tworzenie nagłówków kolumn
-                TableRow headerRow = new TableRow();
-                foreach (DataColumn column in data.Columns)
-                {
-                    TableCell cell = new TableCell();
-                    Paragraph paragraph = new Paragraph();
-
-                    // Ustawianie właściwości justowania tekstu na środek
-                    ParagraphProperties paragraphProperties = new ParagraphProperties();
-                    Justification justification = new Justification() { Val = JustificationValues.Center };
-                    paragraphProperties.Append(justification);
-
-                    Shading shading = new Shading()
-                    {
-                        Val = ShadingPatternValues.Clear,
-                        Color = "auto",
-                        Fill = "D9D9D9" // Kolor "D9D9D9" reprezentuje szary kolor
-                    };
-
-                    paragraph.Append(paragraphProperties);
-                    paragraph.Append(new Run(new Text(column.ColumnName)));
-                    cell.Append(paragraph);
-                    cell.Append(new TableCellProperties(shading));
-                    headerRow.Append(cell);
+                    headerText.Text = headerText.Text.Replace("#[ewidencja-title]", $"Ewidencja kupna sprzedaży w okresie od {fromDate.ToShortDateString()} do {toDate.ToShortDateString()}");
                 }
-                table.Append(headerRow);
 
-                foreach (DataRow row in data.Rows)
+                // Znajdź i zaktualizuj tekst tabeli
+                var tableText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-tabela]"));
+                if (tableText != null)
                 {
-                    TableRow dataRow = new TableRow();
-                    int columnIndex = 0;
+                    // Otrzymaj tabelę, która zawiera znacznik tekstowy
+                    var table = tableText.Ancestors<Table>().FirstOrDefault();
 
-                    foreach (object item in row.ItemArray)
+                    // Usuń istniejącą zawartość tabeli
+                    foreach (var row in table.Elements<TableRow>().Skip(1).ToList())
                     {
-                        TableCell cell = new TableCell();
-                        Paragraph paragraph = new Paragraph();
+                        row.Remove();
+                    }
 
-                        // Ustawianie właściwości justowania tekstu na środek
-                        ParagraphProperties paragraphProperties = new ParagraphProperties();
-                        Justification justification = new Justification() { Val = JustificationValues.Center };
-                        paragraphProperties.Append(justification);
-
-                        paragraph.Append(paragraphProperties);
-
-
-
-                        // Formatowanie wartości jako liczba z dwoma miejscami po przecinku, jeśli to możliwe
-                        if (TryFormatAsDecimal(item, out string formattedValue))
+                    // Wstaw nowe dane do tabeli na podstawie danych DataTable
+                    // Wstaw nowe dane do tabeli na podstawie danych DataTable
+                    foreach (DataRow row in data.Rows)
+                    {
+                        TableRow dataRow = new TableRow();
+                        foreach (object item in row.ItemArray)
                         {
-                            if (columnIndex == 8)
+                            TableCell cell = new TableCell();
+                            Paragraph paragraph = new Paragraph();
+
+                            // Ustawianie właściwości justowania tekstu na środek
+                            ParagraphProperties paragraphProperties = new ParagraphProperties();
+                            Justification justification = new Justification() { Val = JustificationValues.Center };
+                            paragraphProperties.Append(justification);
+
+                            // Dodanie centrowania w pionie
+                            TableCellProperties cellProperties = new TableCellProperties();
+                            TableCellVerticalAlignment verticalAlignment = new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Center };
+                            cellProperties.Append(verticalAlignment);
+
+                            // Dodanie właściwości paragrafu i komórki
+                            paragraph.Append(paragraphProperties);
+                            cell.Append(cellProperties);
+
+                            Run run = new Run();
+                            RunProperties runProperties = new RunProperties();
+                            FontSize fontSize = new FontSize() { Val = "18" };
+                            runProperties.Append(fontSize);
+
+                            // Formatowanie wartości jako liczba z dwoma miejscami po przecinku, jeśli to możliwe
+                            if (TryFormatAsDecimal(item, out string formattedValue))
                             {
-                                // Tworzenie nowego Run z właściwościami koloru tekstu
-                                Run run = new Run();
-                                RunProperties runProperties2 = new RunProperties();
+                                if (dataRow.Elements<TableCell>().Count() == 8)
+                                {
+                                    Color color = new Color() { Val = "000000" }; // Kolor czerwony
+                                    if (decimal.Parse(formattedValue) < 0) { color = new Color() { Val = "CC0000" }; } // Kolor czerwony
+                                    if (decimal.Parse(formattedValue) > 0) { color = new Color() { Val = "00CC00" }; } // Kolor zielony
 
-                                Color color = new Color() { Val = "000000" }; // Kolor czerwony
-                                if (decimal.Parse(formattedValue) < 0) { color = new Color() { Val = "CC0000" }; } // Kolor czerwony
-                                if (decimal.Parse(formattedValue) > 0) { color = new Color() { Val = "00CC00" }; } // Kolor zielony
+                                    runProperties.Append(color);
+                                    run.Append(runProperties);
+                                    run.AppendChild(new Text(formattedValue));
+                                    paragraph.Append(run);
+                                }
+                                else
+                                {
+                                    run.Append(runProperties);
+                                    run.AppendChild(new Text(formattedValue));
+                                    paragraph.Append(run);
+                                }
+                            }
+                            else if (dataRow.Elements<TableCell>().Count() == 6 || dataRow.Elements<TableCell>().Count() == 7)
+                            {
+                                string[] parts = item.ToString().Split(':'); // Rozdziel tekst na część przed i po dwukropku
+                                if (parts.Length == 2) // Upewnij się, że są dwie części
+                                {
+                                    string valuePart = parts[1].Trim(); // Pobierz część z wartością
+                                    decimal numericValue;
+                                    if (decimal.TryParse(valuePart, out numericValue)) // Sprawdź, czy wartość jest liczbą
+                                    {
+                                        string formattedNumericValue = numericValue.ToString("0.00"); // Formatuj wartość do dwóch miejsc po przecinku
+                                        parts[1] = formattedNumericValue; // Zaktualizuj część z wartością
 
-                                runProperties2.Append(color);
-                                run.Append(runProperties2);
+                                        // Dodaj pierwszą linię do Run
+                                        run.Append(runProperties);
+                                        run.Append(new Text(parts[0]));
 
-                                // Ustawienie tekstu sformatowanego Run
-                                run.AppendChild(new Text(formattedValue));
+                                        // Dodaj znacznik nowej linii
+                                        run.Append(new Break());
+                                        run.Append(new Break());
 
-                                // Dodanie Run do akapitu
-                                paragraph.Append(run);
+                                        // Dodaj drugą linię do Run
+                                        run.Append(new Text(parts[1]));
+
+                                        paragraph.Append(run);
+                                    }
+                                }
                             }
                             else
                             {
-                                paragraph.Append(new Run(new Text(formattedValue)));
+                                run.Append(runProperties);
+                                run.AppendChild(new Text(item.ToString()));
+                                paragraph.Append(run);
                             }
-                        }
-                        else if (columnIndex == 6 || columnIndex == 7)
-                        {
-                            string[] parts = item.ToString().Split(':'); // Rozdziel tekst na część przed i po dwukropku
-                            if (parts.Length == 2) // Upewnij się, że są dwie części
-                            {
-                                string valuePart = parts[1].Trim(); // Pobierz część z wartością
-                                decimal numericValue;
-                                if (decimal.TryParse(valuePart, out numericValue)) // Sprawdź, czy wartość jest liczbą
-                                {
-                                    string formattedNumericValue = numericValue.ToString("0.00"); // Formatuj wartość do dwóch miejsc po przecinku
-                                    parts[1] = formattedNumericValue; // Zaktualizuj część z wartością
 
-                                    // Połącz ponownie części tekstu i ustaw sformatowany tekst
-                                    paragraph.Append(new Run(new Text(string.Join(" : ", parts))));
-                                }
-                            }
+                            cell.Append(paragraph);
+                            dataRow.Append(cell);
                         }
-                        else
-                        {
-                            paragraph.Append(new Run(new Text(item.ToString())));
-                        }
-
-
-                        cell.Append(paragraph);
-                        dataRow.Append(cell);
-                        columnIndex++;
+                        table.Append(dataRow);
                     }
-                    table.Append(dataRow);
+
+
+                    // Usuń znacznik tekstowy z dokumentu
+                    tableText.Text = tableText.Text.Replace("#[ewidencja-tabela]", "");
                 }
 
-                body.Append(table);
-
-                // Zapisywanie dokumentu DOCX
+                // Zapisywanie dokumetu DOCX
                 mainPart.Document.Save();
+            }
+        }
+
+        // Funkcja do zastępowania tekstu w dokumencie
+        private void ReplaceTextInDocument(WordprocessingDocument doc, string token, string replacementText)
+        {
+            var body = doc.MainDocumentPart.Document.Body;
+            var paragraphs = body.Descendants<Paragraph>();
+
+            foreach (var paragraph in paragraphs)
+            {
+                var text = paragraph.InnerText;
+
+                if (text.Contains(token))
+                {
+                    text = text.Replace(token, replacementText);
+                    paragraph.RemoveAllChildren<Text>();
+                    paragraph.Append(new Text(text));
+                }
             }
         }
 
@@ -552,22 +521,13 @@ namespace SKS_Service_Manager
             }
         }
 
-
-
         private void Print_Click(object sender, EventArgs e)
         {
             if (generated)
             {
-                // Wyświetl MessageBox z pytaniem
-                DialogResult result = MessageBox.Show("Czy wszystkie dane się zgadzają?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                if (result == DialogResult.Yes)
-                {
-                    DialogResult result2 = MessageBox.Show("Czy chcesz zapisać plik pdf w katalogu?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (result2 == DialogResult.Yes) // Poprawiony warunek na result2
-                    {
                         File.Copy(pdfFilePath, savedpdfFilePath, true);
-                    }
+
 
                     try
                     {
@@ -580,7 +540,7 @@ namespace SKS_Service_Manager
 
                     generated = false;
                     this.Close();
-                }
+
             }
             else
             {
@@ -767,12 +727,12 @@ namespace SKS_Service_Manager
                 newFile = "uppz";
             }
 
-            folderFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy/";
+            folderFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy\\";
 
             docxFilePath = folderFilePath + newFile + ".docx";
-            editedDocxFilePath = folderFilePath + "backup/" + newFile + "_new.docx";
-            pdfFilePath = folderFilePath + "backup/" + newFile + "_new.pdf";
-            savedpdfFilePath = folderFilePath + "Wystawione/" + newFile + "_" + issueId + ".pdf";
+            editedDocxFilePath = folderFilePath + "backup\\" + newFile + "_new.docx";
+            pdfFilePath = folderFilePath + "backup\\" + newFile + "_new.pdf";
+            savedpdfFilePath = folderFilePath + "Wystawione\\" + newFile + "_" + issueId + ".pdf";
         }
         private int GetFormTypeIndex(String text)
         {
@@ -814,19 +774,6 @@ namespace SKS_Service_Manager
 
         private void IssueUKS_Load(object sender, EventArgs e)
         {
-
-        }
-
-        private void LoadLibreOffive()
-        {
-            if (File.Exists(libreOfficeInst))
-            {
-                libreOfficePath = libreOfficeInst;
-            }
-            else
-            {
-                libreOfficePath = libreOfficePort;
-            }
 
         }
 

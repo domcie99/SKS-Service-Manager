@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile>
+	<DocInfo>
+		<OutMode>0</OutMode>
+		<SavePath>C:\My PDF</SavePath>
+		<FileExistMode>0</FileExistMode>
+		<CanOpenFolder>false</CanOpenFolder>
+		<CanAddInfoToDoc>false</CanAddInfoToDoc>
+		<DocTitle/>
+		<DocSubject/>
+		<DocAuthor/>
+		<DocKeyword/>
+	</DocInfo>
+	<PageSetting>
+		<PageSizeMode>0</PageSizeMode>
+		<PageSizePredefined>9</PageSizePredefined>
+		<PageSizeCustWidth>8.27</PageSizeCustWidth>
+		<PageSizeCustHeight>11.69</PageSizeCustHeight>
+		<PageSizeUnit>0</PageSizeUnit>
+		<GraphicRes>72</GraphicRes>
+		<GraphicScale>100</GraphicScale>
+		<PageOrientation>0</PageOrientation>
+	</PageSetting>
+	<PageLayout>
+		<PageRowCount>1</PageRowCount>
+		<PageColumnCount>1</PageColumnCount>
+		<PageAroundSpace>0</PageAroundSpace>
+		<ImageAutoFit>true</ImageAutoFit>
+		<ImageSplitFrame>true</ImageSplitFrame>
+	</PageLayout>
+	<Watermarks>
+		<AddWatermarks>false</AddWatermarks>
+		<WatermarksMode>0</WatermarksMode>
+		<WatermarksText/>
+		<TextFontname>Tahoma</TextFontname>
+		<TextFontcolor>0</TextFontcolor>
+		<TextFontsize>8</TextFontsize>
+		<TextFontcharset>1</TextFontcharset>
+		<TextFontstyle>0</TextFontstyle>
+		<ImageWatermarksPath/>
+		<WatermarkOpacity>100</WatermarkOpacity>
+		<WatermarksRotation>0</WatermarksRotation>
+		<WatermarksOffsetUnits>0</WatermarksOffsetUnits>
+		<WatermarksOffsetLeft>0</WatermarksOffsetLeft>
+		<WatermarksOffsetTop>0</WatermarksOffsetTop>
+	</Watermarks>
+	<Security>
+		<EnabledPassword>false</EnabledPassword>
+		<RequirePassword>false</RequirePassword>
+		<OpenPassword/>
+		<RequirePermission>false</RequirePermission>
+		<PermissionPassword/>
+		<EnabledCopy>false</EnabledCopy>
+		<EnabledPrint>false</EnabledPrint>
+		<EncryptAlogrithm>0</EncryptAlogrithm>
+	</Security>
+</profile>
