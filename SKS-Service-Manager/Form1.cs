@@ -1,4 +1,3 @@
-
 using System.Diagnostics;
 using System.Net;
 using Ionic.Zip;
@@ -15,15 +14,15 @@ namespace SKS_Service_Manager
         private DataBase database;
         private System.Timers.Timer syncTimer;
 
-        string remoteUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.1/PDFConvert.zip";
+        private string appdataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-        string localPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        string localPathZip = AppDomain.CurrentDomain.BaseDirectory + "/PDFConvert.zip";
-        string libreOfficeInst = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
-        string libreOfficePort = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\LibreOfficePortable\\App\\libreoffice\\program\\soffice.exe";
+        private string word2Pdf = "C:\\Program Files (x86)\\Weeny Free Word to PDF Converter\\word2pdf.exe";
+        private string word2PdfInstaller = AppDomain.CurrentDomain.BaseDirectory + "word2pdf.exe";
 
+        private string remoteUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.1/PDFConvert.zip";
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
+
         private string localVersion = "1.0.8.0"; // Wersja Twojej aplikacji
         private string latestVersion;
 
@@ -110,33 +109,25 @@ namespace SKS_Service_Manager
         }
 
 
-        public async void CheckAndShowOfficeMessage()
+        public async void CheckDependanceInstalled()
         {
-            if (!File.Exists(libreOfficeInst) && !File.Exists(libreOfficePort))
+            if (!File.Exists(word2Pdf))
             {
-                DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego LibreOffice. Kliknij 'OK', aby automatycznie pobrac i zainstalowaæ pakiet.", "Brak zainstalowanego LibreOffice", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego dodatkowe pakiety. Kliknij 'OK', aby automatycznie pobrac i zainstalowaæ pakiet.", "Brak zainstalowanego word2pdf", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.OK)
                 {
                     try
                     {
-                        // Spróbuj otworzyæ stronê do pobrania Microsoft Office
-                        await DownloadFileAsync();
+                        Process.Start("cmd", $"/c start {word2PdfInstaller}");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("B³¹d podczas otwierania strony do pobrania Office: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("B³¹d podczas otwierania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
         }
-
-        private async void buttonDownload_Click(object sender, EventArgs e)
-        {
-            // Wywo³aj metodê DownloadFileAsync
-            await DownloadFileAsync();
-        }
-
 
         public void setDataBase()
         {
@@ -280,7 +271,7 @@ namespace SKS_Service_Manager
             issueUksForm.ShowDialog();
         }
 
-        private async Task DownloadFileAsync()
+        private async Task DownloadFileAsync(string fileUrl, string zipPath, string unzipPath)
         {
             label2.Invoke(new Action(() => label2.Visible = true));
             progressBar1.Invoke(new Action(() => progressBar1.Visible = true));
@@ -293,7 +284,7 @@ namespace SKS_Service_Manager
             {
                 try
                 {
-                    HttpResponseMessage response = await httpClient.GetAsync(remoteUrl, HttpCompletionOption.ResponseHeadersRead);
+                    HttpResponseMessage response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead);
                     response.EnsureSuccessStatusCode();
 
                     long? totalBytes = response.Content.Headers.ContentLength;
@@ -301,7 +292,7 @@ namespace SKS_Service_Manager
 
                     using (var stream = await response.Content.ReadAsStreamAsync())
                     {
-                        using (var fileStream = new FileStream(localPathZip, FileMode.Create, FileAccess.Write, FileShare.None))
+                        using (var fileStream = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None))
                         {
                             var buffer = new byte[4096];
                             int bytesReadThisChunk;
@@ -323,8 +314,7 @@ namespace SKS_Service_Manager
                     }
 
                     label2.Invoke(new Action(() => label2.Text = "Wypakowywanie... To mo¿e chwilê zaj¹æ"));
-                    // Plik zosta³ pomyœlnie pobrany, teraz mo¿esz go rozpakowaæ lub podj¹æ inne dzia³ania
-                    ExtractZipFile(localPathZip, localPath);
+                    ExtractZipFile(zipPath, unzipPath);
                 }
                 catch (HttpRequestException ex)
                 {
@@ -391,7 +381,7 @@ namespace SKS_Service_Manager
             database = new DataBase(this);
             await Task.Run(() => CheckMySQLConnection());
             await Task.Run(() => CheckForUpdates());
-            await Task.Run(() => CheckAndShowOfficeMessage());
+            await Task.Run(() => CheckDependanceInstalled());
         }
 
         private async Task CompareAndSyncDataAsync()
