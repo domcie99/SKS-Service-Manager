@@ -15,13 +15,12 @@ namespace SKS_Service_Manager
         private DataBase database;
         private System.Timers.Timer syncTimer;
 
-        string remoteUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.1/PDFConvert.zip";
+        private string localPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        private string localPathZip = AppDomain.CurrentDomain.BaseDirectory + "/PDFConvert.zip";
+        private string libreOfficeInst = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+        private string libreOfficePort = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\LibreOfficePortable\\App\\libreoffice\\program\\soffice.exe";
 
-        string localPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        string localPathZip = AppDomain.CurrentDomain.BaseDirectory + "/PDFConvert.zip";
-        string libreOfficeInst = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
-        string libreOfficePort = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\LibreOfficePortable\\App\\libreoffice\\program\\soffice.exe";
-
+        private string remoteUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.1/PDFConvert.zip";
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
         private string localVersion = "1.0.8.0"; // Wersja Twojej aplikacji
