@@ -1,16 +1,11 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Humanizer;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
-using Body = DocumentFormat.OpenXml.Wordprocessing.Body;
-using Color = DocumentFormat.OpenXml.Wordprocessing.Color;
-using DataTable = System.Data.DataTable;
-using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 
+using Color = DocumentFormat.OpenXml.Wordprocessing.Color;
 
 #pragma warning disable
 namespace SKS_Service_Manager
