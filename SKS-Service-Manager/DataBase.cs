@@ -13,16 +13,20 @@ namespace SKS_Service_Manager
         private SQLiteConnection sqliteConnection;
         private Settings settingsForm;
         private Form1 mainForms;
+        Logger logger;
         public bool useMySQL;
         private string connectionString;
 
+        public event EventHandler<int> ProgressChanged;
+        public event EventHandler<int[]> ProgressTotal;
+
         public DataBase(Form1 mainForm)
         {
+            logger = new Logger("log.txt");
             settingsForm = new Settings(mainForm);
             connectionString = $"Server={settingsForm.GetMySQLHost()};Port={settingsForm.GetMySQLPort()};Database={settingsForm.GetMySQLDatabase()};User ID={settingsForm.GetMySQLUser()};Password={settingsForm.GetMySQLPassword()};";
 
             mainForms = mainForm;
-
             useMySQL = IsMySQLConnectionAvailable(mainForm); // Sprawdzamy dostępność połączenia MySQL
 
             if (useMySQL)
@@ -54,16 +58,35 @@ namespace SKS_Service_Manager
             }
         }
 
-        private void CloseConnection()
+        private void OpenConnection() 
         {
             if (useMySQL)
+            {
+                if (mySqlConnection.State == ConnectionState.Closed)
+                {
+                    mySqlConnection.Open();
+                }
+            }
+            else
+            {
+                if (sqliteConnection.State == ConnectionState.Closed)
+                {
+                    sqliteConnection.Open();
+                }
+            }
+
+        }
+
+        private void CloseConnection()
+        {
+/*            if (useMySQL)
             {
                 mySqlConnection.Close();
             }
             else
             {
                 sqliteConnection.Close();
-            }
+            }*/
         }
 
         private void InitializeMySQLConnection(Form1 mainForm)
@@ -118,41 +141,35 @@ namespace SKS_Service_Manager
 
                                     Notes TEXT
                                     );";
+            OpenConnection();
+
             if (useMySQL)
             {
                 try
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(createTableQuery, mySqlConnection);
                     cmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Błąd podczas tworzenia tabeli UKS w MySQL: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    mySqlConnection.Close();
+                    logger.LogError("CreateInvoicesTableIfNotExists() - Błąd podczas tworzenia struktury tabeli INVOICES w MySQL: " + ex.Message);
                 }
             }
             else
             {
                 try
                 {
-                    sqliteConnection.Open();
                     createTableQuery = createTableQuery.Replace("ID INT AUTO_INCREMENT PRIMARY KEY", "ID INTEGER PRIMARY KEY AUTOINCREMENT");
                     SQLiteCommand cmd = new SQLiteCommand(createTableQuery, sqliteConnection);
                     cmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Błąd podczas tworzenia tabeli UKS w bazie SQLite: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    sqliteConnection.Close();
+                    logger.LogError("CreateInvoicesTableIfNotExists() - Błąd podczas tworzenia struktury tabeli INVOICES w bazie SQLite: " + ex.Message);
                 }
             }
+
+            CloseConnection();
         }
 
         public void CreateUsersTableIfNotExists()
@@ -173,41 +190,34 @@ namespace SKS_Service_Manager
                             Pesel VARCHAR(11),
                             Notes TEXT
                             );";
+
+            OpenConnection();
             if (useMySQL)
             {
                 try
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(createTableQuery, mySqlConnection);
                     cmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Błąd podczas tworzenia tabeli UKS w MySQL: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    mySqlConnection.Close();
+                    logger.LogError("CreateUsersTableIfNotExists() - Błąd podczas tworzenia struktury tabeli USERS w MySQL: " + ex.Message);
                 }
             }
             else
             {
                 try
                 {
-                    sqliteConnection.Open();
                     createTableQuery = createTableQuery.Replace("ID INT AUTO_INCREMENT PRIMARY KEY", "ID INTEGER PRIMARY KEY AUTOINCREMENT");
                     SQLiteCommand cmd = new SQLiteCommand(createTableQuery, sqliteConnection);
                     cmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Błąd podczas tworzenia tabeli UKS w bazie SQLite: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    sqliteConnection.Close();
+                    logger.LogError("CreateUsersTableIfNotExists() - Błąd podczas tworzenia struktury tabeli USERS w bazie SQLite: " + ex.Message);
                 }
             }
+            CloseConnection();
         }
 
         public DataTable uksLoadData()
@@ -237,16 +247,15 @@ namespace SKS_Service_Manager
 
                 DataTable dt = new DataTable();
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     adapter.Fill(dt);
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
                     adapter.Fill(dt);
@@ -256,18 +265,11 @@ namespace SKS_Service_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd podczas odczytu danych uksLoadData: " + ex.Message);
+                logger.LogError("uksLoadData() - Błąd podczas odczytu danych uksLoadData: " + ex.Message);
             }
             finally
             {
-                if (useMySQL)
-                {
-                    mySqlConnection.Close();
-                }
-                else
-                {
-                    sqliteConnection.Close();
-                }
+                CloseConnection();
             }
             return null;
         }
@@ -300,9 +302,9 @@ namespace SKS_Service_Manager
 
                 DataTable dt = new DataTable();
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@FromDate", fromDate);
                     cmd.Parameters.AddWithValue("@ToDate", toDate);
@@ -315,7 +317,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@FromDate", fromDate);
                     cmd.Parameters.AddWithValue("@ToDate", toDate);
@@ -331,18 +332,11 @@ namespace SKS_Service_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd podczas odczytu danych uksLoadDataByDateRange: " + ex.Message);
+                logger.LogError("uksLoadDataByDateRange() - Błąd podczas odczytu danych uksLoadDataByDateRange: " + ex.Message);
             }
             finally
             {
-                if (useMySQL)
-                {
-                    mySqlConnection.Close();
-                }
-                else
-                {
-                    sqliteConnection.Close();
-                }
+                CloseConnection();
             }
             return null;
         }
@@ -356,16 +350,15 @@ namespace SKS_Service_Manager
 
                 DataTable dt = new DataTable();
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     adapter.Fill(dt);
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
                     adapter.Fill(dt);
@@ -382,14 +375,7 @@ namespace SKS_Service_Manager
             }
             finally
             {
-                if (useMySQL)
-                {
-                    mySqlConnection.Close();
-                }
-                else
-                {
-                    sqliteConnection.Close();
-                }
+                CloseConnection();
             }
             return cities;
         }
@@ -400,16 +386,16 @@ namespace SKS_Service_Manager
             {
                 string deleteQuery = "DELETE FROM UKS WHERE ID = @UksId";
                 int rowsAffected;
+
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(deleteQuery, mySqlConnection);
                     cmd.Parameters.AddWithValue("@UksId", uksId);
                     rowsAffected = cmd.ExecuteNonQuery();
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(deleteQuery, sqliteConnection);
                     cmd.Parameters.AddWithValue("@UksId", uksId);
                     rowsAffected = cmd.ExecuteNonQuery();
@@ -426,14 +412,7 @@ namespace SKS_Service_Manager
             }
             finally
             {
-                if (useMySQL)
-                {
-                    mySqlConnection.Close();
-                }
-                else
-                {
-                    sqliteConnection.Close();
-                }
+                CloseConnection();
             }
 
             return false; // Zwracamy false w przypadku błędu lub braku faktury do usunięcia
@@ -446,9 +425,9 @@ namespace SKS_Service_Manager
                 string query = "SELECT * FROM Users WHERE ID = @UserID;";
                 DataTable dt = new DataTable();
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@UserID", userIdToEdit);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
@@ -456,7 +435,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@UserID", userIdToEdit);
                     SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
@@ -466,7 +444,7 @@ namespace SKS_Service_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd podczas odczytu danych LoadUserData: " + ex.Message);
+                logger.LogError("loadUserData() - Błąd podczas odczytu danych LoadUserData: " + ex.Message);
             }
             finally
             {
@@ -497,16 +475,15 @@ namespace SKS_Service_Manager
 
                 DataTable dt = new DataTable();
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     adapter.Fill(dt);
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
                     adapter.Fill(dt);
@@ -516,7 +493,7 @@ namespace SKS_Service_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd podczas odczytu danych: " + ex.Message);
+                logger.LogError("LoadAllUserData() - Błąd podczas odczytu danych: " + ex.Message);
             }
             finally
             {
@@ -531,16 +508,15 @@ namespace SKS_Service_Manager
             {
                 string deleteQuery = "DELETE FROM Users WHERE ID = @ID;";
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(deleteQuery, mySqlConnection);
                     cmd.Parameters.AddWithValue("@ID", userId);
                     cmd.ExecuteNonQuery();
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(deleteQuery, sqliteConnection);
                     cmd.Parameters.AddWithValue("@ID", userId);
                     cmd.ExecuteNonQuery();
@@ -564,9 +540,9 @@ namespace SKS_Service_Manager
             INSERT INTO UKS (UserID, DocumentType, City, Description, TotalAmount, InvoiceDate, BuyDate, Days, Percentage, Fee, LateFee, BuyAmount, DateOfReturn, SaleDate, SaleAmount, Notes)
             VALUES (@UserID, @DocumentType, @City, @Description, @TotalAmount, @InvoiceDate, @BuyDate, @Days, @Percentage, @Fee, @LateFee, @BuyAmount, @DateOfReturn, @SaleDate, @SaleAmount, @Notes);";
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     foreach (DataRow row in invoiceData.Rows)
                     {
                         MySqlCommand cmd = new MySqlCommand(insertInvoiceQuery, mySqlConnection);
@@ -591,7 +567,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     foreach (DataRow row in invoiceData.Rows)
                     {
                         SQLiteCommand cmd = new SQLiteCommand(insertInvoiceQuery, sqliteConnection);
@@ -631,12 +606,9 @@ namespace SKS_Service_Manager
             {
                 string query = "SELECT ID FROM Users WHERE Pesel = @Pesel;";
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    if (mySqlConnection.State == ConnectionState.Closed)
-                    {
-                        mySqlConnection.Open();
-                    }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@Pesel", pesel);
                     object result = cmd.ExecuteScalar();
@@ -647,10 +619,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    if (sqliteConnection.State == ConnectionState.Closed)
-                    {
-                        sqliteConnection.Open();
-                    }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@Pesel", pesel);
                     object result = cmd.ExecuteScalar();
@@ -677,12 +645,9 @@ namespace SKS_Service_Manager
             {
                 string query = "SELECT ID FROM Users WHERE DocumentNumber = @DokNr;";
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    if (mySqlConnection.State == ConnectionState.Closed)
-                    {
-                        mySqlConnection.Open();
-                    }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@DokNr", dokNr);
                     object result = cmd.ExecuteScalar();
@@ -693,10 +658,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    if (sqliteConnection.State == ConnectionState.Closed)
-                    {
-                        sqliteConnection.Open();
-                    }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@DokNr", dokNr);
                     object result = cmd.ExecuteScalar();
@@ -723,12 +684,9 @@ namespace SKS_Service_Manager
             {
                 string query = "SELECT ID FROM Users WHERE FullName = @FullName AND Address = @Address;";
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    if (mySqlConnection.State == ConnectionState.Closed)
-                    {
-                        mySqlConnection.Open();
-                    }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@FullName", FullName);
                     cmd.Parameters.AddWithValue("@Address", Address);
@@ -740,10 +698,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    if (sqliteConnection.State == ConnectionState.Closed)
-                    {
-                        sqliteConnection.Open();
-                    }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@FullName", FullName);
                     cmd.Parameters.AddWithValue("@Address", Address);
@@ -765,7 +719,48 @@ namespace SKS_Service_Manager
             return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
         }
 
-        public int CheckUserExists(string Pesel, string docNumber, string Adress, string FullName)
+        public int CheckUserExistsByNameAndCity(string City, string FullName)
+        {
+            try
+            {
+                string query = "SELECT ID FROM Users WHERE FullName = @FullName AND City = @City;";
+
+                OpenConnection();
+                if (useMySQL)
+                {
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@FullName", FullName);
+                    cmd.Parameters.AddWithValue("@City", City);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+                else
+                {
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    cmd.Parameters.AddWithValue("@FullName", FullName);
+                    cmd.Parameters.AddWithValue("@City", City);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas sprawdzania użytkownika w bazie danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+            return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
+        }
+
+        public int CheckUserExists(string Pesel, string docNumber, string Adress,string City, string FullName)
         {
             if (!string.IsNullOrEmpty(Pesel))
             {
@@ -778,6 +773,10 @@ namespace SKS_Service_Manager
             if (!string.IsNullOrEmpty(Adress) && !string.IsNullOrEmpty(FullName))
             {
                 return CheckUserExistsByNameAndAdress(Adress, FullName);
+            }
+            if (!string.IsNullOrEmpty(City) && !string.IsNullOrEmpty(City))
+            {
+                return CheckUserExistsByNameAndCity(City, FullName);
             }
             return -1; // Zwraca -1, jeśli użytkownik nie został znaleziony
         }
@@ -803,12 +802,9 @@ namespace SKS_Service_Manager
                 VALUES (@FullName, @Name, @Address, @PostalCode, @City, @Phone, @Email, @DocumentType, @DocumentNumber, @Pesel, @NIP, @Notes);";
                 }
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    if (mySqlConnection.State == ConnectionState.Closed)
-                    {
-                        mySqlConnection.Open();
-                    }
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@FullName", fullName);
@@ -827,10 +823,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    if (sqliteConnection.State == ConnectionState.Closed)
-                    {
-                        sqliteConnection.Open();
-                    }
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@FullName", fullName);
@@ -865,9 +857,9 @@ namespace SKS_Service_Manager
                 string query = "SELECT * FROM UKS WHERE ID = @ID;";
                 DataTable dt = new DataTable();
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@ID", invoiceId);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
@@ -875,7 +867,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@ID", invoiceId);
                     SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
@@ -918,9 +909,9 @@ namespace SKS_Service_Manager
                 SaleAmount = @SaleAmount
             WHERE ID = @InvoiceID;";
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@City", city);
                     cmd.Parameters.AddWithValue("@UserID", userId);
@@ -943,7 +934,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@City", city);
                     cmd.Parameters.AddWithValue("@UserID", userId);
@@ -981,9 +971,9 @@ namespace SKS_Service_Manager
             {
                 string query = "SELECT COUNT(*) FROM UKS WHERE ID = @ID;";
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@ID", id);
                     int count = Convert.ToInt32(cmd.ExecuteScalar());
@@ -991,7 +981,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@ID", id);
                     int count = Convert.ToInt32(cmd.ExecuteScalar());
@@ -1015,9 +1004,9 @@ namespace SKS_Service_Manager
             {
                 string query = "SELECT COUNT(*) FROM UKS WHERE Description = @Description AND TotalAmount = @TotalAmount;";
 
+                OpenConnection();
                 if (useMySQL)
                 {
-                    mySqlConnection.Open();
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
                     cmd.Parameters.AddWithValue("@Description", description);
                     cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
@@ -1026,7 +1015,6 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    sqliteConnection.Open();
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
                     cmd.Parameters.AddWithValue("@Description", description);
                     cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
@@ -1045,7 +1033,7 @@ namespace SKS_Service_Manager
             }
         }
 
-        public void AddUsersFromGeneratedDatabase(string generatedDatabaseFilePath)
+        public async Task AddUsersFromGeneratedDatabaseAsync(string generatedDatabaseFilePath)
         {
             try
             {
@@ -1054,6 +1042,12 @@ namespace SKS_Service_Manager
                 SQLiteConnection generatedDatabaseConnection = new SQLiteConnection(generatedDatabaseConnectionString);
                 generatedDatabaseConnection.Open();
 
+                string countQuery = "SELECT COUNT(*) FROM lombard";
+                SQLiteCommand countCommand = new SQLiteCommand(countQuery, generatedDatabaseConnection);
+
+                int totalCount = Convert.ToInt32(countCommand.ExecuteScalar());
+                int processedCount = 0;
+
                 // Przygotowanie zapytania do pobrania użytkowników z wygenerowanej bazy
                 string query = "SELECT KLIENT_NAZWISKO_IMIE, KLIENT_KOD_POCZT, KLIENT_MIEJSCOW, KLIENT_ULICA, KLIENT_TEL_KONTAKT, KLIENT_DOK_TYP, KLIENT_DOK_NR, KLIENT_PESEL, FIRMA_MIEJSCOW, PRZEDMIOT_OPIS, PRZEDMIOT_WARTOSC, DATA_PRZYJECIA, TERMIN_ODBIORU, UMOWA_ILOSC_DNI, UMOWA_PROCENT, OPLATA, OPLATA_OPOZNIENIE, KWOTA_WYKUPU, FAKT_ODBIOR_DATA, SPRZEDAZ_DATA, SPRZEDAZ_KWOTA, UWAGI FROM lombard";
 
@@ -1061,15 +1055,20 @@ namespace SKS_Service_Manager
                 SQLiteCommand command = new SQLiteCommand(query, generatedDatabaseConnection);
                 SQLiteDataReader reader = command.ExecuteReader();
 
-                // Otwarcie połączenia do Twojej bazy danych
-                //sqliteConnection.Open();
-
-                // Iteracja przez wyniki zapytania i dodawanie użytkowników do Twojej bazy danych
                 while (reader.Read())
                 {
                     string nazwiskoImie = reader["KLIENT_NAZWISKO_IMIE"].ToString();
+                    string odwroconeImieNazwisko = string.Empty;
                     string[] parts = nazwiskoImie.Split(' ');
-                    string odwroconeImieNazwisko = parts[1] + " " + parts[0];
+                    if (parts.Length >= 2)
+                    {
+                        odwroconeImieNazwisko = parts[1] + " " + parts[0];
+                    }
+                    else if (parts.Length == 1)
+                    {
+                        odwroconeImieNazwisko = parts[0]; // Jeśli ciąg zawiera tylko jedną część, przypisz ją bez zmiany
+                    }
+
 
                     string kodPocztowy = reader["KLIENT_KOD_POCZT"].ToString();
                     string miejscowosc = reader["KLIENT_MIEJSCOW"].ToString();
@@ -1088,8 +1087,10 @@ namespace SKS_Service_Manager
                     string InvoiceDate = reader["DATA_PRZYJECIA"].ToString();
                     string BuyDate = reader["TERMIN_ODBIORU"].ToString();
                     string Days = reader["UMOWA_ILOSC_DNI"].ToString();
-                    string Percentage = reader["UMOWA_PROCENT"].ToString();
 
+                    string PercentageString = reader["UMOWA_PROCENT"].ToString().Replace(".", ",");
+                    double PercentageDouble = Convert.ToDouble(string.IsNullOrEmpty(PercentageString) ? 0 : PercentageString);
+                    int Percentage = (int)Math.Floor(PercentageDouble);
 
                     string Fee = reader["OPLATA"].ToString().Replace(".", ",");
                     string LateFee = reader["OPLATA_OPOZNIENIE"].ToString().Replace(".", ",");
@@ -1102,11 +1103,12 @@ namespace SKS_Service_Manager
                     string Notes = reader["UWAGI"].ToString();
 
 
-                    int userid = CheckUserExists(pesel, dokumentNumer, ulica, odwroconeImieNazwisko);
+                    int userid = CheckUserExists(pesel, dokumentNumer, ulica, miejscowosc, odwroconeImieNazwisko);
 
-                    UpdateUserInDatabase(userid, odwroconeImieNazwisko, "", ulica, kodPocztowy, miejscowosc, telefon, "", "Dowód Osobisty", dokumentNumer, "", "", "");
-
-                    userid = CheckUserExists(pesel, dokumentNumer, ulica, odwroconeImieNazwisko);
+                    if (userid == -1) {
+                        UpdateUserInDatabase(userid, odwroconeImieNazwisko, "", ulica, kodPocztowy, miejscowosc, telefon, "", "Dowód Osobisty", dokumentNumer, "", "", "");
+                        userid = CheckUserExists(pesel, dokumentNumer, ulica, miejscowosc, odwroconeImieNazwisko);
+                    }
 
                     if (userid != -1 && !CheckInvoiceExists(Description, string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount)))
                     {
@@ -1138,7 +1140,7 @@ namespace SKS_Service_Manager
                         newRow["BuyDate"] = DateTime.TryParse(BuyDate, out DateTime buyDateTime) ? (object)buyDateTime : (object)new DateTime(1753, 1, 1);
                         newRow["Notes"] = Notes;
                         newRow["Days"] = string.IsNullOrEmpty(Days) ? 0 : int.Parse(Days);
-                        newRow["Percentage"] = string.IsNullOrEmpty(Percentage) ? 0 : int.Parse(Percentage);
+                        newRow["Percentage"] = Percentage;
                         newRow["Fee"] = string.IsNullOrEmpty(Fee) ? 0 : decimal.Parse(Fee);
                         newRow["LateFee"] = string.IsNullOrEmpty(LateFee) ? 0 : decimal.Parse(LateFee);
                         newRow["BuyAmount"] = string.IsNullOrEmpty(BuyAmount) ? 0 : decimal.Parse(BuyAmount);
@@ -1151,6 +1153,15 @@ namespace SKS_Service_Manager
                         SaveInvoiceToDatabase(invoiceData);
                     }
 
+                    processedCount++;
+
+                    // Obliczenie procentowego postępu
+                    int progressPercentage = (int)((processedCount / (double)totalCount) * 100);
+
+                    // Wywołanie zdarzenia ProgressChanged
+                    OnProgressChanged(progressPercentage);
+                    OnProgressTotalChanged(processedCount, totalCount);
+
                 }
 
                 // Zamknięcie połączenia z wygenerowaną bazą danych
@@ -1158,7 +1169,7 @@ namespace SKS_Service_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd podczas importu użytkowników: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Błąd podczas importu bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
             }
             finally
             {
@@ -1167,81 +1178,16 @@ namespace SKS_Service_Manager
             }
         }
 
-        private string sqliteConnectionString = "Data Source=your_sqlite_database.db";
-        private string mysqlConnectionString = "Your_MySQL_Connection_String";
-
-        public async Task SynchronizeDataAsync()
+        protected virtual void OnProgressChanged(int progressPercentage)
         {
-            try
-            {
-                await SynchronizeTableAsync("UKS");
-                await SynchronizeTableAsync("Users");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Błąd podczas synchronizacji danych: " + ex.Message);
-            }
+            ProgressChanged?.Invoke(this, progressPercentage);
         }
 
-        private async Task SynchronizeTableAsync(string tableName)
+        protected virtual void OnProgressTotalChanged(int current, int total)
         {
-            DataTable localData = await Task.Run(() => GetLocalData(tableName));
-            DataTable remoteData = await Task.Run(() => GetRemoteData(tableName));
-
-            SynchronizeData(localData, remoteData, tableName);
-
-            await Task.Run(() => SaveChangesToLocalDatabase(localData, tableName));
+            int[] progress = { current, total };
+            ProgressTotal?.Invoke(this, progress);
         }
 
-        private DataTable GetLocalData(string tableName)
-        {
-            DataTable localData = new DataTable();
-            using (SQLiteConnection connection = new SQLiteConnection(sqliteConnectionString))
-            {
-                connection.Open();
-                string query = $"SELECT * FROM {tableName}";
-                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, connection))
-                {
-                    adapter.Fill(localData);
-                }
-            }
-            return localData;
-        }
-
-        private DataTable GetRemoteData(string tableName)
-        {
-            DataTable remoteData = new DataTable();
-            using (SqlConnection connection = new SqlConnection(mysqlConnectionString))
-            {
-                connection.Open();
-                string query = $"SELECT * FROM {tableName}";
-                using (SqlDataAdapter adapter = new SqlDataAdapter(query, connection))
-                {
-                    adapter.Fill(remoteData);
-                }
-            }
-            return remoteData;
-        }
-
-        private void SynchronizeData(DataTable localData, DataTable remoteData, string tableName)
-        {
-            // Logika synchronizacji między lokalną i zdalną bazą danych
-        }
-
-        private void SaveChangesToLocalDatabase(DataTable localData, string tableName)
-        {
-            using (SQLiteConnection connection = new SQLiteConnection(sqliteConnectionString))
-            {
-                connection.Open();
-                using (SQLiteTransaction transaction = connection.BeginTransaction())
-                {
-                    // Zapisz zmiany w tabeli do bazy danych SQLite
-                    // Użyj adapterów i poleceń INSERT, UPDATE, DELETE
-                    // Możesz również zaimplementować transakcje, aby zapewnić spójność danych
-
-                    transaction.Commit();
-                }
-            }
-        }
     }
 }

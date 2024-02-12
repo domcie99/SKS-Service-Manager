@@ -79,8 +79,10 @@
             label1.AutoSize = true;
             label1.Location = new Point(12, 92);
             label1.Name = "label1";
-            label1.Size = new Size(0, 15);
-            label1.TabIndex = 5;
+            label1.Size = new Size(111, 15);
+            label1.TabIndex = 6;
+            label1.Text = "Konwertowanie: 0%";
+            label1.Visible = false;
             // 
             // DataBaseInsert
             // 

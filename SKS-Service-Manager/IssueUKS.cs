@@ -243,7 +243,7 @@ namespace SKS_Service_Manager
                 Print.Enabled = true;
                 generated = true;
 
-                UpdateUserInDatabase(dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, FullName.Text));
+                UpdateUserInDatabase(dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, City.Text, FullName.Text));
 
                 if (dataBase.CheckInvoiceExists(issueId))
                 {
@@ -252,7 +252,7 @@ namespace SKS_Service_Manager
                 }
                 else
                 {
-                    int userid = dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, FullName.Text);
+                    int userid = dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, City.Text, FullName.Text);
                     SaveInvoiceToDatabase(userid);
                 }
             }

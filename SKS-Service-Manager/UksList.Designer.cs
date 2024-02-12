@@ -38,7 +38,12 @@
             search = new TextBox();
             label1 = new Label();
             print = new Button();
+            IssuedCity = new ComboBox();
+            label2 = new Label();
+            label3 = new Label();
+            maxRowsDt = new NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)maxRowsDt).BeginInit();
             SuspendLayout();
             // 
             // delete
@@ -126,7 +131,7 @@
             // 
             label1.AutoSize = true;
             label1.BackColor = Color.Transparent;
-            label1.Location = new Point(877, 67);
+            label1.Location = new Point(942, 46);
             label1.Name = "label1";
             label1.Size = new Size(59, 15);
             label1.TabIndex = 30;
@@ -147,6 +152,46 @@
             print.UseVisualStyleBackColor = false;
             print.Click += print_Click;
             // 
+            // IssuedCity
+            // 
+            IssuedCity.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
+            IssuedCity.DropDownStyle = ComboBoxStyle.DropDownList;
+            IssuedCity.FormattingEnabled = true;
+            IssuedCity.Location = new Point(590, 64);
+            IssuedCity.Name = "IssuedCity";
+            IssuedCity.Size = new Size(220, 23);
+            IssuedCity.TabIndex = 128;
+            IssuedCity.TextChanged += IssuedCity_TextChanged;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.BackColor = Color.Transparent;
+            label2.Location = new Point(590, 46);
+            label2.Name = "label2";
+            label2.Size = new Size(115, 15);
+            label2.TabIndex = 129;
+            label2.Text = "Miasto Wystawienia:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.BackColor = Color.Transparent;
+            label3.Location = new Point(816, 46);
+            label3.Name = "label3";
+            label3.Size = new Size(78, 15);
+            label3.TabIndex = 131;
+            label3.Text = "Max Wpisów:";
+            // 
+            // maxRowsDt
+            // 
+            maxRowsDt.Location = new Point(816, 64);
+            maxRowsDt.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
+            maxRowsDt.Name = "maxRowsDt";
+            maxRowsDt.Size = new Size(120, 23);
+            maxRowsDt.TabIndex = 132;
+            maxRowsDt.ValueChanged += maxRowsDt_ValueChanged;
+            // 
             // UksList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -154,6 +199,10 @@
             BackgroundImage = Properties.Resources.background;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1143, 480);
+            Controls.Add(maxRowsDt);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(IssuedCity);
             Controls.Add(print);
             Controls.Add(label1);
             Controls.Add(search);
@@ -167,6 +216,7 @@
             Text = "Umowy Kupna-Sprzedaży";
             SizeChanged += UksList_SizeChanged;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)maxRowsDt).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -179,5 +229,9 @@
         private TextBox search;
         private Label label1;
         private Button print;
+        private ComboBox IssuedCity;
+        private Label label2;
+        private Label label3;
+        private NumericUpDown maxRowsDt;
     }
 }

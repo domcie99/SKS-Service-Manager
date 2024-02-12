@@ -94,7 +94,7 @@ namespace SKS_Service_Manager
             try
             {
                 // Ustal, czy użytkownik istnieje w bazie danych
-                int userId = database.CheckUserExists(pesel, documentNumber, address, fullname);
+                int userId = database.CheckUserExists(pesel, documentNumber, address, city, fullname);
 
                 // Wywołaj metodę UpdateUserInDatabase z klasy Database
                 database.UpdateUserInDatabase(userId, fullname, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);

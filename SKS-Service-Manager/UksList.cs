@@ -10,10 +10,13 @@ namespace SKS_Service_Manager
 {
     public partial class UksList : Form
     {
-        private IssueUKS issueUksForm;
         private Form1 mainForm;
         private DataBase dataBase;
+        private IssueUKS issueUksForm;
+        private Settings settingsForm;
         private PrintRecords printRecords;
+
+        private int maxRows = 50;
 
         DataTable dt;
 
@@ -25,11 +28,26 @@ namespace SKS_Service_Manager
             mainForm = form1;
             dataBase = mainForm.getDataBase();
 
+            settingsForm = new Settings(mainForm);
+            printRecords = new PrintRecords(mainForm);
             issueUksForm = new IssueUKS(-1, mainForm);
 
-            dataBase.CreateInvoicesTableIfNotExists();
+            IssuedCity.Items.Insert(0, "Wszystko");
+            IssuedCity.Items.AddRange(dataBase.GetUniqueCities().ToArray());
+            maxRowsDt.Value = maxRows;
 
-            printRecords = new PrintRecords(mainForm);
+            int mainCity = IssuedCity.Items.IndexOf(settingsForm.GetCity());
+
+            if (mainCity >= 0)
+            {
+                IssuedCity.SelectedIndex = mainCity;
+            }
+            else
+            {
+                IssuedCity.SelectedIndex = 0;
+            }
+
+            dataBase.CreateInvoicesTableIfNotExists();
 
             LoadData();
 
@@ -40,12 +58,57 @@ namespace SKS_Service_Manager
         public void LoadData()
         {
             dt = dataBase.uksLoadData();
+            GridInsert();
+        }
 
+        public void GridInsert()
+        {
             if (dt != null)
             {
-                dataGridView1.DataSource = dt;
+                string selectedCity = IssuedCity.SelectedItem.ToString();
+
+                if (selectedCity == "Wszystko")
+                {
+                    // Przepisz wszystkie dane
+                    DataTable filteredDataTable = dt.Copy();
+
+                    // Ograniczenie liczby wierszy do maksymalnie 500
+                    if (filteredDataTable.Rows.Count > maxRows)
+                    {
+                        DataTable limitedDataTable = filteredDataTable.AsEnumerable().Take(maxRows).CopyToDataTable();
+                        dataGridView1.DataSource = limitedDataTable;
+                    }
+                    else
+                    {
+                        dataGridView1.DataSource = filteredDataTable;
+                    }
+                }
+                else
+                {
+                    // Filtruj dane, aby zawierały tylko wiersze z wybranym miastem
+                    DataRow[] filteredRows = dt.Select($"[Miasto Wystawienia] = '{selectedCity}'");
+
+                    // Tworzenie nowej DataTable na podstawie przefiltrowanych wierszy
+                    DataTable filteredDataTable = dt.Clone();
+                    foreach (DataRow row in filteredRows)
+                    {
+                        filteredDataTable.ImportRow(row);
+                    }
+
+                    // Ograniczenie liczby wierszy do maksymalnie 500
+                    if (filteredDataTable.Rows.Count > maxRows)
+                    {
+                        DataTable limitedDataTable = filteredDataTable.AsEnumerable().Take(maxRows).CopyToDataTable();
+                        dataGridView1.DataSource = limitedDataTable;
+                    }
+                    else
+                    {
+                        dataGridView1.DataSource = filteredDataTable;
+                    }
+                }
             }
         }
+
 
         public void SearchUserValueChange(object sender, EventArgs e)
         {
@@ -69,7 +132,16 @@ namespace SKS_Service_Manager
             }
 
             // Wyświetl wyniki w DataGridView
-            dataGridView1.DataSource = filteredUserData;
+            if (filteredUserData.Rows.Count > maxRows)
+            {
+                DataTable limitedDataTable = filteredUserData.AsEnumerable().Take(maxRows).CopyToDataTable();
+                dataGridView1.DataSource = limitedDataTable;
+            }
+            else
+            {
+                dataGridView1.DataSource = filteredUserData;
+            }
+
         }
 
         private void Add_Click(object sender, EventArgs e)
@@ -182,6 +254,17 @@ namespace SKS_Service_Manager
             int margin = 20; // Możesz dostosować marginesy i inne wartości
             dataGridView1.Width = this.ClientSize.Width - margin;
             dataGridView1.Height = this.ClientSize.Height - 100;
+        }
+
+        private void IssuedCity_TextChanged(object sender, EventArgs e)
+        {
+            GridInsert();
+        }
+
+        private void maxRowsDt_ValueChanged(object sender, EventArgs e)
+        {
+            maxRows = (int)maxRowsDt.Value;
+            GridInsert();
         }
     }
 }
