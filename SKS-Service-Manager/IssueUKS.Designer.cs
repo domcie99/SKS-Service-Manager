@@ -811,7 +811,7 @@
             // 
             // FormType
             // 
-            FormType.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
+            FormType.AutoCompleteCustomSource.AddRange(new string[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
             FormType.DropDownStyle = ComboBoxStyle.DropDownList;
             FormType.FormattingEnabled = true;
             FormType.Items.AddRange(new object[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });

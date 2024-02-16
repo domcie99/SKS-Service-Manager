@@ -36,6 +36,9 @@ namespace SKS_Service_Manager
             IssuedCity.Items.AddRange(dataBase.GetUniqueCities().ToArray());
             maxRowsDt.Value = maxRows;
 
+            FormType.Items.Insert(0, "Wszystko");
+            FormType.SelectedIndex = 0;
+
             int mainCity = IssuedCity.Items.IndexOf(settingsForm.GetCity());
 
             if (mainCity >= 0)
@@ -66,48 +69,62 @@ namespace SKS_Service_Manager
             if (dt != null)
             {
                 string selectedCity = IssuedCity.SelectedItem.ToString();
+                string selectedFormType = FormType.SelectedItem.ToString();
 
-                if (selectedCity == "Wszystko")
+                DataRow[] filteredRows;
+
+                // Jeśli miasto i rodzaj umowy są wybrane jako "Wszystko"
+                if (selectedCity == "Wszystko" && selectedFormType == "Wszystko")
                 {
                     // Przepisz wszystkie dane
-                    DataTable filteredDataTable = dt.Copy();
-
-                    // Ograniczenie liczby wierszy do maksymalnie 500
-                    if (filteredDataTable.Rows.Count > maxRows)
-                    {
-                        DataTable limitedDataTable = filteredDataTable.AsEnumerable().Take(maxRows).CopyToDataTable();
-                        dataGridView1.DataSource = limitedDataTable;
-                    }
-                    else
-                    {
-                        dataGridView1.DataSource = filteredDataTable;
-                    }
+                    filteredRows = dt.Select();
                 }
                 else
                 {
-                    // Filtruj dane, aby zawierały tylko wiersze z wybranym miastem
-                    DataRow[] filteredRows = dt.Select($"[Miasto Wystawienia] = '{selectedCity}'");
+                    // Tworzenie warunków filtra
+                    string filterExpression = "";
 
-                    // Tworzenie nowej DataTable na podstawie przefiltrowanych wierszy
-                    DataTable filteredDataTable = dt.Clone();
-                    foreach (DataRow row in filteredRows)
+                    if (selectedCity != "Wszystko")
                     {
-                        filteredDataTable.ImportRow(row);
+                        filterExpression += $"[Miasto Wystawienia] = '{selectedCity}'";
                     }
 
-                    // Ograniczenie liczby wierszy do maksymalnie 500
-                    if (filteredDataTable.Rows.Count > maxRows)
+                    if (selectedFormType != "Wszystko")
                     {
-                        DataTable limitedDataTable = filteredDataTable.AsEnumerable().Take(maxRows).CopyToDataTable();
-                        dataGridView1.DataSource = limitedDataTable;
+                        if (!string.IsNullOrEmpty(filterExpression))
+                            filterExpression += " AND ";
+                        filterExpression += $"[Typ Umowy] = '{selectedFormType}'";
                     }
-                    else
-                    {
-                        dataGridView1.DataSource = filteredDataTable;
-                    }
+
+                    // Wykonaj filtrowanie
+                    filteredRows = dt.Select(filterExpression);
+                }
+
+                // Tworzenie nowej DataTable na podstawie przefiltrowanych wierszy
+                DataTable filteredDataTable = dt.Clone();
+                foreach (DataRow row in filteredRows)
+                {
+                    filteredDataTable.ImportRow(row);
+                }
+
+                // Sortowanie danych według kolumny "Typ Umowy"
+                DataView dv = filteredDataTable.DefaultView;
+                dv.Sort = "Data Wystawienia ASC"; // Możesz zmienić "ASC" na "DESC", jeśli chcesz sortować malejąco
+                filteredDataTable = dv.ToTable();
+
+                // Ograniczenie liczby wierszy do maksymalnie 500
+                if (filteredDataTable.Rows.Count > maxRows)
+                {
+                    DataTable limitedDataTable = filteredDataTable.AsEnumerable().Take(maxRows).CopyToDataTable();
+                    dataGridView1.DataSource = limitedDataTable;
+                }
+                else
+                {
+                    dataGridView1.DataSource = filteredDataTable;
                 }
             }
         }
+
 
 
         public void SearchUserValueChange(object sender, EventArgs e)
@@ -265,6 +282,11 @@ namespace SKS_Service_Manager
         {
             maxRows = (int)maxRowsDt.Value;
             GridInsert();
+        }
+
+        private void UksList_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

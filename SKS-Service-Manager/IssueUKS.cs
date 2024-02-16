@@ -602,7 +602,7 @@ namespace SKS_Service_Manager
 
         private void UpdateInvoiceInDatabase(int invoiceId)
         {
-            string city = City.Text;
+            string city = settingsForm.GetCity();
             int userId = issueUserId;
             string description = Description.Text;
             decimal totalAmount = decimal.Parse(Value.Text);

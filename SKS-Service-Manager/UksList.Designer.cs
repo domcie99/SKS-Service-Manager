@@ -42,6 +42,8 @@
             label2 = new Label();
             label3 = new Label();
             maxRowsDt = new NumericUpDown();
+            FormType = new ComboBox();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)maxRowsDt).BeginInit();
             SuspendLayout();
@@ -192,6 +194,28 @@
             maxRowsDt.TabIndex = 132;
             maxRowsDt.ValueChanged += maxRowsDt_ValueChanged;
             // 
+            // FormType
+            // 
+            FormType.AutoCompleteCustomSource.AddRange(new string[] { "Wszystko", "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            FormType.DropDownStyle = ComboBoxStyle.DropDownList;
+            FormType.FormattingEnabled = true;
+            FormType.Items.AddRange(new object[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            FormType.Location = new Point(364, 63);
+            FormType.Name = "FormType";
+            FormType.Size = new Size(220, 23);
+            FormType.TabIndex = 133;
+            FormType.TextChanged += IssuedCity_TextChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.BackColor = Color.Transparent;
+            label4.Location = new Point(364, 43);
+            label4.Name = "label4";
+            label4.Size = new Size(86, 15);
+            label4.TabIndex = 134;
+            label4.Text = "Rodzaj Umowy";
+            // 
             // UksList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -199,6 +223,8 @@
             BackgroundImage = Properties.Resources.background;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1143, 480);
+            Controls.Add(label4);
+            Controls.Add(FormType);
             Controls.Add(maxRowsDt);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -214,6 +240,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "UksList";
             Text = "Umowy Kupna-Sprzedaży";
+            Load += UksList_Load;
             SizeChanged += UksList_SizeChanged;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)maxRowsDt).EndInit();
@@ -233,5 +260,7 @@
         private Label label2;
         private Label label3;
         private NumericUpDown maxRowsDt;
+        private ComboBox FormType;
+        private Label label4;
     }
 }
