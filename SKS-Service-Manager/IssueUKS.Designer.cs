@@ -406,7 +406,6 @@
             Value.TabIndex = 104;
             Value.Text = "0,00";
             Value.TextAlign = HorizontalAlignment.Right;
-            Value.TextChanged += Value_Validation;
             Value.KeyPress += Value_KeyPress;
             Value.Leave += Value_Validation;
             // 
@@ -819,7 +818,6 @@
             FormType.Name = "FormType";
             FormType.Size = new Size(220, 23);
             FormType.TabIndex = 118;
-            FormType.SelectedIndexChanged += FormType_SelectedIndexChanged;
             FormType.SelectedValueChanged += FormType_ValueChanged;
             // 
             // IssueUKS

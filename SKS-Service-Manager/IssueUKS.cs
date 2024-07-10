@@ -521,20 +521,20 @@ namespace SKS_Service_Manager
             if (generated)
             {
 
-                        File.Copy(pdfFilePath, savedpdfFilePath, true);
+                File.Copy(pdfFilePath, savedpdfFilePath, true);
 
 
-                    try
-                    {
-                        Process.Start("cmd", $"/c start {pdfFilePath}");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Błąd podczas otwierania pliku PDF: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                try
+                {
+                    Process.Start("cmd", $"/c start {pdfFilePath}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Błąd podczas otwierania pliku PDF: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
 
-                    generated = false;
-                    this.Close();
+                generated = false;
+                this.Close();
 
             }
             else
@@ -765,16 +765,6 @@ namespace SKS_Service_Manager
         private void PercentageChanged(object sender, EventArgs e)
         {
             settingsForm.SetPercentage(int.Parse(Percentage.Text.ToString()));
-        }
-
-        private void IssueUKS_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void FormType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
