@@ -482,6 +482,7 @@ namespace SKS_Service_Manager
                 invoiceData.Columns.Add("Percentage", typeof(int));
                 invoiceData.Columns.Add("Fee", typeof(decimal));
                 invoiceData.Columns.Add("LateFee", typeof(decimal));
+                invoiceData.Columns.Add("Commision", typeof(decimal));
                 invoiceData.Columns.Add("BuyAmount", typeof(decimal));
                 invoiceData.Columns.Add("DateOfReturn", typeof(DateTime));
                 invoiceData.Columns.Add("SaleDate", typeof(DateTime));
@@ -501,6 +502,7 @@ namespace SKS_Service_Manager
                 newRow["Percentage"] = int.Parse(Percentage.Text);
                 newRow["Fee"] = decimal.Parse(Fee.Text);
                 newRow["LateFee"] = decimal.Parse(LateFee.Text);
+                newRow["Commision"] = decimal.Parse(Commision.Text); // Dodajemy kolumnę Commision
                 newRow["BuyAmount"] = decimal.Parse(BuyAmount.Text);
                 newRow["DateOfReturn"] = DateOfReturn.Value.Date;
                 newRow["SaleDate"] = SaleDate.Value.Date;
@@ -515,7 +517,6 @@ namespace SKS_Service_Manager
                 MessageBox.Show("Błąd podczas zapisywania faktury do bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void Print_Click(object sender, EventArgs e)
         {
             if (generated)
@@ -564,7 +565,6 @@ namespace SKS_Service_Manager
             dataBase.UpdateUserInDatabase(userId, fullName, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
 
         }
-
         private void LoadInvoiceData(int invoiceId)
         {
             DataTable invoiceData = dataBase.LoadInvoiceData(invoiceId);
@@ -590,6 +590,7 @@ namespace SKS_Service_Manager
                 DateOfReturn.Value = Convert.ToDateTime(row["DateOfReturn"]);
                 SaleDate.Value = Convert.ToDateTime(row["SaleDate"]);
                 SaleAmount.Text = row["SaleAmount"].ToString();
+                Commision.Text = row["Commision"].ToString(); // Dodajemy pole Commision
 
                 LoadUserData(issueUserId);
             }
@@ -598,7 +599,6 @@ namespace SKS_Service_Manager
                 MessageBox.Show("Nie można znaleźć danych faktury.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         private void UpdateInvoiceInDatabase(int invoiceId)
         {
@@ -615,13 +615,13 @@ namespace SKS_Service_Manager
             int percentage = int.Parse(Percentage.Text);
             decimal fee = decimal.Parse(Fee.Text);
             decimal lateFee = decimal.Parse(LateFee.Text);
+            decimal commision = decimal.Parse(Commision.Text); // Dodajemy kolumnę Commision
             decimal buyAmount = decimal.Parse(BuyAmount.Text);
             DateTime dateOfReturn = DateOfReturn.Value.Date;
             DateTime saleDate = SaleDate.Value.Date;
 
-            dataBase.UpdateInvoiceInDatabase(invoiceId, userId, city, description, totalAmount, invoiceDate, notes, documentType, pickupDate, days, percentage, fee, lateFee, buyAmount, dateOfReturn, saleDate, saleAmount);
+            dataBase.UpdateInvoiceInDatabase(invoiceId, userId, city, description, totalAmount, invoiceDate, notes, documentType, pickupDate, days, percentage, fee, lateFee, commision, buyAmount, dateOfReturn, saleDate, saleAmount);
         }
-
 
 
         private void IsInt_KeyPress(object sender, KeyPressEventArgs e)

@@ -2,6 +2,8 @@
 
 #[firma-nazwa]
 #[firma-nip]
+#[firma-krs] ----------------------------
+#[firma-regon]
 #[firma-imie-nazwisko]
 #[firma-adres]
 #[firma-kod]
@@ -27,11 +29,13 @@
 #[przedmiot-wartosc]
 #[przedmiot-wartosc-slownie]
 #[przedmiot-wartosc-odestki]
+#[przedmiot-wartosc-prowizja] -------------------------
 #[przedmiot-wartosc-calkowita]
 #[przedmiot-wartosc-calkowita-slownie]
 
 #[przedmiot-data-przyjecia]
 #[przedmiot-data-odbioru]
+#[przedmiot-data-odbioru-30dni] --------------------------
 #[przedmiot-ilosc-dni]
 #[przedmiot-procent]
 

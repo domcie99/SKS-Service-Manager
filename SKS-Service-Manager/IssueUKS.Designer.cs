@@ -62,6 +62,9 @@
             Description = new RichTextBox();
             label9 = new Label();
             groupBox3 = new GroupBox();
+            label33 = new Label();
+            Commision = new TextBox();
+            label34 = new Label();
             label29 = new Label();
             SaleAmount = new TextBox();
             label30 = new Label();
@@ -442,6 +445,9 @@
             // groupBox3
             // 
             groupBox3.BackColor = Color.Transparent;
+            groupBox3.Controls.Add(label33);
+            groupBox3.Controls.Add(Commision);
+            groupBox3.Controls.Add(label34);
             groupBox3.Controls.Add(label29);
             groupBox3.Controls.Add(SaleAmount);
             groupBox3.Controls.Add(label30);
@@ -474,6 +480,37 @@
             groupBox3.Size = new Size(787, 216);
             groupBox3.TabIndex = 91;
             groupBox3.TabStop = false;
+            // 
+            // label33
+            // 
+            label33.BackColor = Color.Transparent;
+            label33.Font = new Font("Segoe UI", 12F);
+            label33.Location = new Point(500, 80);
+            label33.Name = "label33";
+            label33.Size = new Size(22, 23);
+            label33.TabIndex = 117;
+            label33.Text = "zł";
+            label33.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Commision
+            // 
+            Commision.Location = new Point(422, 80);
+            Commision.Name = "Commision";
+            Commision.Size = new Size(77, 23);
+            Commision.TabIndex = 118;
+            Commision.Text = "0,00";
+            Commision.TextAlign = HorizontalAlignment.Right;
+            // 
+            // label34
+            // 
+            label34.BackColor = Color.Transparent;
+            label34.Font = new Font("Segoe UI", 12F);
+            label34.Location = new Point(288, 80);
+            label34.Name = "label34";
+            label34.Size = new Size(123, 23);
+            label34.TabIndex = 116;
+            label34.Text = "Prowizja";
+            label34.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label29
             // 
@@ -554,7 +591,7 @@
             // 
             label26.BackColor = Color.Transparent;
             label26.Font = new Font("Segoe UI", 12F);
-            label26.Location = new Point(500, 80);
+            label26.Location = new Point(500, 109);
             label26.Name = "label26";
             label26.Size = new Size(22, 23);
             label26.TabIndex = 106;
@@ -563,7 +600,7 @@
             // 
             // BuyAmount
             // 
-            BuyAmount.Location = new Point(422, 80);
+            BuyAmount.Location = new Point(422, 109);
             BuyAmount.Name = "BuyAmount";
             BuyAmount.Size = new Size(77, 23);
             BuyAmount.TabIndex = 111;
@@ -598,7 +635,7 @@
             // 
             label24.BackColor = Color.Transparent;
             label24.Font = new Font("Segoe UI", 12F);
-            label24.Location = new Point(288, 80);
+            label24.Location = new Point(288, 109);
             label24.Name = "label24";
             label24.Size = new Size(123, 23);
             label24.TabIndex = 102;
@@ -911,5 +948,8 @@
         private TextBox FullName;
         private Label label32;
         private ComboBox FormType;
+        private Label label33;
+        private TextBox Commision;
+        private Label label34;
     }
 }
