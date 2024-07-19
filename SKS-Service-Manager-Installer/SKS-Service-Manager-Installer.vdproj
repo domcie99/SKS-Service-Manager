@@ -21,7 +21,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_82A46CDB15FE4B80BBD069D9230F63BC"
+        "MsmKey" = "8:_EDB44AFDFA4C4E4598109B0DF1C67EA7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -122,9 +122,9 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_82A46CDB15FE4B80BBD069D9230F63BC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EDB44AFDFA4C4E4598109B0DF1C67EA7"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\Downloads\\icon.ico"
+            "SourcePath" = "8:..\\SKS-Service-Manager\\icon.ico"
             "TargetName" = "8:icon.ico"
             "Tag" = "8:"
             "Folder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"
@@ -198,15 +198,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SKS-Service-Manager"
-        "ProductCode" = "8:{73BFCF03-95C7-4404-9011-ED6EF9668A3A}"
-        "PackageCode" = "8:{E45C1073-2A78-4A1A-B9DD-DA653F713D1A}"
+        "ProductCode" = "8:{8A09377E-E00B-4E37-BE01-D40F86784549}"
+        "PackageCode" = "8:{D5DFF9B1-9227-4E8D-B407-C58E5F7654A9}"
         "UpgradeCode" = "8:{E0B1CF2E-2426-4BC8-809A-A41031EDD0C2}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.1.2"
+        "ProductVersion" = "8:1.2"
         "Manufacturer" = "8:SKS"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -216,7 +216,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:_82A46CDB15FE4B80BBD069D9230F63BC"
+        "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -319,7 +319,21 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_A687160A93064DD5964C1EAF3BDE2BB6"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_6BF17A4394DB45BBAB481BA103FC9D01"
+            {
+            "Name" = "8:SKS-Service-Manager"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_5BD857627A144E609DE1FBEBF9094DC8"
+            "Folder" = "8:_A397A72905CF44C794DAA6BB83DC7B4A"
+            "WorkingFolder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"
+            "Icon" = "8:_EDB44AFDFA4C4E4598109B0DF1C67EA7"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C5DDECFF883247BAB35B630B0A807CF6"
             {
             "Name" = "8:SKS-Service-Manager"
             "Arguments" = "8:"
@@ -330,21 +344,7 @@
             "Target" = "8:_5BD857627A144E609DE1FBEBF9094DC8"
             "Folder" = "8:_03066ED6AD794C9199BE7998B3D2CD7E"
             "WorkingFolder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"
-            "Icon" = "8:_82A46CDB15FE4B80BBD069D9230F63BC"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_DAC4613A201D42A48E01AA8CC8700165"
-            {
-            "Name" = "8:SKS Service Management"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_5BD857627A144E609DE1FBEBF9094DC8"
-            "Folder" = "8:_A397A72905CF44C794DAA6BB83DC7B4A"
-            "WorkingFolder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"
-            "Icon" = "8:_82A46CDB15FE4B80BBD069D9230F63BC"
+            "Icon" = "8:_EDB44AFDFA4C4E4598109B0DF1C67EA7"
             "Feature" = "8:"
             }
         }

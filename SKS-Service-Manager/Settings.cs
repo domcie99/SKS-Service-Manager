@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
+﻿#pragma warning disable
+using System.Diagnostics;
 
-#pragma warning disable
 namespace SKS_Service_Manager
 {
     partial class Settings : Form
     {
-
         private Form1 mainForm;
         private DataBaseInsert dataInsert;
 
@@ -13,9 +12,7 @@ namespace SKS_Service_Manager
         {
             InitializeComponent();
             mainForm = form1;
-            CenterToScreen(); // Centruje formularz na ekranie
-
-            this.mainForm = mainForm; // Przekazanie referencji do formularza Form1
+            CenterToScreen();
             LoadSettings();
         }
 
@@ -31,13 +28,15 @@ namespace SKS_Service_Manager
             Properties.Settings.Default.street_number = Street_And_Number.Text;
             Properties.Settings.Default.phone = Phone.Text;
             Properties.Settings.Default.email = EMail.Text;
+            Properties.Settings.Default.krs = KRS.Text; // Dodane pole KRS
+            Properties.Settings.Default.regon = REGON.Text; // Dodane pole REGON
 
             // Ustawienia MySQL
             Properties.Settings.Default.mysql_host = host.Text;
             Properties.Settings.Default.mysql_user = user.Text;
             Properties.Settings.Default.mysql_password = password.Text;
             Properties.Settings.Default.mysql_database = database.Text;
-            Properties.Settings.Default.mysql_port = Convert.ToInt32(port.Text);
+            Properties.Settings.Default.mysql_port = port.Text;
 
             try
             {
@@ -60,9 +59,6 @@ namespace SKS_Service_Manager
             this.Close(); // Zamknięcie formularza bez zapisywania zmian
         }
 
-
-
-        // Metoda do ładowania ustawień przy otwieraniu formularza
         private void LoadSettings()
         {
             // Wczytanie wartości do formularza z ustawień aplikacji
@@ -75,6 +71,8 @@ namespace SKS_Service_Manager
             Street_And_Number.Text = Properties.Settings.Default.street_number;
             Phone.Text = Properties.Settings.Default.phone;
             EMail.Text = Properties.Settings.Default.email;
+            KRS.Text = Properties.Settings.Default.krs; // Dodane pole KRS
+            REGON.Text = Properties.Settings.Default.regon; // Dodane pole REGON
 
             // Ustawienia MySQL
             host.Text = Properties.Settings.Default.mysql_host;
@@ -83,7 +81,6 @@ namespace SKS_Service_Manager
             database.Text = Properties.Settings.Default.mysql_database;
             port.Text = Properties.Settings.Default.mysql_port.ToString(); // port jest typu int, więc użyj metody ToString()
         }
-
 
         protected override void OnLoad(EventArgs e)
         {
@@ -100,17 +97,17 @@ namespace SKS_Service_Manager
         public string GetStreetNumber() => Properties.Settings.Default.street_number;
         public string GetPhone() => Properties.Settings.Default.phone;
         public string GetEmail() => Properties.Settings.Default.email;
-
-        public int GetPercentage() => Properties.Settings.Default.percentage;
-
-        public void SetPercentage(int i) => Properties.Settings.Default.percentage = i;
+        public string GetKRS() => Properties.Settings.Default.krs; // Dodane pole KRS
+        public string GetREGON() => Properties.Settings.Default.regon; // Dodane pole REGON
+        public int GetPercentage() => int.Parse(Properties.Settings.Default.percentage);
+        public void SetPercentage(int i) => Properties.Settings.Default.percentage = "" + i;
 
         // Gettery dla ustawień MySQL
         public string GetMySQLHost() => Properties.Settings.Default.mysql_host;
         public string GetMySQLUser() => Properties.Settings.Default.mysql_user;
         public string GetMySQLPassword() => Properties.Settings.Default.mysql_password;
         public string GetMySQLDatabase() => Properties.Settings.Default.mysql_database;
-        public int GetMySQLPort() => Properties.Settings.Default.mysql_port;
+        public int GetMySQLPort() => int.Parse(Properties.Settings.Default.mysql_port);
 
         private void button4_Click(object sender, EventArgs e)
         {
@@ -129,7 +126,6 @@ namespace SKS_Service_Manager
 
         private void OpenFileToEdit(String file)
         {
-
             string docxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/" + file + ".docx";
             string copydocxFile = AppDomain.CurrentDomain.BaseDirectory + "umowy/backup/" + file + ".docx";
 
@@ -142,9 +138,10 @@ namespace SKS_Service_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd podczas otwierania pliku uks: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Błąd podczas otwierania pliku: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -172,6 +169,11 @@ namespace SKS_Service_Manager
                 dataInsert = new DataBaseInsert(mainForm); // Tworzenie nowego formularza ustawień, jeśli nie istnieje lub został zamknięty
             }
             dataInsert.ShowDialog(); // Wyświetlanie formularza ustawień
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            OpenFileToEdit("ukpl");
         }
     }
 }

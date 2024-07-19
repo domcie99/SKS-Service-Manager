@@ -37,8 +37,8 @@ namespace SKS_Service_Manager
             {
                 InitializeSQLiteConnection();
             }
-            CreateInvoicesTableIfNotExists();
             CreateUsersTableIfNotExists();
+            CreateInvoicesTableIfNotExists();
 
         }
 
@@ -118,29 +118,29 @@ namespace SKS_Service_Manager
         {
             string createTableQuery = @"
                                     CREATE TABLE IF NOT EXISTS UKS (
-                                    ID INT AUTO_INCREMENT PRIMARY KEY,
-                                    DocumentType VARCHAR(50),
-                                    UserID INT,
-                                    City VARCHAR(255),
-                                    Description TEXT,
-                                    TotalAmount DECIMAL(10, 2),
-
-                                    InvoiceDate DATE,
-                                    BuyDate DATE,
-
-                                    Days INT,
-                                    Percentage INT,
-
-                                    Fee DECIMAL(10, 2),
-                                    LateFee DECIMAL(10, 2),
-                                    BuyAmount DECIMAL(10, 2),
-
-                                    DateOfReturn DATE,
-                                    SaleDate DATE,
-                                    SaleAmount DECIMAL(10, 2),
-
-                                    Notes TEXT
-                                    );";
+                                        ID INT AUTO_INCREMENT PRIMARY KEY,
+                                        UserID INT,
+                                        DocumentType VARCHAR(50),
+                                        City VARCHAR(100),
+                                        Description TEXT,
+                                        TotalAmount DECIMAL(10,2),
+                                        EstimatedValue DECIMAL(10,2),
+                                        InvoiceDate DATE,
+                                        BuyDate DATE,
+                                        Notes TEXT,
+                                        NIP VARCHAR(20),
+                                        Days INT,
+                                        Percentage INT,
+                                        Fee DECIMAL(10,2),
+                                        LateFee DECIMAL(10,2),
+                                        Commision DECIMAL(10,2),
+                                        BuyAmount DECIMAL(10,2),
+                                        DateOfReturn DATE,
+                                        SaleDate DATE,
+                                        SaleAmount DECIMAL(10,2),
+                                        FOREIGN KEY (UserID) REFERENCES Users(ID)
+                                    );
+                                ";
             OpenConnection();
 
             if (useMySQL)
@@ -537,8 +537,10 @@ namespace SKS_Service_Manager
             try
             {
                 string insertInvoiceQuery = @"
-            INSERT INTO UKS (UserID, DocumentType, City, Description, TotalAmount, InvoiceDate, BuyDate, Days, Percentage, Fee, LateFee, BuyAmount, DateOfReturn, SaleDate, SaleAmount, Notes)
-            VALUES (@UserID, @DocumentType, @City, @Description, @TotalAmount, @InvoiceDate, @BuyDate, @Days, @Percentage, @Fee, @LateFee, @BuyAmount, @DateOfReturn, @SaleDate, @SaleAmount, @Notes);";
+            INSERT INTO UKS (UserID, DocumentType, City, Description, TotalAmount, InvoiceDate, BuyDate, Notes, NIP, Days, Percentage, Fee, LateFee, Commision, BuyAmount, DateOfReturn, SaleDate, SaleAmount, EstimatedValue
+                ) VALUES (
+                    @UserID, @DocumentType, @City, @Description, @TotalAmount, @InvoiceDate, @BuyDate, @Notes, @NIP, @Days, @Percentage, @Fee, @LateFee, @Commision, @BuyAmount, @DateOfReturn, @SaleDate, @SaleAmount, @EstimatedValue
+                );";
 
                 OpenConnection();
                 if (useMySQL)
@@ -551,12 +553,15 @@ namespace SKS_Service_Manager
                         cmd.Parameters.AddWithValue("@City", row["City"]);
                         cmd.Parameters.AddWithValue("@Description", row["Description"]);
                         cmd.Parameters.AddWithValue("@TotalAmount", row["TotalAmount"]);
+                        cmd.Parameters.AddWithValue("@EstimatedValue", row["EstimatedValue"]);
                         cmd.Parameters.AddWithValue("@InvoiceDate", row["InvoiceDate"]);
                         cmd.Parameters.AddWithValue("@BuyDate", row["BuyDate"]);
                         cmd.Parameters.AddWithValue("@Days", row["Days"]);
                         cmd.Parameters.AddWithValue("@Percentage", row["Percentage"]);
                         cmd.Parameters.AddWithValue("@Fee", row["Fee"]);
+                        cmd.Parameters.AddWithValue("@NIP", row["NIP"]);
                         cmd.Parameters.AddWithValue("@LateFee", row["LateFee"]);
+                        cmd.Parameters.AddWithValue("@Commision", row["Commision"]);
                         cmd.Parameters.AddWithValue("@BuyAmount", row["BuyAmount"]);
                         cmd.Parameters.AddWithValue("@DateOfReturn", row["DateOfReturn"]);
                         cmd.Parameters.AddWithValue("@SaleDate", row["SaleDate"]);
@@ -575,12 +580,15 @@ namespace SKS_Service_Manager
                         cmd.Parameters.AddWithValue("@City", row["City"]);
                         cmd.Parameters.AddWithValue("@Description", row["Description"]);
                         cmd.Parameters.AddWithValue("@TotalAmount", row["TotalAmount"]);
+                        cmd.Parameters.AddWithValue("@EstimatedValue", row["EstimatedValue"]);
                         cmd.Parameters.AddWithValue("@InvoiceDate", row["InvoiceDate"]);
                         cmd.Parameters.AddWithValue("@BuyDate", row["BuyDate"]);
                         cmd.Parameters.AddWithValue("@Days", row["Days"]);
                         cmd.Parameters.AddWithValue("@Percentage", row["Percentage"]);
                         cmd.Parameters.AddWithValue("@Fee", row["Fee"]);
+                        cmd.Parameters.AddWithValue("@NIP", row["NIP"]);
                         cmd.Parameters.AddWithValue("@LateFee", row["LateFee"]);
+                        cmd.Parameters.AddWithValue("@Commision", row["Commision"]);
                         cmd.Parameters.AddWithValue("@BuyAmount", row["BuyAmount"]);
                         cmd.Parameters.AddWithValue("@DateOfReturn", row["DateOfReturn"]);
                         cmd.Parameters.AddWithValue("@SaleDate", row["SaleDate"]);
@@ -885,29 +893,34 @@ namespace SKS_Service_Manager
             return null;
         }
 
-        public void UpdateInvoiceInDatabase(int invoiceId, int userId, string city, string description, decimal totalAmount, DateTime invoiceDate, string notes, string documentType, DateTime buyDate, int days, int percentage, decimal fee, decimal lateFee, decimal buyAmount, DateTime dateOfReturn, DateTime saleDate, decimal saleAmount)
+        public void UpdateInvoiceInDatabase(int invoiceId, int userId, string city, string description, decimal totalAmount, DateTime invoiceDate, string notes, string documentType, DateTime buyDate, int days, int percentage, decimal fee, string nip, decimal lateFee, decimal commision, decimal buyAmount, DateTime dateOfReturn, DateTime saleDate, decimal saleAmount, decimal estimatedValue)
         {
             try
             {
                 string query = @"
-            UPDATE UKS
-            SET City = @City, 
-                UserID = @UserID, 
-                Description = @Description, 
-                TotalAmount = @TotalAmount, 
-                InvoiceDate = @InvoiceDate, 
-                Notes = @Notes, 
-                DocumentType = @DocumentType, 
-                BuyDate = @BuyDate, 
-                Days = @Days, 
-                Percentage = @Percentage, 
-                Fee = @Fee, 
-                LateFee = @LateFee, 
-                BuyAmount = @BuyAmount, 
-                DateOfReturn = @DateOfReturn, 
-                SaleDate = @SaleDate, 
-                SaleAmount = @SaleAmount
-            WHERE ID = @InvoiceID;";
+                            UPDATE UKS
+                            SET
+                                UserID = @UserID,
+                                DocumentType = @DocumentType,
+                                City = @City,
+                                Description = @Description,
+                                TotalAmount = @TotalAmount,
+                                InvoiceDate = @InvoiceDate,
+                                BuyDate = @BuyDate,
+                                Notes = @Notes,
+                                NIP = @NIP,
+                                Days = @Days,
+                                Percentage = @Percentage,
+                                Fee = @Fee,
+                                LateFee = @LateFee,
+                                Commision = @Commision,
+                                BuyAmount = @BuyAmount,
+                                DateOfReturn = @DateOfReturn,
+                                SaleDate = @SaleDate,
+                                SaleAmount = @SaleAmount,
+                                EstimatedValue = @EstimatedValue -- Dodano EstimatedValue
+                            WHERE ID = @InvoiceId;
+                        ";
 
                 OpenConnection();
                 if (useMySQL)
@@ -917,6 +930,7 @@ namespace SKS_Service_Manager
                     cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@Description", description);
                     cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
+                    cmd.Parameters.AddWithValue("@EstimatedValue", estimatedValue);
                     cmd.Parameters.AddWithValue("@InvoiceDate", invoiceDate);
                     cmd.Parameters.AddWithValue("@Notes", notes);
                     cmd.Parameters.AddWithValue("@DocumentType", documentType);
@@ -924,7 +938,9 @@ namespace SKS_Service_Manager
                     cmd.Parameters.AddWithValue("@Days", days);
                     cmd.Parameters.AddWithValue("@Percentage", percentage);
                     cmd.Parameters.AddWithValue("@Fee", fee);
+                    cmd.Parameters.AddWithValue("@NIP", nip);
                     cmd.Parameters.AddWithValue("@LateFee", lateFee);
+                    cmd.Parameters.AddWithValue("@Commision", commision);
                     cmd.Parameters.AddWithValue("@BuyAmount", buyAmount);
                     cmd.Parameters.AddWithValue("@DateOfReturn", dateOfReturn);
                     cmd.Parameters.AddWithValue("@SaleDate", saleDate);
@@ -939,6 +955,7 @@ namespace SKS_Service_Manager
                     cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@Description", description);
                     cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
+                    cmd.Parameters.AddWithValue("@EstimatedValue", estimatedValue);
                     cmd.Parameters.AddWithValue("@InvoiceDate", invoiceDate);
                     cmd.Parameters.AddWithValue("@Notes", notes);
                     cmd.Parameters.AddWithValue("@DocumentType", documentType);
@@ -946,7 +963,9 @@ namespace SKS_Service_Manager
                     cmd.Parameters.AddWithValue("@Days", days);
                     cmd.Parameters.AddWithValue("@Percentage", percentage);
                     cmd.Parameters.AddWithValue("@Fee", fee);
+                    cmd.Parameters.AddWithValue("@NIP", nip);
                     cmd.Parameters.AddWithValue("@LateFee", lateFee);
+                    cmd.Parameters.AddWithValue("@Commision", commision);
                     cmd.Parameters.AddWithValue("@BuyAmount", buyAmount);
                     cmd.Parameters.AddWithValue("@DateOfReturn", dateOfReturn);
                     cmd.Parameters.AddWithValue("@SaleDate", saleDate);

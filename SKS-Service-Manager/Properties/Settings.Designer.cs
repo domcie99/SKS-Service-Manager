@@ -12,7 +12,7 @@ namespace SKS_Service_Manager.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.8.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -182,9 +182,9 @@ namespace SKS_Service_Manager.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("3306")]
-        public int mysql_port {
+        public string mysql_port {
             get {
-                return ((int)(this["mysql_port"]));
+                return ((string)(this["mysql_port"]));
             }
             set {
                 this["mysql_port"] = value;
@@ -194,12 +194,36 @@ namespace SKS_Service_Manager.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public int percentage {
+        public string percentage {
             get {
-                return ((int)(this["percentage"]));
+                return ((string)(this["percentage"]));
             }
             set {
                 this["percentage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string krs {
+            get {
+                return ((string)(this["krs"]));
+            }
+            set {
+                this["krs"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string regon {
+            get {
+                return ((string)(this["regon"]));
+            }
+            set {
+                this["regon"] = value;
             }
         }
     }

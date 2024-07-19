@@ -56,12 +56,20 @@
             label6 = new Label();
             LoadUser = new Button();
             groupBox2 = new GroupBox();
+            imageFileName = new Label();
+            uploadImageButton = new Button();
+            label35 = new Label();
+            Estimated_Value = new TextBox();
+            label36 = new Label();
             label19 = new Label();
             Value = new TextBox();
             label10 = new Label();
             Description = new RichTextBox();
             label9 = new Label();
             groupBox3 = new GroupBox();
+            label33 = new Label();
+            Commision = new TextBox();
+            label34 = new Label();
             label29 = new Label();
             SaleAmount = new TextBox();
             label30 = new Label();
@@ -93,6 +101,7 @@
             Save = new Button();
             label32 = new Label();
             FormType = new ComboBox();
+            attachment = new CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -375,6 +384,11 @@
             // groupBox2
             // 
             groupBox2.BackColor = Color.Transparent;
+            groupBox2.Controls.Add(imageFileName);
+            groupBox2.Controls.Add(uploadImageButton);
+            groupBox2.Controls.Add(label35);
+            groupBox2.Controls.Add(Estimated_Value);
+            groupBox2.Controls.Add(label36);
             groupBox2.Controls.Add(label19);
             groupBox2.Controls.Add(Value);
             groupBox2.Controls.Add(label10);
@@ -386,6 +400,59 @@
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Przedmiot";
+            // 
+            // imageFileName
+            // 
+            imageFileName.BackColor = Color.Transparent;
+            imageFileName.Font = new Font("Segoe UI", 12F);
+            imageFileName.Location = new Point(644, 81);
+            imageFileName.Name = "imageFileName";
+            imageFileName.Size = new Size(143, 23);
+            imageFileName.TabIndex = 109;
+            imageFileName.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // uploadImageButton
+            // 
+            uploadImageButton.Location = new Point(538, 80);
+            uploadImageButton.Name = "uploadImageButton";
+            uploadImageButton.Size = new Size(100, 23);
+            uploadImageButton.TabIndex = 108;
+            uploadImageButton.Text = "Wgraj zdjęcie";
+            uploadImageButton.UseVisualStyleBackColor = true;
+            uploadImageButton.Click += uploadImageButton_Click;
+            // 
+            // label35
+            // 
+            label35.BackColor = Color.Transparent;
+            label35.Font = new Font("Segoe UI", 12F);
+            label35.Location = new Point(499, 81);
+            label35.Name = "label35";
+            label35.Size = new Size(22, 23);
+            label35.TabIndex = 106;
+            label35.Text = "zł";
+            label35.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Estimated_Value
+            // 
+            Estimated_Value.Location = new Point(439, 81);
+            Estimated_Value.Name = "Estimated_Value";
+            Estimated_Value.Size = new Size(60, 23);
+            Estimated_Value.TabIndex = 107;
+            Estimated_Value.Text = "0,00";
+            Estimated_Value.TextAlign = HorizontalAlignment.Right;
+            Estimated_Value.KeyPress += Value_KeyPress;
+            Estimated_Value.Leave += Value_Validation;
+            // 
+            // label36
+            // 
+            label36.BackColor = Color.Transparent;
+            label36.Font = new Font("Segoe UI", 12F);
+            label36.Location = new Point(279, 81);
+            label36.Name = "label36";
+            label36.Size = new Size(164, 23);
+            label36.TabIndex = 105;
+            label36.Text = "Wartość Szacunkowa";
+            label36.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label19
             // 
@@ -406,7 +473,6 @@
             Value.TabIndex = 104;
             Value.Text = "0,00";
             Value.TextAlign = HorizontalAlignment.Right;
-            Value.TextChanged += Value_Validation;
             Value.KeyPress += Value_KeyPress;
             Value.Leave += Value_Validation;
             // 
@@ -443,6 +509,9 @@
             // groupBox3
             // 
             groupBox3.BackColor = Color.Transparent;
+            groupBox3.Controls.Add(label33);
+            groupBox3.Controls.Add(Commision);
+            groupBox3.Controls.Add(label34);
             groupBox3.Controls.Add(label29);
             groupBox3.Controls.Add(SaleAmount);
             groupBox3.Controls.Add(label30);
@@ -475,6 +544,39 @@
             groupBox3.Size = new Size(787, 216);
             groupBox3.TabIndex = 91;
             groupBox3.TabStop = false;
+            // 
+            // label33
+            // 
+            label33.BackColor = Color.Transparent;
+            label33.Font = new Font("Segoe UI", 12F);
+            label33.Location = new Point(500, 80);
+            label33.Name = "label33";
+            label33.Size = new Size(22, 23);
+            label33.TabIndex = 117;
+            label33.Text = "zł";
+            label33.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Commision
+            // 
+            Commision.Location = new Point(422, 80);
+            Commision.Name = "Commision";
+            Commision.Size = new Size(77, 23);
+            Commision.TabIndex = 118;
+            Commision.Text = "0,00";
+            Commision.TextAlign = HorizontalAlignment.Right;
+            Commision.KeyPress += Value_KeyPress;
+            Commision.Leave += Value_Validation;
+            // 
+            // label34
+            // 
+            label34.BackColor = Color.Transparent;
+            label34.Font = new Font("Segoe UI", 12F);
+            label34.Location = new Point(288, 80);
+            label34.Name = "label34";
+            label34.Size = new Size(123, 23);
+            label34.TabIndex = 116;
+            label34.Text = "Prowizja";
+            label34.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label29
             // 
@@ -555,7 +657,7 @@
             // 
             label26.BackColor = Color.Transparent;
             label26.Font = new Font("Segoe UI", 12F);
-            label26.Location = new Point(500, 80);
+            label26.Location = new Point(500, 109);
             label26.Name = "label26";
             label26.Size = new Size(22, 23);
             label26.TabIndex = 106;
@@ -564,7 +666,7 @@
             // 
             // BuyAmount
             // 
-            BuyAmount.Location = new Point(422, 80);
+            BuyAmount.Location = new Point(422, 109);
             BuyAmount.Name = "BuyAmount";
             BuyAmount.Size = new Size(77, 23);
             BuyAmount.TabIndex = 111;
@@ -599,7 +701,7 @@
             // 
             label24.BackColor = Color.Transparent;
             label24.Font = new Font("Segoe UI", 12F);
-            label24.Location = new Point(288, 80);
+            label24.Location = new Point(288, 109);
             label24.Name = "label24";
             label24.Size = new Size(123, 23);
             label24.TabIndex = 102;
@@ -658,7 +760,7 @@
             label20.Name = "label20";
             label20.Size = new Size(150, 23);
             label20.TabIndex = 97;
-            label20.Text = "Uwagi";
+            label20.Text = "Uwagi/Stan Towaru";
             label20.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // Comments
@@ -713,6 +815,7 @@
             Days.TextAlign = HorizontalAlignment.Right;
             Days.TextChanged += Interest_ValueChanged;
             Days.KeyPress += IsInt_KeyPress;
+            Days.Leave += Days_TextChanged;
             // 
             // label16
             // 
@@ -819,8 +922,18 @@
             FormType.Name = "FormType";
             FormType.Size = new Size(220, 23);
             FormType.TabIndex = 118;
-            FormType.SelectedIndexChanged += FormType_SelectedIndexChanged;
             FormType.SelectedValueChanged += FormType_ValueChanged;
+            // 
+            // attachment
+            // 
+            attachment.AutoSize = true;
+            attachment.Location = new Point(424, 597);
+            attachment.Name = "attachment";
+            attachment.Size = new Size(110, 19);
+            attachment.TabIndex = 120;
+            attachment.Text = "Chcę Załącznik?";
+            attachment.UseVisualStyleBackColor = true;
+            attachment.Visible = false;
             // 
             // IssueUKS
             // 
@@ -828,6 +941,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(818, 650);
+            Controls.Add(attachment);
             Controls.Add(label32);
             Controls.Add(FormType);
             Controls.Add(Save);
@@ -845,6 +959,7 @@
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -913,5 +1028,14 @@
         private TextBox FullName;
         private Label label32;
         private ComboBox FormType;
+        private Label label33;
+        private TextBox Commision;
+        private Label label34;
+        private Label label35;
+        private TextBox Estimated_Value;
+        private Label label36;
+        private CheckBox attachment;
+        private Button uploadImageButton;
+        private Label imageFileName;
     }
 }
