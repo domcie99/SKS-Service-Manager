@@ -72,11 +72,17 @@
             label18 = new Label();
             label19 = new Label();
             label20 = new Label();
+            label21 = new Label();
+            KRS = new TextBox();
+            label22 = new Label();
+            REGON = new TextBox();
+            label23 = new Label();
+            button3 = new Button();
             SuspendLayout();
             // 
             // company_name
             // 
-            company_name.Location = new Point(213, 72);
+            company_name.Location = new Point(213, 57);
             company_name.Name = "company_name";
             company_name.Size = new Size(200, 23);
             company_name.TabIndex = 0;
@@ -85,7 +91,7 @@
             // 
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(57, 72);
+            label1.Location = new Point(57, 57);
             label1.Name = "label1";
             label1.Size = new Size(150, 23);
             label1.TabIndex = 1;
@@ -96,7 +102,7 @@
             // 
             label2.BackColor = Color.Transparent;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(57, 101);
+            label2.Location = new Point(57, 86);
             label2.Name = "label2";
             label2.Size = new Size(150, 23);
             label2.TabIndex = 3;
@@ -105,7 +111,7 @@
             // 
             // NIP
             // 
-            NIP.Location = new Point(213, 101);
+            NIP.Location = new Point(213, 86);
             NIP.Name = "NIP";
             NIP.Size = new Size(200, 23);
             NIP.TabIndex = 2;
@@ -114,7 +120,7 @@
             // 
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(57, 130);
+            label3.Location = new Point(57, 175);
             label3.Name = "label3";
             label3.Size = new Size(150, 23);
             label3.TabIndex = 5;
@@ -123,7 +129,7 @@
             // 
             // name
             // 
-            name.Location = new Point(213, 130);
+            name.Location = new Point(213, 175);
             name.Name = "name";
             name.Size = new Size(200, 23);
             name.TabIndex = 4;
@@ -132,7 +138,7 @@
             // 
             label4.BackColor = Color.Transparent;
             label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(57, 159);
+            label4.Location = new Point(57, 204);
             label4.Name = "label4";
             label4.Size = new Size(150, 23);
             label4.TabIndex = 7;
@@ -141,7 +147,7 @@
             // 
             // Surname
             // 
-            Surname.Location = new Point(213, 159);
+            Surname.Location = new Point(213, 204);
             Surname.Name = "Surname";
             Surname.Size = new Size(200, 23);
             Surname.TabIndex = 6;
@@ -150,7 +156,7 @@
             // 
             label5.BackColor = Color.Transparent;
             label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(57, 188);
+            label5.Location = new Point(57, 233);
             label5.Name = "label5";
             label5.Size = new Size(150, 23);
             label5.TabIndex = 9;
@@ -159,7 +165,7 @@
             // 
             // Post_Code
             // 
-            Post_Code.Location = new Point(213, 188);
+            Post_Code.Location = new Point(213, 233);
             Post_Code.Name = "Post_Code";
             Post_Code.PlaceholderText = "00-000";
             Post_Code.Size = new Size(60, 23);
@@ -170,7 +176,7 @@
             // 
             label6.BackColor = Color.Transparent;
             label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(57, 217);
+            label6.Location = new Point(57, 262);
             label6.Name = "label6";
             label6.Size = new Size(150, 23);
             label6.TabIndex = 11;
@@ -179,7 +185,7 @@
             // 
             // Street_And_Number
             // 
-            Street_And_Number.Location = new Point(213, 217);
+            Street_And_Number.Location = new Point(213, 262);
             Street_And_Number.Name = "Street_And_Number";
             Street_And_Number.Size = new Size(200, 23);
             Street_And_Number.TabIndex = 10;
@@ -188,7 +194,7 @@
             // 
             label7.BackColor = Color.Transparent;
             label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(57, 246);
+            label7.Location = new Point(57, 291);
             label7.Name = "label7";
             label7.Size = new Size(150, 23);
             label7.TabIndex = 13;
@@ -197,14 +203,14 @@
             // 
             // Phone
             // 
-            Phone.Location = new Point(213, 246);
+            Phone.Location = new Point(213, 291);
             Phone.Name = "Phone";
             Phone.Size = new Size(200, 23);
             Phone.TabIndex = 12;
             // 
             // City
             // 
-            City.Location = new Point(279, 188);
+            City.Location = new Point(279, 233);
             City.Name = "City";
             City.Size = new Size(134, 23);
             City.TabIndex = 14;
@@ -213,7 +219,7 @@
             // 
             label8.BackColor = Color.Transparent;
             label8.Font = new Font("Segoe UI", 12F);
-            label8.Location = new Point(57, 275);
+            label8.Location = new Point(57, 320);
             label8.Name = "label8";
             label8.Size = new Size(150, 23);
             label8.TabIndex = 16;
@@ -222,7 +228,7 @@
             // 
             // EMail
             // 
-            EMail.Location = new Point(213, 275);
+            EMail.Location = new Point(213, 320);
             EMail.Name = "EMail";
             EMail.Size = new Size(200, 23);
             EMail.TabIndex = 15;
@@ -259,7 +265,7 @@
             // 
             label9.BackColor = Color.Transparent;
             label9.Font = new Font("Segoe UI", 12F);
-            label9.Location = new Point(57, 35);
+            label9.Location = new Point(57, 20);
             label9.Name = "label9";
             label9.Size = new Size(356, 23);
             label9.TabIndex = 19;
@@ -270,7 +276,7 @@
             // 
             label10.BackColor = Color.Transparent;
             label10.Font = new Font("Segoe UI", 12F);
-            label10.Location = new Point(488, 35);
+            label10.Location = new Point(488, 20);
             label10.Name = "label10";
             label10.Size = new Size(356, 23);
             label10.TabIndex = 20;
@@ -281,7 +287,7 @@
             // 
             label11.BackColor = Color.Transparent;
             label11.Font = new Font("Segoe UI", 12F);
-            label11.Location = new Point(488, 159);
+            label11.Location = new Point(488, 144);
             label11.Name = "label11";
             label11.Size = new Size(150, 23);
             label11.TabIndex = 28;
@@ -290,7 +296,7 @@
             // 
             // database
             // 
-            database.Location = new Point(644, 159);
+            database.Location = new Point(644, 144);
             database.Name = "database";
             database.Size = new Size(200, 23);
             database.TabIndex = 27;
@@ -299,7 +305,7 @@
             // 
             label12.BackColor = Color.Transparent;
             label12.Font = new Font("Segoe UI", 12F);
-            label12.Location = new Point(488, 130);
+            label12.Location = new Point(488, 115);
             label12.Name = "label12";
             label12.Size = new Size(150, 23);
             label12.TabIndex = 26;
@@ -308,7 +314,7 @@
             // 
             // password
             // 
-            password.Location = new Point(644, 130);
+            password.Location = new Point(644, 115);
             password.Name = "password";
             password.Size = new Size(200, 23);
             password.TabIndex = 25;
@@ -317,7 +323,7 @@
             // 
             label13.BackColor = Color.Transparent;
             label13.Font = new Font("Segoe UI", 12F);
-            label13.Location = new Point(488, 101);
+            label13.Location = new Point(488, 86);
             label13.Name = "label13";
             label13.Size = new Size(150, 23);
             label13.TabIndex = 24;
@@ -326,7 +332,7 @@
             // 
             // user
             // 
-            user.Location = new Point(644, 101);
+            user.Location = new Point(644, 86);
             user.Name = "user";
             user.Size = new Size(200, 23);
             user.TabIndex = 23;
@@ -335,7 +341,7 @@
             // 
             label14.BackColor = Color.Transparent;
             label14.Font = new Font("Segoe UI", 12F);
-            label14.Location = new Point(488, 72);
+            label14.Location = new Point(488, 57);
             label14.Name = "label14";
             label14.Size = new Size(150, 23);
             label14.TabIndex = 22;
@@ -344,7 +350,7 @@
             // 
             // host
             // 
-            host.Location = new Point(644, 72);
+            host.Location = new Point(644, 57);
             host.Name = "host";
             host.Size = new Size(200, 23);
             host.TabIndex = 21;
@@ -353,7 +359,7 @@
             // 
             label15.BackColor = Color.Transparent;
             label15.Font = new Font("Segoe UI", 12F);
-            label15.Location = new Point(488, 188);
+            label15.Location = new Point(488, 173);
             label15.Name = "label15";
             label15.Size = new Size(150, 23);
             label15.TabIndex = 30;
@@ -362,7 +368,7 @@
             // 
             // port
             // 
-            port.Location = new Point(644, 188);
+            port.Location = new Point(644, 173);
             port.Name = "port";
             port.Size = new Size(200, 23);
             port.TabIndex = 29;
@@ -375,7 +381,7 @@
             button6.Cursor = Cursors.Hand;
             button6.FlatAppearance.BorderSize = 0;
             button6.FlatStyle = FlatStyle.Flat;
-            button6.Location = new Point(401, 330);
+            button6.Location = new Point(396, 365);
             button6.Name = "button6";
             button6.Size = new Size(74, 88);
             button6.TabIndex = 33;
@@ -392,7 +398,7 @@
             button5.Cursor = Cursors.Hand;
             button5.FlatAppearance.BorderSize = 0;
             button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(261, 330);
+            button5.Location = new Point(256, 365);
             button5.Name = "button5";
             button5.Size = new Size(74, 88);
             button5.TabIndex = 32;
@@ -410,7 +416,7 @@
             button4.Cursor = Cursors.Hand;
             button4.FlatAppearance.BorderSize = 0;
             button4.FlatStyle = FlatStyle.Flat;
-            button4.Location = new Point(114, 330);
+            button4.Location = new Point(109, 365);
             button4.Name = "button4";
             button4.RightToLeft = RightToLeft.Yes;
             button4.Size = new Size(74, 88);
@@ -428,7 +434,7 @@
             button1.Cursor = Cursors.Hand;
             button1.FlatAppearance.BorderSize = 0;
             button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(570, 329);
+            button1.Location = new Point(671, 365);
             button1.Name = "button1";
             button1.Size = new Size(74, 88);
             button1.TabIndex = 37;
@@ -445,7 +451,7 @@
             button2.Cursor = Cursors.Hand;
             button2.FlatAppearance.BorderSize = 0;
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(733, 330);
+            button2.Location = new Point(794, 365);
             button2.Name = "button2";
             button2.Size = new Size(74, 88);
             button2.TabIndex = 39;
@@ -458,7 +464,7 @@
             // 
             label16.BackColor = Color.Transparent;
             label16.Font = new Font("Segoe UI", 12F);
-            label16.Location = new Point(74, 420);
+            label16.Location = new Point(69, 455);
             label16.Name = "label16";
             label16.Size = new Size(150, 59);
             label16.TabIndex = 34;
@@ -469,7 +475,7 @@
             // 
             label17.BackColor = Color.Transparent;
             label17.Font = new Font("Segoe UI", 12F);
-            label17.Location = new Point(222, 422);
+            label17.Location = new Point(217, 457);
             label17.Name = "label17";
             label17.Size = new Size(150, 59);
             label17.TabIndex = 35;
@@ -480,7 +486,7 @@
             // 
             label18.BackColor = Color.Transparent;
             label18.Font = new Font("Segoe UI", 12F);
-            label18.Location = new Point(360, 421);
+            label18.Location = new Point(355, 456);
             label18.Name = "label18";
             label18.Size = new Size(150, 59);
             label18.TabIndex = 36;
@@ -491,9 +497,9 @@
             // 
             label19.BackColor = Color.Transparent;
             label19.Font = new Font("Segoe UI", 12F);
-            label19.Location = new Point(533, 420);
+            label19.Location = new Point(655, 455);
             label19.Name = "label19";
-            label19.Size = new Size(150, 59);
+            label19.Size = new Size(111, 59);
             label19.TabIndex = 38;
             label19.Text = "Otworz folder z plikami";
             label19.TextAlign = ContentAlignment.MiddleCenter;
@@ -502,19 +508,89 @@
             // 
             label20.BackColor = Color.Transparent;
             label20.Font = new Font("Segoe UI", 12F);
-            label20.Location = new Point(696, 421);
+            label20.Location = new Point(763, 456);
             label20.Name = "label20";
-            label20.Size = new Size(150, 59);
+            label20.Size = new Size(135, 59);
             label20.TabIndex = 40;
             label20.Text = "Importowanie Bazy Danych";
             label20.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label21
+            // 
+            label21.BackColor = Color.Transparent;
+            label21.Font = new Font("Segoe UI", 12F);
+            label21.Location = new Point(57, 118);
+            label21.Name = "label21";
+            label21.Size = new Size(150, 23);
+            label21.TabIndex = 42;
+            label21.Text = "KRS";
+            label21.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // KRS
+            // 
+            KRS.Location = new Point(213, 118);
+            KRS.Name = "KRS";
+            KRS.Size = new Size(200, 23);
+            KRS.TabIndex = 41;
+            // 
+            // label22
+            // 
+            label22.BackColor = Color.Transparent;
+            label22.Font = new Font("Segoe UI", 12F);
+            label22.Location = new Point(57, 146);
+            label22.Name = "label22";
+            label22.Size = new Size(150, 23);
+            label22.TabIndex = 44;
+            label22.Text = "REGON";
+            label22.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // REGON
+            // 
+            REGON.Location = new Point(213, 146);
+            REGON.Name = "REGON";
+            REGON.Size = new Size(200, 23);
+            REGON.TabIndex = 43;
+            // 
+            // label23
+            // 
+            label23.BackColor = Color.Transparent;
+            label23.Font = new Font("Segoe UI", 12F);
+            label23.Location = new Point(500, 450);
+            label23.Name = "label23";
+            label23.Size = new Size(149, 73);
+            label23.TabIndex = 46;
+            label23.Text = "Umowa konsumenckiej pożyczki lombardowej";
+            label23.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // button3
+            // 
+            button3.BackColor = Color.Transparent;
+            button3.BackgroundImage = Properties.Resources.EdytujFakture;
+            button3.BackgroundImageLayout = ImageLayout.Zoom;
+            button3.Cursor = Cursors.Hand;
+            button3.FlatAppearance.BorderSize = 0;
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.Location = new Point(540, 365);
+            button3.Name = "button3";
+            button3.Size = new Size(74, 88);
+            button3.TabIndex = 45;
+            toolTip1.SetToolTip(button3, "Edytuj Wzór Umowa Pożyczki z Przechowaniem");
+            button3.UseMnemonic = false;
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
             // 
             // Settings
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
-            ClientSize = new Size(904, 490);
+            ClientSize = new Size(904, 525);
+            Controls.Add(label23);
+            Controls.Add(button3);
+            Controls.Add(label22);
+            Controls.Add(REGON);
+            Controls.Add(label21);
+            Controls.Add(KRS);
             Controls.Add(label20);
             Controls.Add(button2);
             Controls.Add(label19);
@@ -608,5 +684,11 @@
         private Button button1;
         private Label label20;
         private Button button2;
+        private Label label21;
+        private TextBox KRS;
+        private Label label22;
+        private TextBox REGON;
+        private Label label23;
+        private Button button3;
     }
 }

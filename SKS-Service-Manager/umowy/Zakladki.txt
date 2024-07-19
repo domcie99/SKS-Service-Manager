@@ -2,7 +2,7 @@
 
 #[firma-nazwa]
 #[firma-nip]
-#[firma-krs] ----------------------------
+#[firma-krs]
 #[firma-regon]
 #[firma-imie-nazwisko]
 #[firma-adres]
@@ -29,13 +29,16 @@
 #[przedmiot-wartosc]
 #[przedmiot-wartosc-slownie]
 #[przedmiot-wartosc-odestki]
-#[przedmiot-wartosc-prowizja] -------------------------
+#[przedmiot-wartosc-prowizja]
+#[przedmiot-wartosc-koszt-pozyczki]
 #[przedmiot-wartosc-calkowita]
+#[przedmiot-wartosc-szacunkowa]
+#[przedmiot-wartosc-szacunkowa-slownie]
 #[przedmiot-wartosc-calkowita-slownie]
 
 #[przedmiot-data-przyjecia]
 #[przedmiot-data-odbioru]
-#[przedmiot-data-odbioru-30dni] --------------------------
+#[przedmiot-data-odbioru+30]
 #[przedmiot-ilosc-dni]
 #[przedmiot-procent]
 

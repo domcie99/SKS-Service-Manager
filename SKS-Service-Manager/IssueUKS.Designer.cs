@@ -56,6 +56,11 @@
             label6 = new Label();
             LoadUser = new Button();
             groupBox2 = new GroupBox();
+            imageFileName = new Label();
+            uploadImageButton = new Button();
+            label35 = new Label();
+            Estimated_Value = new TextBox();
+            label36 = new Label();
             label19 = new Label();
             Value = new TextBox();
             label10 = new Label();
@@ -96,6 +101,7 @@
             Save = new Button();
             label32 = new Label();
             FormType = new ComboBox();
+            attachment = new CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -378,6 +384,11 @@
             // groupBox2
             // 
             groupBox2.BackColor = Color.Transparent;
+            groupBox2.Controls.Add(imageFileName);
+            groupBox2.Controls.Add(uploadImageButton);
+            groupBox2.Controls.Add(label35);
+            groupBox2.Controls.Add(Estimated_Value);
+            groupBox2.Controls.Add(label36);
             groupBox2.Controls.Add(label19);
             groupBox2.Controls.Add(Value);
             groupBox2.Controls.Add(label10);
@@ -389,6 +400,59 @@
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Przedmiot";
+            // 
+            // imageFileName
+            // 
+            imageFileName.BackColor = Color.Transparent;
+            imageFileName.Font = new Font("Segoe UI", 12F);
+            imageFileName.Location = new Point(644, 81);
+            imageFileName.Name = "imageFileName";
+            imageFileName.Size = new Size(143, 23);
+            imageFileName.TabIndex = 109;
+            imageFileName.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // uploadImageButton
+            // 
+            uploadImageButton.Location = new Point(538, 80);
+            uploadImageButton.Name = "uploadImageButton";
+            uploadImageButton.Size = new Size(100, 23);
+            uploadImageButton.TabIndex = 108;
+            uploadImageButton.Text = "Wgraj zdjęcie";
+            uploadImageButton.UseVisualStyleBackColor = true;
+            uploadImageButton.Click += uploadImageButton_Click;
+            // 
+            // label35
+            // 
+            label35.BackColor = Color.Transparent;
+            label35.Font = new Font("Segoe UI", 12F);
+            label35.Location = new Point(499, 81);
+            label35.Name = "label35";
+            label35.Size = new Size(22, 23);
+            label35.TabIndex = 106;
+            label35.Text = "zł";
+            label35.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // Estimated_Value
+            // 
+            Estimated_Value.Location = new Point(439, 81);
+            Estimated_Value.Name = "Estimated_Value";
+            Estimated_Value.Size = new Size(60, 23);
+            Estimated_Value.TabIndex = 107;
+            Estimated_Value.Text = "0,00";
+            Estimated_Value.TextAlign = HorizontalAlignment.Right;
+            Estimated_Value.KeyPress += Value_KeyPress;
+            Estimated_Value.Leave += Value_Validation;
+            // 
+            // label36
+            // 
+            label36.BackColor = Color.Transparent;
+            label36.Font = new Font("Segoe UI", 12F);
+            label36.Location = new Point(279, 81);
+            label36.Name = "label36";
+            label36.Size = new Size(164, 23);
+            label36.TabIndex = 105;
+            label36.Text = "Wartość Szacunkowa";
+            label36.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label19
             // 
@@ -500,6 +564,8 @@
             Commision.TabIndex = 118;
             Commision.Text = "0,00";
             Commision.TextAlign = HorizontalAlignment.Right;
+            Commision.KeyPress += Value_KeyPress;
+            Commision.Leave += Value_Validation;
             // 
             // label34
             // 
@@ -694,7 +760,7 @@
             label20.Name = "label20";
             label20.Size = new Size(150, 23);
             label20.TabIndex = 97;
-            label20.Text = "Uwagi";
+            label20.Text = "Uwagi/Stan Towaru";
             label20.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // Comments
@@ -749,6 +815,7 @@
             Days.TextAlign = HorizontalAlignment.Right;
             Days.TextChanged += Interest_ValueChanged;
             Days.KeyPress += IsInt_KeyPress;
+            Days.Leave += Days_TextChanged;
             // 
             // label16
             // 
@@ -857,12 +924,24 @@
             FormType.TabIndex = 118;
             FormType.SelectedValueChanged += FormType_ValueChanged;
             // 
+            // attachment
+            // 
+            attachment.AutoSize = true;
+            attachment.Location = new Point(424, 597);
+            attachment.Name = "attachment";
+            attachment.Size = new Size(110, 19);
+            attachment.TabIndex = 120;
+            attachment.Text = "Chcę Załącznik?";
+            attachment.UseVisualStyleBackColor = true;
+            attachment.Visible = false;
+            // 
             // IssueUKS
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(818, 650);
+            Controls.Add(attachment);
             Controls.Add(label32);
             Controls.Add(FormType);
             Controls.Add(Save);
@@ -880,6 +959,7 @@
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -951,5 +1031,11 @@
         private Label label33;
         private TextBox Commision;
         private Label label34;
+        private Label label35;
+        private TextBox Estimated_Value;
+        private Label label36;
+        private CheckBox attachment;
+        private Button uploadImageButton;
+        private Label imageFileName;
     }
 }

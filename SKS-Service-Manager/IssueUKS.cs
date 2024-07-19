@@ -32,6 +32,11 @@ namespace SKS_Service_Manager
         private string libreOfficePath;
         private string ewidPath;
 
+        private string attachmentFilePath;
+        private string editedAttachmentFilePath;
+        private string attachmentPdfPath;
+        private string imageFilePath;
+
         private string word2Pdf = AppDomain.CurrentDomain.BaseDirectory + "convert\\word2pdf.exe";
 
 
@@ -51,6 +56,7 @@ namespace SKS_Service_Manager
             dataBase.CreateInvoicesTableIfNotExists();
 
             DocumentType.SelectedIndex = 0;
+            FormType.Items.Add("UMOWA KONSUMENCKIEJ POŻYCZKI LOMBARDOWEJ");
             FormType.SelectedIndex = 1;
 
             Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "umowy\\Wystawione");
@@ -64,6 +70,11 @@ namespace SKS_Service_Manager
             pdfFilePath = folderFilePath + "backup\\" + newFile + "_new.pdf";
             savedpdfFilePath = folderFilePath + "Wystawione\\" + newFile + "_" + issueId + ".pdf";
             ewidPath = folderFilePath + "ewidencja.docx";
+
+            attachmentFilePath = folderFilePath + "atach.docx";
+            editedAttachmentFilePath = backupPath + "\\atach_new.docx";
+            attachmentPdfPath = backupPath + "\\atach_new.pdf";
+            imageFilePath = "Plik";
 
             Percentage.Text = settingsForm.GetPercentage().ToString();
 
@@ -172,10 +183,8 @@ namespace SKS_Service_Manager
 
             try
             {
-                // Skopiuj oryginalny plik DOCX do miejsca docelowego
                 File.Copy(docxFilePath, editedDocxFilePath, true);
 
-                // Otwieramy skopiowany dokument DOCX
                 using (WordprocessingDocument doc = WordprocessingDocument.Open(editedDocxFilePath, true))
                 {
                     MainDocumentPart mainPart = doc.MainDocumentPart;
@@ -188,6 +197,8 @@ namespace SKS_Service_Manager
                     ReplaceText(body, "#[firma-miasto]", settingsForm.GetCity());
                     ReplaceText(body, "#[firma-telefon]", settingsForm.GetPhone());
                     ReplaceText(body, "#[firma-nip]", settingsForm.GetNIP());
+                    ReplaceText(body, "#[firma-krs]", settingsForm.GetKRS());
+                    ReplaceText(body, "#[firma-regon]", settingsForm.GetREGON());
                     ReplaceText(body, "#[data-wystawienia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
 
                     ReplaceText(body, "#[sprzedajacy-imie-nazwisko]", FullName.Text);
@@ -210,9 +221,14 @@ namespace SKS_Service_Manager
                     ReplaceText(body, "#[przedmiot-wartosc-odestki]", totalIntrest.ToString());
                     ReplaceText(body, "#[przedmiot-wartosc-calkowita]", total.ToString());
                     ReplaceText(body, "#[przedmiot-wartosc-calkowita-slownie]", GetValueAsText(value));
+                    ReplaceText(body, "#[przedmiot-wartosc-prowizja]", Commision.Text);
+                    ReplaceText(body, "#[przedmiot-wartosc-szacunkowa]", Estimated_Value.Text);
+                    ReplaceText(body, "#[przedmiot-wartosc-szacunkowa-slownie]", GetValueAsText(decimal.Parse(Estimated_Value.Text)));
+                    ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (totalIntrest + decimal.Parse(Commision.Text)) + "");
 
                     ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
                     ReplaceText(body, "#[przedmiot-data-odbioru]", Pickup_Date.Value.ToString("dd-MM-yyyy"));
+                    ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
                     ReplaceText(body, "#[przedmiot-ilosc-dni]", Days.Text);
                     ReplaceText(body, "#[przedmiot-procent]", Percentage.Text);
 
@@ -226,8 +242,82 @@ namespace SKS_Service_Manager
 
                     ReplaceText(body, "#[przedmiot-uwagi]", Comments.Text);
 
+                    ReplaceImage(mainPart, "#[obrazek-placeholder]", imageFilePath);
+
                     doc.Save();
                 }
+
+                if (attachment.Checked)
+                {
+
+                    File.Copy(attachmentFilePath, editedAttachmentFilePath, true);
+
+                    using (WordprocessingDocument doc = WordprocessingDocument.Open(editedAttachmentFilePath, true))
+                    {
+                        MainDocumentPart mainPart = doc.MainDocumentPart;
+                        Body body = mainPart.Document.Body;
+
+                        ReplaceText(body, "#[firma-nazwa]", settingsForm.GetCompanyName());
+                        ReplaceText(body, "#[firma-imie-nazwisko]", settingsForm.GetName() + " " + settingsForm.GetSurname());
+                        ReplaceText(body, "#[firma-adres]", settingsForm.GetStreetNumber());
+                        ReplaceText(body, "#[firma-kod]", settingsForm.GetPostCode());
+                        ReplaceText(body, "#[firma-miasto]", settingsForm.GetCity());
+                        ReplaceText(body, "#[firma-telefon]", settingsForm.GetPhone());
+                        ReplaceText(body, "#[firma-nip]", settingsForm.GetNIP());
+                        ReplaceText(body, "#[firma-krs]", settingsForm.GetKRS());
+                        ReplaceText(body, "#[firma-regon]", settingsForm.GetREGON());
+                        ReplaceText(body, "#[data-wystawienia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
+
+                        ReplaceText(body, "#[sprzedajacy-imie-nazwisko]", FullName.Text);
+                        ReplaceText(body, "#[sprzedajacy-nazwa-firmy]", Company_Name.Text);
+                        ReplaceText(body, "#[sprzedajacy-adres]", Adress.Text);
+                        ReplaceText(body, "#[sprzedajacy-kod]", Post_Code.Text);
+                        ReplaceText(body, "#[sprzedajacy-miasto]", City.Text);
+                        ReplaceText(body, "#[sprzedajacy-telefon]", Phone.Text);
+                        ReplaceText(body, "#[sprzedajacy-email]", EMail.Text);
+                        ReplaceText(body, "#[sprzedajacy-nip]", Nip.Text);
+                        ReplaceText(body, "#[sprzedajacy-rodzaj-dok]", DocumentType.Text);
+                        ReplaceText(body, "#[sprzedajacy-numer-dok]", DocumentNumber.Text);
+                        ReplaceText(body, "#[sprzedajacy-pesel]", Pesel.Text);
+                        ReplaceText(body, "#[sprzedajacy-uwagi]", Notes.Text);
+
+                        ReplaceText(body, "#[przedmiot-opis]", Description.Text);
+                        ReplaceText(body, "#[przedmiot-wartosc]", value.ToString());
+                        ReplaceText(body, "#[przedmiot-wartosc-slownie]", GetValueAsText(value));
+
+                        ReplaceText(body, "#[przedmiot-wartosc-odestki]", totalIntrest.ToString());
+                        ReplaceText(body, "#[przedmiot-wartosc-calkowita]", total.ToString());
+                        ReplaceText(body, "#[przedmiot-wartosc-calkowita-slownie]", GetValueAsText(value));
+                        ReplaceText(body, "#[przedmiot-wartosc-prowizja]", Commision.Text);
+                        ReplaceText(body, "#[przedmiot-wartosc-szacunkowa]", Estimated_Value.Text);
+                        ReplaceText(body, "#[przedmiot-wartosc-szacunkowa-slownie]", GetValueAsText(decimal.Parse(Estimated_Value.Text)));
+                        ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (totalIntrest + decimal.Parse(Commision.Text)) + "");
+
+                        ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
+                        ReplaceText(body, "#[przedmiot-data-odbioru]", Pickup_Date.Value.ToString("dd-MM-yyyy"));
+                        ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
+                        ReplaceText(body, "#[przedmiot-ilosc-dni]", Days.Text);
+                        ReplaceText(body, "#[przedmiot-procent]", Percentage.Text);
+
+                        ReplaceText(body, "#[przedmiot-oplata]", Fee.Text);
+                        ReplaceText(body, "#[przedmiot-oplata-opoznienia]", LateFee.Text);
+                        ReplaceText(body, "#[przedmiot-kwota-wykupu]", BuyAmount.Text);
+
+                        ReplaceText(body, "#[przedmiot-data-zwrotu]", DateOfReturn.Value.ToString("dd-MM-yyyy"));
+                        ReplaceText(body, "#[przedmiot-data-sprzedazy]", SaleDate.Value.ToString("dd-MM-yyyy"));
+                        ReplaceText(body, "#[przedmiot-kwota-sprzedazy]", SaleAmount.Text);
+
+                        ReplaceText(body, "#[przedmiot-uwagi]", Comments.Text);
+
+                        ReplaceImage(mainPart, "#[obrazek-placeholder]", "C:\\Users\\Jaafaan\\source\\repos\\SKS-Service-Manager\\SKS-Service-Manager\\bin\\Debug\\net8.0-windows\\umowy\\makita.jpg");
+
+                        doc.Save();
+                    }
+
+                    ConvertDocxToPdf(editedAttachmentFilePath, backupPath);
+                    //Process.Start("cmd", $"/c start {attachmentPdfPath}");
+                }
+
                 ConvertDocxToPdf(editedDocxFilePath, backupPath);
                 MessageBox.Show("Dokument został wygenerowany, można drukować", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -258,14 +348,59 @@ namespace SKS_Service_Manager
             }
         }
 
+        public void ReplaceImage(MainDocumentPart mainPart, string imagePlaceholder, string imagePath)
+        {
+            var imageParts = mainPart.ImageParts.ToList();
+            ImagePart oldImagePart = null;
+            string oldRelationshipId = null;
+
+            // Znajdź obraz na podstawie tekstu alternatywnego
+            var imageElements = mainPart.Document.Body.Descendants<Drawing>().Where(d =>
+            {
+                var title = d.Descendants<DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties>().FirstOrDefault()?.Description?.Value;
+                return title != null && title.Contains(imagePlaceholder);
+            });
+
+            foreach (var imageElement in imageElements)
+            {
+                var blip = imageElement.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().FirstOrDefault();
+                if (blip != null)
+                {
+                    oldRelationshipId = blip.Embed.Value;
+                    oldImagePart = (ImagePart)mainPart.GetPartById(oldRelationshipId);
+                    break;
+                }
+            }
+
+            if (oldImagePart != null)
+            {
+                mainPart.DeletePart(oldImagePart);
+
+                ImagePart newImagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
+                using (FileStream stream = new FileStream(imagePath, FileMode.Open))
+                {
+                    newImagePart.FeedData(stream);
+                }
+
+                var newRelationshipId = mainPart.GetIdOfPart(newImagePart);
+
+                foreach (var imageElement in imageElements)
+                {
+                    var blip = imageElement.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().FirstOrDefault();
+                    if (blip != null)
+                    {
+                        blip.Embed.Value = newRelationshipId;
+                    }
+                }
+            }
+        }
+
+
         private void ReplaceText(Body body, string findText, string replaceText)
         {
             foreach (Text text in body.Descendants<Text>())
             {
-                if (text.Text.Contains(findText))
-                {
-                    text.Text = text.Text.Replace(findText, replaceText);
-                }
+                text.Text = text.Text.Replace(findText, replaceText);
             }
         }
 
@@ -467,7 +602,6 @@ namespace SKS_Service_Manager
         {
             try
             {
-                // Tworzymy nowy obiekt DataTable z odpowiednimi kolumnami
                 System.Data.DataTable invoiceData = new System.Data.DataTable();
                 invoiceData.Columns.Add("UserID", typeof(int));
                 invoiceData.Columns.Add("DocumentType", typeof(string));
@@ -487,11 +621,12 @@ namespace SKS_Service_Manager
                 invoiceData.Columns.Add("DateOfReturn", typeof(DateTime));
                 invoiceData.Columns.Add("SaleDate", typeof(DateTime));
                 invoiceData.Columns.Add("SaleAmount", typeof(decimal));
+                invoiceData.Columns.Add("EstimatedValue", typeof(decimal)); // Dodano EstimatedValue
 
                 DataRow newRow = invoiceData.NewRow();
                 newRow["UserID"] = userId;
                 newRow["City"] = settingsForm.GetCity();
-                newRow["DocumentType"] = FormType.Text.ToString(); // Pobierz rodzaj dokumentu
+                newRow["DocumentType"] = FormType.Text.ToString();
                 newRow["Description"] = Description.Text;
                 newRow["TotalAmount"] = decimal.Parse(Value.Text);
                 newRow["InvoiceDate"] = Issue_Date.Value.Date;
@@ -502,11 +637,12 @@ namespace SKS_Service_Manager
                 newRow["Percentage"] = int.Parse(Percentage.Text);
                 newRow["Fee"] = decimal.Parse(Fee.Text);
                 newRow["LateFee"] = decimal.Parse(LateFee.Text);
-                newRow["Commision"] = decimal.Parse(Commision.Text); // Dodajemy kolumnę Commision
+                newRow["Commision"] = decimal.Parse(Commision.Text);
                 newRow["BuyAmount"] = decimal.Parse(BuyAmount.Text);
                 newRow["DateOfReturn"] = DateOfReturn.Value.Date;
                 newRow["SaleDate"] = SaleDate.Value.Date;
                 newRow["SaleAmount"] = decimal.Parse(SaleAmount.Text);
+                newRow["EstimatedValue"] = decimal.Parse(Estimated_Value.Text); // Dodano EstimatedValue
 
                 invoiceData.Rows.Add(newRow);
 
@@ -517,13 +653,15 @@ namespace SKS_Service_Manager
                 MessageBox.Show("Błąd podczas zapisywania faktury do bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
+
         private void Print_Click(object sender, EventArgs e)
         {
             if (generated)
             {
-
+                // Kopiowanie i otwieranie głównego dokumentu PDF
                 File.Copy(pdfFilePath, savedpdfFilePath, true);
-
 
                 try
                 {
@@ -534,9 +672,26 @@ namespace SKS_Service_Manager
                     MessageBox.Show("Błąd podczas otwierania pliku PDF: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
+                // Jeśli checkbox attachment jest zaznaczony, kopiowanie i otwieranie załącznika PDF
+                if (attachment.Checked)
+                {
+                    string attachmentPdfPath = backupPath + "\\atach_new.pdf";
+                    string savedAttachmentPdfPath = folderFilePath + "Wystawione\\atach_" + issueId + ".pdf";
+
+                    File.Copy(attachmentPdfPath, savedAttachmentPdfPath, true);
+
+                    try
+                    {
+                        Process.Start("cmd", $"/c start {attachmentPdfPath}");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Błąd podczas otwierania pliku PDF załącznika: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
                 generated = false;
                 this.Close();
-
             }
             else
             {
@@ -577,9 +732,8 @@ namespace SKS_Service_Manager
                 Value.Text = row["TotalAmount"].ToString();
                 Issue_Date.Value = Convert.ToDateTime(row["InvoiceDate"]);
                 Comments.Text = row["Notes"].ToString();
-                issueUserId = Convert.ToInt32(row["UserID"]); // Poprawione "USERID" na "UserID"
+                issueUserId = Convert.ToInt32(row["UserID"]);
 
-                // Nowe kolumny
                 FormType.SelectedIndex = GetFormTypeIndex(row["DocumentType"].ToString());
                 Pickup_Date.Value = Convert.ToDateTime(row["BuyDate"]);
                 Days.Text = row["Days"].ToString();
@@ -590,7 +744,8 @@ namespace SKS_Service_Manager
                 DateOfReturn.Value = Convert.ToDateTime(row["DateOfReturn"]);
                 SaleDate.Value = Convert.ToDateTime(row["SaleDate"]);
                 SaleAmount.Text = row["SaleAmount"].ToString();
-                Commision.Text = row["Commision"].ToString(); // Dodajemy pole Commision
+                Commision.Text = row["Commision"].ToString();
+                Estimated_Value.Text = row["EstimatedValue"].ToString(); // Dodano EstimatedValue
 
                 LoadUserData(issueUserId);
             }
@@ -614,14 +769,19 @@ namespace SKS_Service_Manager
             int days = int.Parse(Days.Text);
             int percentage = int.Parse(Percentage.Text);
             decimal fee = decimal.Parse(Fee.Text);
+
+            string nip = Nip.Text;
+
             decimal lateFee = decimal.Parse(LateFee.Text);
-            decimal commision = decimal.Parse(Commision.Text); // Dodajemy kolumnę Commision
+            decimal commision = decimal.Parse(Commision.Text);
             decimal buyAmount = decimal.Parse(BuyAmount.Text);
             DateTime dateOfReturn = DateOfReturn.Value.Date;
             DateTime saleDate = SaleDate.Value.Date;
+            decimal estimatedValue = decimal.Parse(Estimated_Value.Text); // Dodano EstimatedValue
 
-            dataBase.UpdateInvoiceInDatabase(invoiceId, userId, city, description, totalAmount, invoiceDate, notes, documentType, pickupDate, days, percentage, fee, lateFee, commision, buyAmount, dateOfReturn, saleDate, saleAmount);
+            dataBase.UpdateInvoiceInDatabase(invoiceId, userId, city, description, totalAmount, invoiceDate, notes, documentType, pickupDate, days, percentage, fee, nip, lateFee, commision, buyAmount, dateOfReturn, saleDate, saleAmount, estimatedValue);
         }
+
 
 
         private void IsInt_KeyPress(object sender, KeyPressEventArgs e)
@@ -693,9 +853,11 @@ namespace SKS_Service_Manager
             // Obliczamy wartość odsetek za pozostałe dni
             decimal intrestByDay = interest / 30;
 
+            decimal comm = decimal.Parse(Commision.Text);
+
             totalIntrest = intrestByDay * days;
             // Obliczamy całkowitą cenę przedmiotu
-            decimal totalPrice = initialPrice + totalIntrest;
+            decimal totalPrice = initialPrice + totalIntrest + comm;
 
             return totalPrice;
         }
@@ -704,6 +866,14 @@ namespace SKS_Service_Manager
         private void FormType_ValueChanged(object sender, EventArgs e)
         {
             ChangeFormType();
+            if (FormType.SelectedItem.ToString() == "UMOWA KONSUMENCKIEJ POŻYCZKI LOMBARDOWEJ")
+            {
+                attachment.Visible = true;
+            }
+            else
+            {
+                attachment.Visible = false;
+            }
         }
         private void ChangeFormType()
         {
@@ -721,6 +891,10 @@ namespace SKS_Service_Manager
             {
                 newFile = "uppz";
             }
+            else if (FormType.SelectedIndex == 3)
+            {
+                newFile = "ukpl";
+            }
 
             folderFilePath = AppDomain.CurrentDomain.BaseDirectory + "umowy\\";
 
@@ -729,6 +903,7 @@ namespace SKS_Service_Manager
             pdfFilePath = folderFilePath + "backup\\" + newFile + "_new.pdf";
             savedpdfFilePath = folderFilePath + "Wystawione\\" + newFile + "_" + issueId + ".pdf";
         }
+
         private int GetFormTypeIndex(String text)
         {
             if ("Umowa Komisowa" == text)
@@ -739,11 +914,16 @@ namespace SKS_Service_Manager
             {                                                   // 1 - Umowa Kupna-Sprzedaży
                 return 2;                                       // 2 - Umowa Pożyczki z Przechowaniem
             }
+            else if ("UMOWA KONSUMENCKIEJ POŻYCZKI LOMBARDOWEJ" == text)
+            {
+                return 3;
+            }
             else
             {
                 return 1;
             }
         }
+
 
         private void Interest_ValueChanged(object sender, EventArgs e)
         {
@@ -765,6 +945,32 @@ namespace SKS_Service_Manager
         private void PercentageChanged(object sender, EventArgs e)
         {
             settingsForm.SetPercentage(int.Parse(Percentage.Text.ToString()));
+        }
+
+        private void Days_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(Days.Text, out int days))
+            {
+                Pickup_Date.Value = Issue_Date.Value.AddDays(days - 1);
+            }
+        }
+
+        private void uploadImageButton_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = "c:\\";
+                openFileDialog.Filter = "Image Files (*.png; *.jpg; *.jpeg)|*.png; *.jpg; *.jpeg";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Get the path of specified file
+                    imageFilePath = openFileDialog.FileName;
+                    imageFileName.Text = imageFilePath.ToString();
+                }
+            }
         }
     }
 }
