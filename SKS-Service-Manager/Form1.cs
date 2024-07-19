@@ -23,7 +23,7 @@ namespace SKS_Service_Manager
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
 
-        private string localVersion = "1.1.2.0"; // Wersja Twojej aplikacji
+        private string localVersion = "1.2.0.0";
         private string latestVersion;
 
         public Form1()
@@ -33,10 +33,10 @@ namespace SKS_Service_Manager
             this.Text = "SKS-Service Manager v" + localVersion;
 
             syncTimer = new System.Timers.Timer();
-            syncTimer.Interval = 5 * 60 * 1000; // 5 minut w milisekundach
+            syncTimer.Interval = 5 * 60 * 1000;
             syncTimer.AutoReset = true;
-            syncTimer.Elapsed += async (sender, e) => await CompareAndSyncDataAsync(); // Pod³¹cz funkcjê wywo³ywan¹ po up³ywie interwa³u
-            syncTimer.Start(); // Rozpocznij dzia³anie Timera
+            syncTimer.Elapsed += async (sender, e) => await CompareAndSyncDataAsync();
+            syncTimer.Start();
 
             button1.Enabled = false;
             button2.Enabled = false;
