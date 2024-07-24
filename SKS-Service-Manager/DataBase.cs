@@ -365,18 +365,25 @@ namespace SKS_Service_Manager
 
                 DataTable dt = new DataTable();
 
-                OpenConnection();
                 if (useMySQL)
                 {
-                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
-                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                    adapter.Fill(dt);
+                    using (MySqlConnection tempConnection = new MySqlConnection(mySqlConnection.ConnectionString))
+                    {
+                        tempConnection.Open();
+                        MySqlCommand cmd = new MySqlCommand(query, tempConnection);
+                        MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                        adapter.Fill(dt);
+                    }
                 }
                 else
                 {
-                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
-                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
-                    adapter.Fill(dt);
+                    using (SQLiteConnection tempConnection = new SQLiteConnection(sqliteConnection.ConnectionString))
+                    {
+                        tempConnection.Open();
+                        SQLiteCommand cmd = new SQLiteCommand(query, tempConnection);
+                        SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                        adapter.Fill(dt);
+                    }
                 }
 
                 foreach (DataRow row in dt.Rows)
@@ -388,12 +395,9 @@ namespace SKS_Service_Manager
             {
                 MessageBox.Show("Błąd podczas pobierania unikalnych miast: " + ex.Message);
             }
-            finally
-            {
-                CloseConnection();
-            }
             return cities;
         }
+
 
         public bool DeleteUks(int uksId)
         {
