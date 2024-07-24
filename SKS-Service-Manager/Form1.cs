@@ -26,6 +26,8 @@ namespace SKS_Service_Manager
         private string localVersion = "1.3.0.0";
         private string latestVersion;
 
+        private bool isUpdating = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -68,9 +70,10 @@ namespace SKS_Service_Manager
             }
         }
 
-
         private async void DownloadAndInstallUpdate(string latestVersion)
         {
+            isUpdating = true;
+
             label2.Invoke(new Action(() => label2.Visible = true));
             progressBar1.Invoke(new Action(() => progressBar1.Visible = true));
             try
@@ -106,6 +109,10 @@ namespace SKS_Service_Manager
             {
                 Console.WriteLine("B³¹d podczas pobierania i instalowania aktualizacji: " + ex.Message);
             }
+            finally
+            {
+                isUpdating = false;
+            }
         }
 
         private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -116,12 +123,13 @@ namespace SKS_Service_Manager
             label2.Invoke(new Action(() => label2.Text = $"Pobieranie {e.ProgressPercentage}%"));
         }
 
-
         public async void CheckDependanceInstalled()
         {
+            if (isUpdating) return;
+
             if (!File.Exists(word2Pdf))
             {
-                DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego dodatkowe pakiety. Kliknij 'OK', aby automatycznie pobrac i zainstalowaæ pakiet.", "Brak zainstalowanego word2pdf", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego dodatkowe pakiety. Kliknij 'OK', aby automatycznie pobraæ i zainstalowaæ pakiet.", "Brak zainstalowanego word2pdf", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.OK)
                 {
@@ -144,6 +152,7 @@ namespace SKS_Service_Manager
                 }
             }
         }
+
 
 
 
