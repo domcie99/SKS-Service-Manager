@@ -367,7 +367,7 @@ namespace SKS_Service_Manager
 
                 if (useMySQL)
                 {
-                    using (MySqlConnection tempConnection = new MySqlConnection(mySqlConnection.ConnectionString))
+                    using (MySqlConnection tempConnection = new MySqlConnection(connectionString))
                     {
                         tempConnection.Open();
                         MySqlCommand cmd = new MySqlCommand(query, tempConnection);
@@ -375,15 +375,12 @@ namespace SKS_Service_Manager
                         adapter.Fill(dt);
                     }
                 }
+
                 else
                 {
-                    using (SQLiteConnection tempConnection = new SQLiteConnection(sqliteConnection.ConnectionString))
-                    {
-                        tempConnection.Open();
-                        SQLiteCommand cmd = new SQLiteCommand(query, tempConnection);
-                        SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
-                        adapter.Fill(dt);
-                    }
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                    adapter.Fill(dt);
                 }
 
                 foreach (DataRow row in dt.Rows)
@@ -556,9 +553,9 @@ namespace SKS_Service_Manager
             try
             {
                 string insertInvoiceQuery = @"
-            INSERT INTO UKS (UserID, DocumentType, City, Description, TotalAmount, InvoiceDate, BuyDate, Notes, NIP, Days, Percentage, Fee, LateFee, Commision, BuyAmount, DateOfReturn, SaleDate, SaleAmount, EstimatedValue
+            INSERT INTO UKS (UserID, DocumentType, City, Description, TotalAmount, InvoiceDate, BuyDate, Notes, Days, Percentage, Fee, LateFee, Commision, BuyAmount, DateOfReturn, SaleDate, SaleAmount, EstimatedValue
                 ) VALUES (
-                    @UserID, @DocumentType, @City, @Description, @TotalAmount, @InvoiceDate, @BuyDate, @Notes, @NIP, @Days, @Percentage, @Fee, @LateFee, @Commision, @BuyAmount, @DateOfReturn, @SaleDate, @SaleAmount, @EstimatedValue
+                    @UserID, @DocumentType, @City, @Description, @TotalAmount, @InvoiceDate, @BuyDate, @Notes, @Days, @Percentage, @Fee, @LateFee, @Commision, @BuyAmount, @DateOfReturn, @SaleDate, @SaleAmount, @EstimatedValue
                 );";
 
                 OpenConnection();
@@ -578,7 +575,6 @@ namespace SKS_Service_Manager
                         cmd.Parameters.AddWithValue("@Days", row["Days"]);
                         cmd.Parameters.AddWithValue("@Percentage", row["Percentage"]);
                         cmd.Parameters.AddWithValue("@Fee", row["Fee"]);
-                        cmd.Parameters.AddWithValue("@NIP", row["NIP"]);
                         cmd.Parameters.AddWithValue("@LateFee", row["LateFee"]);
                         cmd.Parameters.AddWithValue("@Commision", row["Commision"]);
                         cmd.Parameters.AddWithValue("@BuyAmount", row["BuyAmount"]);
@@ -605,7 +601,6 @@ namespace SKS_Service_Manager
                         cmd.Parameters.AddWithValue("@Days", row["Days"]);
                         cmd.Parameters.AddWithValue("@Percentage", row["Percentage"]);
                         cmd.Parameters.AddWithValue("@Fee", row["Fee"]);
-                        cmd.Parameters.AddWithValue("@NIP", row["NIP"]);
                         cmd.Parameters.AddWithValue("@LateFee", row["LateFee"]);
                         cmd.Parameters.AddWithValue("@Commision", row["Commision"]);
                         cmd.Parameters.AddWithValue("@BuyAmount", row["BuyAmount"]);
