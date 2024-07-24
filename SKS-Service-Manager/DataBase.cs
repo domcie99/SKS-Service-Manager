@@ -1123,7 +1123,7 @@ namespace SKS_Service_Manager
                     string SaleAmount = reader["SPRZEDAZ_KWOTA"].ToString().Replace(".", ",");
                     string Notes = reader["UWAGI"].ToString();
 
-                    int userid = CheckUserExists(pesel, dokumentNumer, ulica, miejscowosc, odwroconeImieNazwisko);
+                    int userid = CheckUserExistsByNameAndCity(miejscowosc, odwroconeImieNazwisko);
 
                     if (userid == -1)
                     {
