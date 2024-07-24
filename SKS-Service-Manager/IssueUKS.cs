@@ -41,7 +41,6 @@ namespace SKS_Service_Manager
 
         private string word2Pdf = AppDomain.CurrentDomain.BaseDirectory + "convert\\word2pdf.exe";
 
-
         public IssueUKS(int Id, Form1 form1)
         {
             InitializeComponent();
