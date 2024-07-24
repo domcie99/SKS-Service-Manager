@@ -91,6 +91,7 @@ namespace SKS_Service_Manager
                     ProcessStartInfo startInfo = new ProcessStartInfo("cmd", $"/c start /wait {msiPath}")
                     {
                         WindowStyle = ProcessWindowStyle.Hidden,
+                        UseShellExecute = false,
                         CreateNoWindow = true
                     };
                     Process process = Process.Start(startInfo);
@@ -138,6 +139,7 @@ namespace SKS_Service_Manager
                         ProcessStartInfo startInfo = new ProcessStartInfo("cmd", $"/c start /wait {word2PdfInstaller}")
                         {
                             WindowStyle = ProcessWindowStyle.Hidden,
+                            UseShellExecute = false,
                             CreateNoWindow = true
                         };
                         Process process = Process.Start(startInfo);
