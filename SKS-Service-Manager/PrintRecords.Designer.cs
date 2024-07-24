@@ -61,7 +61,7 @@
             DocumentType.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
             DocumentType.DropDownStyle = ComboBoxStyle.DropDownList;
             DocumentType.FormattingEnabled = true;
-            DocumentType.Items.AddRange(new object[] { "Wszystko", "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            DocumentType.Items.AddRange(new object[] { "Wszystko", "Umowa Kupna-Sprzedaży", "Umowa Komisowa", "Umowa Konsumenckiej Pożyczki Lombardowej", "Umowa Pożyczki z Przechowaniem" });
             DocumentType.Location = new Point(201, 75);
             DocumentType.Name = "DocumentType";
             DocumentType.Size = new Size(220, 23);
