@@ -32,7 +32,7 @@ namespace SKS_Service_Manager
         private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Pliki bazy danych Firebird (*.gdb)|*.gdb|Wszystkie pliki (*.*)|*.*";
+            openFileDialog.Filter = "Pliki bazy danych Firebird (*.gdb)|*.gdb|Pliki kopii zapasowej (*.bak)|*.bak|Wszystkie pliki (*.*)|*.*";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -59,6 +59,8 @@ namespace SKS_Service_Manager
                 UpdateLabel($"Importowanie bazy danych: 0%");
                 await Task.Run(() => dataBase.AddUsersFromGeneratedDatabaseAsync(dataBaseFile));
 
+                MessageBox.Show("Zakończono Import Bazy danych.");
+                dataBase.RefreshConnection();
             }
             else
             {

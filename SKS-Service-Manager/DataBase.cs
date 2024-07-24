@@ -90,6 +90,20 @@ namespace SKS_Service_Manager
             }*/
         }
 
+        public void RefreshConnection()
+        {
+            if (useMySQL)
+            {
+                mySqlConnection.Close();
+                InitializeMySQLConnection(mainForms);
+            }
+            else
+            {
+                sqliteConnection.Close();
+                InitializeSQLiteConnection();
+            }
+        }
+
         private void InitializeMySQLConnection(Form1 mainForm)
         {
             mySqlConnection = new MySqlConnection(connectionString);

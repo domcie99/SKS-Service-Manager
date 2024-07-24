@@ -100,19 +100,16 @@ namespace SKS_Service_Manager
                     filteredRows = dt.Select(filterExpression);
                 }
 
-                // Tworzenie nowej DataTable na podstawie przefiltrowanych wierszy
                 DataTable filteredDataTable = dt.Clone();
                 foreach (DataRow row in filteredRows)
                 {
                     filteredDataTable.ImportRow(row);
                 }
 
-                // Sortowanie danych według kolumny "Typ Umowy"
                 DataView dv = filteredDataTable.DefaultView;
-                dv.Sort = "Data Wystawienia ASC"; // Możesz zmienić "ASC" na "DESC", jeśli chcesz sortować malejąco
+                dv.Sort = "Data Wystawienia DESC";
                 filteredDataTable = dv.ToTable();
 
-                // Ograniczenie liczby wierszy do maksymalnie 500
                 if (filteredDataTable.Rows.Count > maxRows)
                 {
                     DataTable limitedDataTable = filteredDataTable.AsEnumerable().Take(maxRows).CopyToDataTable();

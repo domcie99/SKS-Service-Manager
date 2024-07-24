@@ -23,7 +23,7 @@ namespace SKS_Service_Manager
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
 
-        private string localVersion = "1.3.1.0";
+        private string localVersion = "1.3.2.0";
         private string latestVersion;
 
         private bool isUpdating = false;
@@ -98,13 +98,14 @@ namespace SKS_Service_Manager
                     process.WaitForExit();
 
                     MessageBox.Show("Pakiet zosta³ pomyœlnie zainstalowany.", "Instalacja zakoñczona", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    await Task.Delay(1000); // Dodaj opóŸnienie, aby zapewniæ przetworzenie zdarzeñ
+                    Application.ExitThread(); // U¿yj ExitThread zamiast Exit
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("B³¹d podczas otwierania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
-                Application.Exit();
             }
             catch (Exception ex)
             {
