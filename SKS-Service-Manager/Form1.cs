@@ -130,30 +130,29 @@ namespace SKS_Service_Manager
 
             if (!File.Exists(word2Pdf))
             {
-                DialogResult result = MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego dodatkowe pakiety. Kliknij 'OK', aby automatycznie pobraæ i zainstalowaæ pakiet.", "Brak zainstalowanego word2pdf", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                // Wyœwietlanie okna dialogowego informuj¹cego o instalacji pakietu
+                MessageBox.Show("Aby korzystaæ z tej aplikacji, potrzebujesz zainstalowanego dodatkowego pakietu. Automatyczne pobieranie i instalacja pakietu rozpoczn¹ siê teraz.", "Brak zainstalowanego word2pdf", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.OK)
+                try
                 {
-                    try
+                    ProcessStartInfo startInfo = new ProcessStartInfo("cmd", $"/c start /wait {word2PdfInstaller}")
                     {
-                        ProcessStartInfo startInfo = new ProcessStartInfo("cmd", $"/c start /wait {word2PdfInstaller}")
-                        {
-                            WindowStyle = ProcessWindowStyle.Hidden,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        };
-                        Process process = Process.Start(startInfo);
-                        process.WaitForExit();
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+                    Process process = Process.Start(startInfo);
+                    process.WaitForExit();
 
-                        MessageBox.Show("Pakiet zosta³ pomyœlnie zainstalowany.", "Instalacja zakoñczona", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("B³¹d podczas otwierania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    MessageBox.Show("Pakiet zosta³ pomyœlnie zainstalowany.", "Instalacja zakoñczona", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("B³¹d podczas otwierania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
 
 
 
