@@ -17,13 +17,13 @@ namespace SKS_Service_Manager
         private string appdataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
         private string word2Pdf = "C:\\Program Files (x86)\\Weeny Free Word to PDF Converter\\word2pdf.exe";
-        private string word2PdfInstaller = AppDomain.CurrentDomain.BaseDirectory + "word2pdf.exe";
+        private string word2PdfInstaller = AppDomain.CurrentDomain.BaseDirectory + "word2pdf.msi";
 
         private string remoteUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.1/PDFConvert.zip";
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
 
-        private string localVersion = "1.2.0.0";
+        private string localVersion = "1.3.0.0";
         private string latestVersion;
 
         public Form1()
@@ -85,7 +85,15 @@ namespace SKS_Service_Manager
 
                 try
                 {
-                    Process.Start("cmd", $"/c start {msiPath}");
+                    ProcessStartInfo startInfo = new ProcessStartInfo("cmd", $"/c start /wait {msiPath}")
+                    {
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        CreateNoWindow = true
+                    };
+                    Process process = Process.Start(startInfo);
+                    process.WaitForExit();
+
+                    MessageBox.Show("Pakiet zosta³ pomyœlnie zainstalowany.", "Instalacja zakoñczona", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -119,7 +127,15 @@ namespace SKS_Service_Manager
                 {
                     try
                     {
-                        Process.Start("cmd", $"/c start {word2PdfInstaller}");
+                        ProcessStartInfo startInfo = new ProcessStartInfo("cmd", $"/c start /wait {word2PdfInstaller}")
+                        {
+                            WindowStyle = ProcessWindowStyle.Hidden,
+                            CreateNoWindow = true
+                        };
+                        Process process = Process.Start(startInfo);
+                        process.WaitForExit();
+
+                        MessageBox.Show("Pakiet zosta³ pomyœlnie zainstalowany.", "Instalacja zakoñczona", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
@@ -128,6 +144,8 @@ namespace SKS_Service_Manager
                 }
             }
         }
+
+
 
         public void setDataBase()
         {

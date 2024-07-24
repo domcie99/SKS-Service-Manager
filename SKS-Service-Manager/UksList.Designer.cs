@@ -199,7 +199,7 @@
             FormType.AutoCompleteCustomSource.AddRange(new string[] { "Wszystko", "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
             FormType.DropDownStyle = ComboBoxStyle.DropDownList;
             FormType.FormattingEnabled = true;
-            FormType.Items.AddRange(new object[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            FormType.Items.AddRange(new object[] { "Umowa Kupna-Sprzedaży", "Umowa Komisowa", "Umowa Konsumenckiej Pożyczki Lombardowej", "Umowa Pożyczki z Przechowaniem" });
             FormType.Location = new Point(364, 63);
             FormType.Name = "FormType";
             FormType.Size = new Size(220, 23);

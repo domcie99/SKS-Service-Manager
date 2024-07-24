@@ -5,7 +5,7 @@ namespace SKS_Service_Manager
     public partial class EditUser : Form
     {
 
-        private int userIdToEdit; // Identyfikator użytkownika do edycji
+        private int userIdToEdit;
         private Settings settingsForm;
         private Form1 mainForm;
         private UserList parentForm;
@@ -18,7 +18,6 @@ namespace SKS_Service_Manager
             mainForm = form1;
             database = mainForm.getDataBase();
 
-            // Inicjalizacja połączenia z bazą danych (możesz użyć istniejącego połączenia z userlist)
             this.userIdToEdit = userID;
             this.parentForm = parentForm;
 
@@ -26,12 +25,10 @@ namespace SKS_Service_Manager
 
             if (userIdToEdit == -1)
             {
-                // Tryb dodawania nowego użytkownika
                 Text = "Dodawanie Użytkownika";
             }
             else
             {
-                // Tryb edycji istniejącego użytkownika
                 Text = "Edycja Użytkownika";
                 LoadUserData();
             }
@@ -46,7 +43,7 @@ namespace SKS_Service_Manager
 
                 if (userData != null && userData.Rows.Count > 0)
                 {
-                    DataRow row = userData.Rows[0]; // Pobierz pierwszy wiersz (powinien być tylko jeden)
+                    DataRow row = userData.Rows[0];
 
                     FullName.Text = row["FullName"].ToString();
                     Adress.Text = row["Address"].ToString();
@@ -75,9 +72,10 @@ namespace SKS_Service_Manager
 
         private void Save_Click(object sender, EventArgs e)
         {
-            // Pozostała część kodu jest taka sama jak wcześniej
-
-            // Pobierz dane z kontrolek formularza
+            if (!ValidateFields())
+            {
+                return;
+            }
             string fullname = FullName.Text;
             string address = Adress.Text;
             string postalCode = Post_Code.Text;
@@ -93,10 +91,8 @@ namespace SKS_Service_Manager
 
             try
             {
-                // Ustal, czy użytkownik istnieje w bazie danych
                 int userId = database.CheckUserExists(pesel, documentNumber, address, city, fullname);
 
-                // Wywołaj metodę UpdateUserInDatabase z klasy Database
                 database.UpdateUserInDatabase(userId, fullname, name, address, postalCode, city, phone, email, documentType, documentNumber, pesel, nip, notes);
 
                 MessageBox.Show("Dane zostały zapisane.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -109,9 +105,40 @@ namespace SKS_Service_Manager
             }
         }
 
+        private bool ValidateFields()
+        {
+            if (string.IsNullOrWhiteSpace(FullName.Text))
+            {
+                MessageBox.Show("Pole 'Imię i Nazwisko' jest wymagane.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                FullName.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(Adress.Text) || Adress.Text.Equals("ul. ", StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("Pole 'Ulica i Numer' jest wymagane.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Adress.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(Post_Code.Text))
+            {
+                MessageBox.Show("Pole 'Kod Pocztowy' jest wymagane.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Post_Code.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(City.Text))
+            {
+                MessageBox.Show("Pole 'Miasto' jest wymagane.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                City.Focus();
+                return false;
+            }
+            return true;
+        }
+
         private void Abort_Click(object sender, EventArgs e)
         {
-            // Obsługa przycisku Anuluj - zamknij formularz
             Close();
         }
 

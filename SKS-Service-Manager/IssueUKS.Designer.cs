@@ -317,6 +317,7 @@
             Post_Code.Size = new Size(60, 23);
             Post_Code.TabIndex = 92;
             Post_Code.TextAlign = HorizontalAlignment.Center;
+            Post_Code.Leave += Post_Code_Leave;
             // 
             // label2
             // 
@@ -326,7 +327,7 @@
             label2.Name = "label2";
             label2.Size = new Size(150, 23);
             label2.TabIndex = 105;
-            label2.Text = "Ulica Numer";
+            label2.Text = "Ulica i Numer";
             label2.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // Adress
@@ -474,7 +475,7 @@
             Value.Text = "0,00";
             Value.TextAlign = HorizontalAlignment.Right;
             Value.KeyPress += Value_KeyPress;
-            Value.Leave += Value_Validation;
+            Value.Leave += Value_Validate;
             // 
             // label10
             // 
@@ -917,11 +918,12 @@
             FormType.AutoCompleteCustomSource.AddRange(new string[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
             FormType.DropDownStyle = ComboBoxStyle.DropDownList;
             FormType.FormattingEnabled = true;
-            FormType.Items.AddRange(new object[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            FormType.Items.AddRange(new object[] { "Umowa Kupna-Sprzedaży", "Umowa Komisowa", "Umowa Konsumenckiej Pożyczki Lombardowej", "Umowa Pożyczki z Przechowaniem" });
             FormType.Location = new Point(174, 595);
             FormType.Name = "FormType";
             FormType.Size = new Size(220, 23);
             FormType.TabIndex = 118;
+            FormType.SelectedIndexChanged += FormType_SelectedIndexChanged;
             FormType.SelectedValueChanged += FormType_ValueChanged;
             // 
             // attachment

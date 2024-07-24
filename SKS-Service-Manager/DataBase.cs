@@ -52,8 +52,9 @@ namespace SKS_Service_Manager
                     return true;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError("IsMySQLConnectionAvailable() - Błąd podczas połączenia z bazą danych: " + ex.Message);
                 return false;
             }
         }

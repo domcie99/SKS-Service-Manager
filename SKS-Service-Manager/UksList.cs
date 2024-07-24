@@ -176,28 +176,6 @@ namespace SKS_Service_Manager
             issueUksForm.ShowDialog();
         }
 
-        private void Edit_Click(object sender, EventArgs e)
-        {
-            // Sprawdź, czy użytkownik wybrał fakturę UKS do edycji
-            if (dataGridView1.SelectedRows.Count > 0)
-            {
-                // Tworzymy nowy formularz IssueUKS w trybie edycji
-                string cellValue = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
-
-                int selectedissueID = int.Parse(cellValue);
-
-                IssueUKS editForm = new IssueUKS(selectedissueID, mainForm);
-
-                // Otwieramy formularz w trybie edycji
-                editForm.ShowDialog();
-                LoadData();
-            }
-            else
-            {
-                MessageBox.Show("Proszę najpierw wybrać fakturę UKS do edycji.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
         private void delete_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count > 0)
@@ -245,6 +223,11 @@ namespace SKS_Service_Manager
         }
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Edit_Click(sender, e);
+        }
+
+        private void Edit_Click(object sender, EventArgs e)
         {
             // Sprawdź, czy użytkownik wybrał fakturę UKS do edycji
             if (dataGridView1.SelectedRows.Count > 0)
