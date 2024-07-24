@@ -1057,7 +1057,6 @@ namespace SKS_Service_Manager
         {
             try
             {
-                // Tworzenie połączenia do wygenerowanej bazy danych SQLite
                 string generatedDatabaseConnectionString = $"Data Source={generatedDatabaseFilePath};Version=3;";
                 SQLiteConnection generatedDatabaseConnection = new SQLiteConnection(generatedDatabaseConnectionString);
                 generatedDatabaseConnection.Open();
@@ -1068,10 +1067,8 @@ namespace SKS_Service_Manager
                 int totalCount = Convert.ToInt32(countCommand.ExecuteScalar());
                 int processedCount = 0;
 
-                // Przygotowanie zapytania do pobrania użytkowników z wygenerowanej bazy
                 string query = "SELECT KLIENT_NAZWISKO_IMIE, KLIENT_KOD_POCZT, KLIENT_MIEJSCOW, KLIENT_ULICA, KLIENT_TEL_KONTAKT, KLIENT_DOK_TYP, KLIENT_DOK_NR, KLIENT_PESEL, FIRMA_MIEJSCOW, PRZEDMIOT_OPIS, PRZEDMIOT_WARTOSC, DATA_PRZYJECIA, TERMIN_ODBIORU, UMOWA_ILOSC_DNI, UMOWA_PROCENT, OPLATA, OPLATA_OPOZNIENIE, KWOTA_WYKUPU, FAKT_ODBIOR_DATA, SPRZEDAZ_DATA, SPRZEDAZ_KWOTA, UWAGI FROM lombard";
 
-                // Wykonanie zapytania
                 SQLiteCommand command = new SQLiteCommand(query, generatedDatabaseConnection);
                 SQLiteDataReader reader = command.ExecuteReader();
 
@@ -1086,9 +1083,8 @@ namespace SKS_Service_Manager
                     }
                     else if (parts.Length == 1)
                     {
-                        odwroconeImieNazwisko = parts[0]; // Jeśli ciąg zawiera tylko jedną część, przypisz ją bez zmiany
+                        odwroconeImieNazwisko = parts[0];
                     }
-
 
                     string kodPocztowy = reader["KLIENT_KOD_POCZT"].ToString();
                     string miejscowosc = reader["KLIENT_MIEJSCOW"].ToString();
@@ -1096,36 +1092,28 @@ namespace SKS_Service_Manager
                     string telefon = reader["KLIENT_TEL_KONTAKT"].ToString();
                     string dokumentTyp = reader["KLIENT_DOK_TYP"].ToString();
                     string dokumentNumer = reader["KLIENT_DOK_NR"].ToString();
-
                     string pesel = reader["KLIENT_PESEL"].ToString();
-
                     string City = reader["FIRMA_MIEJSCOW"].ToString();
-
                     string Description = reader["PRZEDMIOT_OPIS"].ToString();
                     string TotalAmount = reader["PRZEDMIOT_WARTOSC"].ToString().Replace(".", ",");
-
                     string InvoiceDate = reader["DATA_PRZYJECIA"].ToString();
                     string BuyDate = reader["TERMIN_ODBIORU"].ToString();
                     string Days = reader["UMOWA_ILOSC_DNI"].ToString();
-
                     string PercentageString = reader["UMOWA_PROCENT"].ToString().Replace(".", ",");
                     double PercentageDouble = Convert.ToDouble(string.IsNullOrEmpty(PercentageString) ? 0 : PercentageString);
                     int Percentage = (int)Math.Floor(PercentageDouble);
-
                     string Fee = reader["OPLATA"].ToString().Replace(".", ",");
                     string LateFee = reader["OPLATA_OPOZNIENIE"].ToString().Replace(".", ",");
                     string BuyAmount = reader["KWOTA_WYKUPU"].ToString().Replace(".", ",");
-
                     string DateOfReturn = reader["FAKT_ODBIOR_DATA"].ToString();
                     string SaleDate = reader["SPRZEDAZ_DATA"].ToString();
                     string SaleAmount = reader["SPRZEDAZ_KWOTA"].ToString().Replace(".", ",");
-
                     string Notes = reader["UWAGI"].ToString();
-
 
                     int userid = CheckUserExists(pesel, dokumentNumer, ulica, miejscowosc, odwroconeImieNazwisko);
 
-                    if (userid == -1) {
+                    if (userid == -1)
+                    {
                         UpdateUserInDatabase(userid, odwroconeImieNazwisko, "", ulica, kodPocztowy, miejscowosc, telefon, "", "Dowód Osobisty", dokumentNumer, "", "", "");
                         userid = CheckUserExists(pesel, dokumentNumer, ulica, miejscowosc, odwroconeImieNazwisko);
                     }
@@ -1138,6 +1126,8 @@ namespace SKS_Service_Manager
                         invoiceData.Columns.Add("City", typeof(string));
                         invoiceData.Columns.Add("Description", typeof(string));
                         invoiceData.Columns.Add("TotalAmount", typeof(decimal));
+                        invoiceData.Columns.Add("EstimatedValue", typeof(decimal));
+                        invoiceData.Columns.Add("Commision", typeof(decimal));
                         invoiceData.Columns.Add("InvoiceDate", typeof(DateTime));
                         invoiceData.Columns.Add("BuyDate", typeof(DateTime));
                         invoiceData.Columns.Add("Notes", typeof(string));
@@ -1149,13 +1139,16 @@ namespace SKS_Service_Manager
                         invoiceData.Columns.Add("DateOfReturn", typeof(DateTime));
                         invoiceData.Columns.Add("SaleDate", typeof(DateTime));
                         invoiceData.Columns.Add("SaleAmount", typeof(decimal));
+                        invoiceData.Columns.Add("NIP", typeof(string));
 
                         DataRow newRow = invoiceData.NewRow();
                         newRow["UserID"] = userid;
                         newRow["City"] = City;
-                        newRow["DocumentType"] = "Umowa Kupna-Sprzedaży"; // Pobierz rodzaj dokumentu
+                        newRow["DocumentType"] = "Umowa Kupna-Sprzedaży";
                         newRow["Description"] = Description;
                         newRow["TotalAmount"] = string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount);
+                        newRow["EstimatedValue"] = 0;
+                        newRow["Commision"] = 0;
                         newRow["InvoiceDate"] = DateTime.TryParse(InvoiceDate, out DateTime invoiceDateTime) ? (object)invoiceDateTime : (object)new DateTime(1753, 1, 1);
                         newRow["BuyDate"] = DateTime.TryParse(BuyDate, out DateTime buyDateTime) ? (object)buyDateTime : (object)new DateTime(1753, 1, 1);
                         newRow["Notes"] = Notes;
@@ -1167,6 +1160,7 @@ namespace SKS_Service_Manager
                         newRow["DateOfReturn"] = DateTime.TryParse(DateOfReturn, out DateTime dateOfReturnDateTime) ? (object)dateOfReturnDateTime : (object)new DateTime(1753, 1, 1);
                         newRow["SaleDate"] = DateTime.TryParse(SaleDate, out DateTime saleDateTime) ? (object)saleDateTime : (object)new DateTime(1753, 1, 1);
                         newRow["SaleAmount"] = string.IsNullOrEmpty(SaleAmount) ? 0 : decimal.Parse(SaleAmount);
+                        newRow["NIP"] = null;
 
                         invoiceData.Rows.Add(newRow);
 
@@ -1175,28 +1169,24 @@ namespace SKS_Service_Manager
 
                     processedCount++;
 
-                    // Obliczenie procentowego postępu
                     int progressPercentage = (int)((processedCount / (double)totalCount) * 100);
 
-                    // Wywołanie zdarzenia ProgressChanged
                     OnProgressChanged(progressPercentage);
                     OnProgressTotalChanged(processedCount, totalCount);
-
                 }
 
-                // Zamknięcie połączenia z wygenerowaną bazą danych
                 generatedDatabaseConnection.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd podczas importu bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
+                MessageBox.Show("Błąd podczas importu bazy danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                // Zamknięcie połączenia z Twoją bazą danych
                 CloseConnection();
             }
         }
+
 
         protected virtual void OnProgressChanged(int progressPercentage)
         {
