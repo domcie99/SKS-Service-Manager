@@ -32,7 +32,7 @@ namespace SKS_Service_Manager
         private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Pliki bazy danych Firebird (*.gdb)|*.gdb|Pliki kopii zapasowej (*.bak)|*.bak|Wszystkie pliki (*.*)|*.*";
+            openFileDialog.Filter = "Pliki bazy danych Firebird (*.gdb; *.bak)|*.gdb; *.bak|Wszystkie pliki (*.*)|*.*";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {

@@ -128,6 +128,7 @@
             search.Size = new Size(189, 23);
             search.TabIndex = 29;
             search.TextChanged += SearchUserValueChange;
+            search.KeyDown += search_KeyDown;
             // 
             // label1
             // 

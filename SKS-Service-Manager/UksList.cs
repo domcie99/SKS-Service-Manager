@@ -62,26 +62,24 @@ namespace SKS_Service_Manager
         {
             dt = dataBase.uksLoadData();
             GridInsert();
+            SearchTextBox();
         }
 
         public void GridInsert()
         {
             if (dt != null)
             {
-                string selectedCity = IssuedCity.SelectedItem.ToString();
-                string selectedFormType = FormType.SelectedItem.ToString();
+                string selectedCity = IssuedCity.SelectedItem?.ToString() ?? "Wszystko";
+                string selectedFormType = FormType.SelectedItem?.ToString() ?? "Wszystko";
 
                 DataRow[] filteredRows;
 
-                // Jeśli miasto i rodzaj umowy są wybrane jako "Wszystko"
                 if (selectedCity == "Wszystko" && selectedFormType == "Wszystko")
                 {
-                    // Przepisz wszystkie dane
                     filteredRows = dt.Select();
                 }
                 else
                 {
-                    // Tworzenie warunków filtra
                     string filterExpression = "";
 
                     if (selectedCity != "Wszystko")
@@ -96,7 +94,6 @@ namespace SKS_Service_Manager
                         filterExpression += $"[Typ Umowy] = '{selectedFormType}'";
                     }
 
-                    // Wykonaj filtrowanie
                     filteredRows = dt.Select(filterExpression);
                 }
 
@@ -122,30 +119,53 @@ namespace SKS_Service_Manager
             }
         }
 
-
-
         public void SearchUserValueChange(object sender, EventArgs e)
         {
-            string searchPhrase = search.Text.Trim(); // Pobierz frazę do wyszukiwania
-            DataTable filteredUserData = dt.Clone(); // Utwórz kopię struktury userData
+            SearchTextBox();
+        }
+
+        public void SearchTextBox()
+        {
+            string searchPhrase = search.Text.Trim();
+            DataTable filteredUserData = dt.Clone();
+
+            // Podziel frazę wyszukiwania na słowa
+            string[] searchWords = searchPhrase.Split(' ');
 
             foreach (DataRow row in dt.Rows)
             {
-                DataRow newRow = filteredUserData.NewRow(); // Utwórz nowy wiersz w wynikowej tabeli
+                DataRow newRow = filteredUserData.NewRow();
+                bool matchFound = false;
 
                 foreach (DataColumn column in dt.Columns)
                 {
-                    if (row[column].ToString().IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
+                    string cellValue = row[column].ToString();
+
+                    // Sprawdź, czy wszystkie słowa są zawarte w wartości komórki
+                    bool allWordsMatch = true;
+                    foreach (string word in searchWords)
                     {
-                        // Jeśli znaleziono dopasowanie, dodaj dane z tego wiersza do nowego wiersza w wynikowej tabeli
-                        newRow.ItemArray = row.ItemArray;
-                        filteredUserData.Rows.Add(newRow);
-                        break; // Przeszukuj wszystkie komórki w danym wierszu
+                        if (cellValue.IndexOf(word, StringComparison.OrdinalIgnoreCase) < 0)
+                        {
+                            allWordsMatch = false;
+                            break;
+                        }
                     }
+
+                    if (allWordsMatch)
+                    {
+                        matchFound = true;
+                        break;
+                    }
+                }
+
+                if (matchFound)
+                {
+                    newRow.ItemArray = row.ItemArray;
+                    filteredUserData.Rows.Add(newRow);
                 }
             }
 
-            // Wyświetl wyniki w DataGridView
             if (filteredUserData.Rows.Count > maxRows)
             {
                 DataTable limitedDataTable = filteredUserData.AsEnumerable().Take(maxRows).CopyToDataTable();
@@ -155,8 +175,8 @@ namespace SKS_Service_Manager
             {
                 dataGridView1.DataSource = filteredUserData;
             }
-
         }
+
 
         private void Add_Click(object sender, EventArgs e)
         {
@@ -177,20 +197,15 @@ namespace SKS_Service_Manager
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
-                // Pobierz ID wybranej faktury UKS
                 int selectedIssueID = int.Parse(dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString());
 
-                // Wyświetl potwierdzenie usuwania
                 DialogResult result = MessageBox.Show("Czy na pewno chcesz usunąć tę fakturę UKS?", "Potwierdź Usunięcie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
-                    // Usuń fakturę UKS z bazy danych
                     if (dataBase.DeleteUks(selectedIssueID))
                     {
                         MessageBox.Show("Faktura UKS została pomyślnie usunięta.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        // Odśwież dane w dataGridView po usunięciu
                         LoadData();
                     }
                     else
@@ -226,17 +241,14 @@ namespace SKS_Service_Manager
 
         private void Edit_Click(object sender, EventArgs e)
         {
-            // Sprawdź, czy użytkownik wybrał fakturę UKS do edycji
             if (dataGridView1.SelectedRows.Count > 0)
             {
-                // Tworzymy nowy formularz IssueUKS w trybie edycji
                 string cellValue = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
 
                 int selectedissueID = int.Parse(cellValue);
 
                 IssueUKS editForm = new IssueUKS(selectedissueID, mainForm);
 
-                // Otwieramy formularz w trybie edycji
                 editForm.ShowDialog();
                 LoadData();
             }
@@ -248,7 +260,7 @@ namespace SKS_Service_Manager
 
         private void UksList_SizeChanged(object sender, EventArgs e)
         {
-            int margin = 20; // Możesz dostosować marginesy i inne wartości
+            int margin = 20;
             dataGridView1.Width = this.ClientSize.Width - margin;
             dataGridView1.Height = this.ClientSize.Height - 100;
         }
@@ -267,6 +279,14 @@ namespace SKS_Service_Manager
         private void UksList_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void search_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                SearchUserValueChange(sender, e);
+            }
         }
     }
 }

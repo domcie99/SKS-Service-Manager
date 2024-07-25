@@ -77,6 +77,7 @@ namespace SKS_Service_Manager
             imageFilePath = null;
 
             Percentage.Text = settingsForm.GetPercentage().ToString();
+            Days.Text = settingsForm.GetDays().ToString();
 
             if (issueId > 0)
             {
@@ -971,10 +972,7 @@ namespace SKS_Service_Manager
 
         private void Days_TextChanged(object sender, EventArgs e)
         {
-            if (int.TryParse(Days.Text, out int days))
-            {
-                //Pickup_Date.Value = Issue_Date.Value.AddDays(days - 1);
-            }
+            settingsForm.SetDays(int.Parse(Days.Text.ToString()));
         }
 
         private void uploadImageButton_Click(object sender, EventArgs e)

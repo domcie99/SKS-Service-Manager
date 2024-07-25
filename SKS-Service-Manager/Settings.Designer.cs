@@ -63,6 +63,11 @@
             port = new TextBox();
             button4 = new Button();
             toolTip1 = new ToolTip(components);
+            button5 = new Button();
+            button2 = new Button();
+            button6 = new Button();
+            button3 = new Button();
+            button1 = new Button();
             label16 = new Label();
             label17 = new Label();
             label18 = new Label();
@@ -75,11 +80,8 @@
             label23 = new Label();
             label24 = new Label();
             percentage = new TextBox();
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
-            button5 = new Button();
-            button6 = new Button();
+            label25 = new Label();
+            days = new TextBox();
             SuspendLayout();
             // 
             // company_name
@@ -394,6 +396,101 @@
             button4.UseVisualStyleBackColor = false;
             button4.Click += button4_Click;
             // 
+            // button5
+            // 
+            button5.AccessibleDescription = "";
+            button5.BackColor = Color.Transparent;
+            button5.BackgroundImage = Properties.Resources.EdytujFakture;
+            button5.BackgroundImageLayout = ImageLayout.Zoom;
+            button5.Cursor = Cursors.Hand;
+            button5.FlatAppearance.BorderSize = 0;
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(202, 398);
+            button5.Name = "button5";
+            button5.RightToLeft = RightToLeft.Yes;
+            button5.Size = new Size(62, 88);
+            button5.TabIndex = 49;
+            toolTip1.SetToolTip(button5, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button5.UseMnemonic = false;
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
+            // 
+            // button2
+            // 
+            button2.AccessibleDescription = "";
+            button2.BackColor = Color.Transparent;
+            button2.BackgroundImage = Properties.Resources.EdytujFakture;
+            button2.BackgroundImageLayout = ImageLayout.Zoom;
+            button2.Cursor = Cursors.Hand;
+            button2.FlatAppearance.BorderSize = 0;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Location = new Point(794, 419);
+            button2.Name = "button2";
+            button2.RightToLeft = RightToLeft.Yes;
+            button2.Size = new Size(62, 88);
+            button2.TabIndex = 50;
+            toolTip1.SetToolTip(button2, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button2.UseMnemonic = false;
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
+            // button6
+            // 
+            button6.AccessibleDescription = "";
+            button6.BackColor = Color.Transparent;
+            button6.BackgroundImage = Properties.Resources.EdytujFakture;
+            button6.BackgroundImageLayout = ImageLayout.Zoom;
+            button6.Cursor = Cursors.Hand;
+            button6.FlatAppearance.BorderSize = 0;
+            button6.FlatStyle = FlatStyle.Flat;
+            button6.Location = new Point(351, 398);
+            button6.Name = "button6";
+            button6.RightToLeft = RightToLeft.Yes;
+            button6.Size = new Size(62, 88);
+            button6.TabIndex = 51;
+            toolTip1.SetToolTip(button6, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button6.UseMnemonic = false;
+            button6.UseVisualStyleBackColor = false;
+            button6.Click += button6_Click;
+            // 
+            // button3
+            // 
+            button3.AccessibleDescription = "";
+            button3.BackColor = Color.Transparent;
+            button3.BackgroundImage = Properties.Resources.EdytujFakture;
+            button3.BackgroundImageLayout = ImageLayout.Zoom;
+            button3.Cursor = Cursors.Hand;
+            button3.FlatAppearance.BorderSize = 0;
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.Location = new Point(488, 397);
+            button3.Name = "button3";
+            button3.RightToLeft = RightToLeft.Yes;
+            button3.Size = new Size(62, 88);
+            button3.TabIndex = 52;
+            toolTip1.SetToolTip(button3, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button3.UseMnemonic = false;
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
+            // 
+            // button1
+            // 
+            button1.AccessibleDescription = "";
+            button1.BackColor = Color.Transparent;
+            button1.BackgroundImage = Properties.Resources.EdytujFakture;
+            button1.BackgroundImageLayout = ImageLayout.Zoom;
+            button1.Cursor = Cursors.Hand;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Location = new Point(596, 398);
+            button1.Name = "button1";
+            button1.RightToLeft = RightToLeft.Yes;
+            button1.Size = new Size(62, 88);
+            button1.TabIndex = 53;
+            toolTip1.SetToolTip(button1, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button1.UseMnemonic = false;
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
             // label16
             // 
             label16.BackColor = Color.Transparent;
@@ -500,109 +597,37 @@
             // 
             label24.BackColor = Color.Transparent;
             label24.Font = new Font("Segoe UI", 12F);
-            label24.Location = new Point(57, 349);
+            label24.Location = new Point(57, 352);
             label24.Name = "label24";
-            label24.Size = new Size(150, 23);
+            label24.Size = new Size(73, 23);
             label24.TabIndex = 48;
             label24.Text = "Procent";
             label24.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // percentage
             // 
-            percentage.Location = new Point(213, 349);
+            percentage.Location = new Point(136, 352);
             percentage.Name = "percentage";
-            percentage.Size = new Size(200, 23);
+            percentage.Size = new Size(70, 23);
             percentage.TabIndex = 47;
             // 
-            // button1
+            // label25
             // 
-            button1.AccessibleDescription = "";
-            button1.BackColor = Color.Transparent;
-            button1.BackgroundImage = Properties.Resources.EdytujFakture;
-            button1.BackgroundImageLayout = ImageLayout.Zoom;
-            button1.Cursor = Cursors.Hand;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(202, 398);
-            button1.Name = "button1";
-            button1.RightToLeft = RightToLeft.Yes;
-            button1.Size = new Size(62, 88);
-            button1.TabIndex = 49;
-            toolTip1.SetToolTip(button1, "Edytuj Wzór Umowa Kupna-Sprzedaży");
-            button1.UseMnemonic = false;
-            button1.UseVisualStyleBackColor = false;
+            label25.BackColor = Color.Transparent;
+            label25.Font = new Font("Segoe UI", 12F);
+            label25.Location = new Point(275, 352);
+            label25.Name = "label25";
+            label25.Size = new Size(62, 23);
+            label25.TabIndex = 55;
+            label25.Text = "Dni";
+            label25.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // button2
+            // days
             // 
-            button2.AccessibleDescription = "";
-            button2.BackColor = Color.Transparent;
-            button2.BackgroundImage = Properties.Resources.EdytujFakture;
-            button2.BackgroundImageLayout = ImageLayout.Zoom;
-            button2.Cursor = Cursors.Hand;
-            button2.FlatAppearance.BorderSize = 0;
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(794, 419);
-            button2.Name = "button2";
-            button2.RightToLeft = RightToLeft.Yes;
-            button2.Size = new Size(62, 88);
-            button2.TabIndex = 50;
-            toolTip1.SetToolTip(button2, "Edytuj Wzór Umowa Kupna-Sprzedaży");
-            button2.UseMnemonic = false;
-            button2.UseVisualStyleBackColor = false;
-            // 
-            // button3
-            // 
-            button3.AccessibleDescription = "";
-            button3.BackColor = Color.Transparent;
-            button3.BackgroundImage = Properties.Resources.EdytujFakture;
-            button3.BackgroundImageLayout = ImageLayout.Zoom;
-            button3.Cursor = Cursors.Hand;
-            button3.FlatAppearance.BorderSize = 0;
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(351, 398);
-            button3.Name = "button3";
-            button3.RightToLeft = RightToLeft.Yes;
-            button3.Size = new Size(62, 88);
-            button3.TabIndex = 51;
-            toolTip1.SetToolTip(button3, "Edytuj Wzór Umowa Kupna-Sprzedaży");
-            button3.UseMnemonic = false;
-            button3.UseVisualStyleBackColor = false;
-            // 
-            // button5
-            // 
-            button5.AccessibleDescription = "";
-            button5.BackColor = Color.Transparent;
-            button5.BackgroundImage = Properties.Resources.EdytujFakture;
-            button5.BackgroundImageLayout = ImageLayout.Zoom;
-            button5.Cursor = Cursors.Hand;
-            button5.FlatAppearance.BorderSize = 0;
-            button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(488, 397);
-            button5.Name = "button5";
-            button5.RightToLeft = RightToLeft.Yes;
-            button5.Size = new Size(62, 88);
-            button5.TabIndex = 52;
-            toolTip1.SetToolTip(button5, "Edytuj Wzór Umowa Kupna-Sprzedaży");
-            button5.UseMnemonic = false;
-            button5.UseVisualStyleBackColor = false;
-            // 
-            // button6
-            // 
-            button6.AccessibleDescription = "";
-            button6.BackColor = Color.Transparent;
-            button6.BackgroundImage = Properties.Resources.EdytujFakture;
-            button6.BackgroundImageLayout = ImageLayout.Zoom;
-            button6.Cursor = Cursors.Hand;
-            button6.FlatAppearance.BorderSize = 0;
-            button6.FlatStyle = FlatStyle.Flat;
-            button6.Location = new Point(596, 398);
-            button6.Name = "button6";
-            button6.RightToLeft = RightToLeft.Yes;
-            button6.Size = new Size(62, 88);
-            button6.TabIndex = 53;
-            toolTip1.SetToolTip(button6, "Edytuj Wzór Umowa Kupna-Sprzedaży");
-            button6.UseMnemonic = false;
-            button6.UseVisualStyleBackColor = false;
+            days.Location = new Point(343, 352);
+            days.Name = "days";
+            days.Size = new Size(70, 23);
+            days.TabIndex = 54;
             // 
             // Settings
             // 
@@ -610,11 +635,13 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(904, 562);
-            Controls.Add(button6);
-            Controls.Add(button5);
-            Controls.Add(button3);
-            Controls.Add(button2);
+            Controls.Add(label25);
+            Controls.Add(days);
             Controls.Add(button1);
+            Controls.Add(button3);
+            Controls.Add(button6);
+            Controls.Add(button2);
+            Controls.Add(button5);
             Controls.Add(label24);
             Controls.Add(percentage);
             Controls.Add(label23);
@@ -714,10 +741,12 @@
         private Label label23;
         private Label label24;
         private TextBox percentage;
-        private Button button1;
-        private Button button2;
-        private Button button3;
         private Button button5;
+        private Button button2;
         private Button button6;
+        private Button button3;
+        private Button button1;
+        private Label label25;
+        private TextBox days;
     }
 }

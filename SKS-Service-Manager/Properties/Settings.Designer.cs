@@ -226,5 +226,17 @@ namespace SKS_Service_Manager.Properties {
                 this["regon"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int days {
+            get {
+                return ((int)(this["days"]));
+            }
+            set {
+                this["days"] = value;
+            }
+        }
     }
 }

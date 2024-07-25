@@ -46,6 +46,7 @@ namespace SKS_Service_Manager
             appSettings.MySQLDatabase = database.Text;
             appSettings.MySQLPort = port.Text;
             appSettings.Percentage = int.Parse(percentage.Text);
+            appSettings.Days = int.Parse(days.Text);
 
             try
             {
@@ -93,7 +94,8 @@ namespace SKS_Service_Manager
                     MySQLPassword = Properties.Settings.Default.mysql_password,
                     MySQLDatabase = Properties.Settings.Default.mysql_database,
                     MySQLPort = Properties.Settings.Default.mysql_port,
-                    Percentage = int.Parse(Properties.Settings.Default.percentage)
+                    Percentage = int.Parse(Properties.Settings.Default.percentage),
+                    Days = Properties.Settings.Default.days
                 };
             }
 
@@ -114,6 +116,7 @@ namespace SKS_Service_Manager
             database.Text = appSettings.MySQLDatabase;
             port.Text = appSettings.MySQLPort;
             percentage.Text = appSettings.Percentage.ToString();
+            days.Text = appSettings.Days.ToString();
 
             SaveSettings();
         }
@@ -232,6 +235,12 @@ namespace SKS_Service_Manager
             SaveSettings();
         }
 
+        public void SetDays(int days)
+        {
+            appSettings.Days = days;
+            SaveSettings();
+        }
+
         // Gettery dla ustawień
         public string GetCompanyName() => appSettings.CompanyName;
         public string GetNIP() => appSettings.NIP;
@@ -245,6 +254,7 @@ namespace SKS_Service_Manager
         public string GetKRS() => appSettings.KRS;
         public string GetREGON() => appSettings.REGON;
         public int GetPercentage() => appSettings.Percentage;
+        public int GetDays() => appSettings.Days;
 
         // Gettery dla ustawień MySQL
         public string GetMySQLHost() => appSettings.MySQLHost;
@@ -321,20 +331,6 @@ namespace SKS_Service_Manager
         }
     }
 
-    public class AnotherClass
-    {
-        private Settings settingsForm;
-
-        public AnotherClass(Settings settingsForm)
-        {
-            this.settingsForm = settingsForm;
-        }
-
-        public void UpdatePercentage(int newPercentage)
-        {
-            settingsForm.SetPercentage(newPercentage);
-        }
-    }
     public class AppSettings
     {
         public string CompanyName { get; set; }
@@ -354,5 +350,6 @@ namespace SKS_Service_Manager
         public string MySQLDatabase { get; set; }
         public string MySQLPort { get; set; }
         public int Percentage { get; set; }
+        public int Days { get; set; }
     }
 }

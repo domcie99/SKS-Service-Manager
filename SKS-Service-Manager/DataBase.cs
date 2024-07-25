@@ -1068,6 +1068,8 @@ namespace SKS_Service_Manager
 
         public async Task AddUsersFromGeneratedDatabaseAsync(string generatedDatabaseFilePath)
         {
+            string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test-log.txt");
+
             try
             {
                 string generatedDatabaseConnectionString = $"Data Source={generatedDatabaseFilePath};Version=3;";
@@ -1087,105 +1089,113 @@ namespace SKS_Service_Manager
 
                 while (reader.Read())
                 {
-                    string nazwiskoImie = reader["KLIENT_NAZWISKO_IMIE"].ToString();
-                    string odwroconeImieNazwisko = string.Empty;
-                    string[] parts = nazwiskoImie.Split(' ');
-                    if (parts.Length >= 2)
+                    try
                     {
-                        odwroconeImieNazwisko = parts[1] + " " + parts[0];
+                        string nazwiskoImie = reader["KLIENT_NAZWISKO_IMIE"].ToString();
+                        string odwroconeImieNazwisko = string.Empty;
+                        string[] parts = nazwiskoImie.Split(' ');
+                        if (parts.Length >= 2)
+                        {
+                            odwroconeImieNazwisko = parts[1] + " " + parts[0];
+                        }
+                        else if (parts.Length == 1)
+                        {
+                            odwroconeImieNazwisko = parts[0];
+                        }
+
+                        string kodPocztowy = reader["KLIENT_KOD_POCZT"].ToString();
+                        string miejscowosc = reader["KLIENT_MIEJSCOW"].ToString();
+                        string ulica = reader["KLIENT_ULICA"].ToString();
+                        string telefon = reader["KLIENT_TEL_KONTAKT"].ToString();
+                        string dokumentTyp = reader["KLIENT_DOK_TYP"].ToString();
+                        string dokumentNumer = reader["KLIENT_DOK_NR"].ToString();
+                        string pesel = reader["KLIENT_PESEL"].ToString();
+                        string City = reader["FIRMA_MIEJSCOW"].ToString();
+                        string Description = reader["PRZEDMIOT_OPIS"].ToString();
+                        string TotalAmount = reader["PRZEDMIOT_WARTOSC"].ToString().Replace(".", ",");
+                        string InvoiceDate = reader["DATA_PRZYJECIA"].ToString();
+                        string BuyDate = reader["TERMIN_ODBIORU"].ToString();
+                        string Days = reader["UMOWA_ILOSC_DNI"].ToString();
+                        string PercentageString = reader["UMOWA_PROCENT"].ToString().Replace(".", ",");
+                        double PercentageDouble = Convert.ToDouble(string.IsNullOrEmpty(PercentageString) ? 0 : PercentageString);
+                        int Percentage = (int)Math.Floor(PercentageDouble);
+                        string Fee = reader["OPLATA"].ToString().Replace(".", ",");
+                        string LateFee = reader["OPLATA_OPOZNIENIE"].ToString().Replace(".", ",");
+                        string BuyAmount = reader["KWOTA_WYKUPU"].ToString().Replace(".", ",");
+                        string DateOfReturn = reader["FAKT_ODBIOR_DATA"].ToString();
+                        string SaleDate = reader["SPRZEDAZ_DATA"].ToString();
+                        string SaleAmount = reader["SPRZEDAZ_KWOTA"].ToString().Replace(".", ",");
+                        string Notes = reader["UWAGI"].ToString();
+
+                        int userid = CheckUserExistsByNameAndCity(miejscowosc, odwroconeImieNazwisko);
+
+                        if (userid == -1)
+                        {
+                            UpdateUserInDatabase(userid, odwroconeImieNazwisko, "", ulica, kodPocztowy, miejscowosc, telefon, "", "Dowód Osobisty", dokumentNumer, "", "", "");
+                            userid = CheckUserExists(pesel, dokumentNumer, ulica, miejscowosc, odwroconeImieNazwisko);
+                        }
+
+                        if (userid != -1 && !CheckInvoiceExists(Description, string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount)))
+                        {
+                            System.Data.DataTable invoiceData = new System.Data.DataTable();
+                            invoiceData.Columns.Add("UserID", typeof(int));
+                            invoiceData.Columns.Add("DocumentType", typeof(string));
+                            invoiceData.Columns.Add("City", typeof(string));
+                            invoiceData.Columns.Add("Description", typeof(string));
+                            invoiceData.Columns.Add("TotalAmount", typeof(decimal));
+                            invoiceData.Columns.Add("EstimatedValue", typeof(decimal));
+                            invoiceData.Columns.Add("Commision", typeof(decimal));
+                            invoiceData.Columns.Add("InvoiceDate", typeof(DateTime));
+                            invoiceData.Columns.Add("BuyDate", typeof(DateTime));
+                            invoiceData.Columns.Add("Notes", typeof(string));
+                            invoiceData.Columns.Add("Days", typeof(int));
+                            invoiceData.Columns.Add("Percentage", typeof(int));
+                            invoiceData.Columns.Add("Fee", typeof(decimal));
+                            invoiceData.Columns.Add("LateFee", typeof(decimal));
+                            invoiceData.Columns.Add("BuyAmount", typeof(decimal));
+                            invoiceData.Columns.Add("DateOfReturn", typeof(DateTime));
+                            invoiceData.Columns.Add("SaleDate", typeof(DateTime));
+                            invoiceData.Columns.Add("SaleAmount", typeof(decimal));
+                            invoiceData.Columns.Add("NIP", typeof(string));
+
+                            DataRow newRow = invoiceData.NewRow();
+                            newRow["UserID"] = userid;
+                            newRow["City"] = City;
+                            newRow["DocumentType"] = "Umowa Kupna-Sprzedaży";
+                            newRow["Description"] = Description;
+                            newRow["TotalAmount"] = string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount);
+                            newRow["EstimatedValue"] = 0;
+                            newRow["Commision"] = 0;
+                            newRow["InvoiceDate"] = DateTime.TryParse(InvoiceDate, out DateTime invoiceDateTime) ? (object)invoiceDateTime : (object)new DateTime(1753, 1, 1);
+                            newRow["BuyDate"] = DateTime.TryParse(BuyDate, out DateTime buyDateTime) ? (object)buyDateTime : (object)new DateTime(1753, 1, 1);
+                            newRow["Notes"] = Notes;
+                            newRow["Days"] = string.IsNullOrEmpty(Days) ? 0 : int.Parse(Days);
+                            newRow["Percentage"] = Percentage;
+                            newRow["Fee"] = string.IsNullOrEmpty(Fee) ? 0 : decimal.Parse(Fee);
+                            newRow["LateFee"] = string.IsNullOrEmpty(LateFee) ? 0 : decimal.Parse(LateFee);
+                            newRow["BuyAmount"] = string.IsNullOrEmpty(BuyAmount) ? 0 : decimal.Parse(BuyAmount);
+                            newRow["DateOfReturn"] = DateTime.TryParse(DateOfReturn, out DateTime dateOfReturnDateTime) ? (object)dateOfReturnDateTime : (object)new DateTime(1753, 1, 1);
+                            newRow["SaleDate"] = DateTime.TryParse(SaleDate, out DateTime saleDateTime) ? (object)saleDateTime : (object)new DateTime(1753, 1, 1);
+                            newRow["SaleAmount"] = string.IsNullOrEmpty(SaleAmount) ? 0 : decimal.Parse(SaleAmount);
+                            newRow["NIP"] = null;
+
+                            invoiceData.Rows.Add(newRow);
+
+                            SaveInvoiceToDatabase(invoiceData);
+                        }
+
+                        processedCount++;
+
+                        int progressPercentage = (int)((processedCount / (double)totalCount) * 100);
+
+                        OnProgressChanged(progressPercentage);
+                        OnProgressTotalChanged(processedCount, totalCount);
                     }
-                    else if (parts.Length == 1)
+                    catch (Exception ex)
                     {
-                        odwroconeImieNazwisko = parts[0];
+                        string errorMessage = $"Error processing record: {ex.Message}";
+                        File.AppendAllText(logFilePath, errorMessage + Environment.NewLine);
                     }
-
-                    string kodPocztowy = reader["KLIENT_KOD_POCZT"].ToString();
-                    string miejscowosc = reader["KLIENT_MIEJSCOW"].ToString();
-                    string ulica = reader["KLIENT_ULICA"].ToString();
-                    string telefon = reader["KLIENT_TEL_KONTAKT"].ToString();
-                    string dokumentTyp = reader["KLIENT_DOK_TYP"].ToString();
-                    string dokumentNumer = reader["KLIENT_DOK_NR"].ToString();
-                    string pesel = reader["KLIENT_PESEL"].ToString();
-                    string City = reader["FIRMA_MIEJSCOW"].ToString();
-                    string Description = reader["PRZEDMIOT_OPIS"].ToString();
-                    string TotalAmount = reader["PRZEDMIOT_WARTOSC"].ToString().Replace(".", ",");
-                    string InvoiceDate = reader["DATA_PRZYJECIA"].ToString();
-                    string BuyDate = reader["TERMIN_ODBIORU"].ToString();
-                    string Days = reader["UMOWA_ILOSC_DNI"].ToString();
-                    string PercentageString = reader["UMOWA_PROCENT"].ToString().Replace(".", ",");
-                    double PercentageDouble = Convert.ToDouble(string.IsNullOrEmpty(PercentageString) ? 0 : PercentageString);
-                    int Percentage = (int)Math.Floor(PercentageDouble);
-                    string Fee = reader["OPLATA"].ToString().Replace(".", ",");
-                    string LateFee = reader["OPLATA_OPOZNIENIE"].ToString().Replace(".", ",");
-                    string BuyAmount = reader["KWOTA_WYKUPU"].ToString().Replace(".", ",");
-                    string DateOfReturn = reader["FAKT_ODBIOR_DATA"].ToString();
-                    string SaleDate = reader["SPRZEDAZ_DATA"].ToString();
-                    string SaleAmount = reader["SPRZEDAZ_KWOTA"].ToString().Replace(".", ",");
-                    string Notes = reader["UWAGI"].ToString();
-
-                    int userid = CheckUserExistsByNameAndCity(miejscowosc, odwroconeImieNazwisko);
-
-                    if (userid == -1)
-                    {
-                        UpdateUserInDatabase(userid, odwroconeImieNazwisko, "", ulica, kodPocztowy, miejscowosc, telefon, "", "Dowód Osobisty", dokumentNumer, "", "", "");
-                        userid = CheckUserExists(pesel, dokumentNumer, ulica, miejscowosc, odwroconeImieNazwisko);
-                    }
-
-                    if (userid != -1 && !CheckInvoiceExists(Description, string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount)))
-                    {
-                        System.Data.DataTable invoiceData = new System.Data.DataTable();
-                        invoiceData.Columns.Add("UserID", typeof(int));
-                        invoiceData.Columns.Add("DocumentType", typeof(string));
-                        invoiceData.Columns.Add("City", typeof(string));
-                        invoiceData.Columns.Add("Description", typeof(string));
-                        invoiceData.Columns.Add("TotalAmount", typeof(decimal));
-                        invoiceData.Columns.Add("EstimatedValue", typeof(decimal));
-                        invoiceData.Columns.Add("Commision", typeof(decimal));
-                        invoiceData.Columns.Add("InvoiceDate", typeof(DateTime));
-                        invoiceData.Columns.Add("BuyDate", typeof(DateTime));
-                        invoiceData.Columns.Add("Notes", typeof(string));
-                        invoiceData.Columns.Add("Days", typeof(int));
-                        invoiceData.Columns.Add("Percentage", typeof(int));
-                        invoiceData.Columns.Add("Fee", typeof(decimal));
-                        invoiceData.Columns.Add("LateFee", typeof(decimal));
-                        invoiceData.Columns.Add("BuyAmount", typeof(decimal));
-                        invoiceData.Columns.Add("DateOfReturn", typeof(DateTime));
-                        invoiceData.Columns.Add("SaleDate", typeof(DateTime));
-                        invoiceData.Columns.Add("SaleAmount", typeof(decimal));
-                        invoiceData.Columns.Add("NIP", typeof(string));
-
-                        DataRow newRow = invoiceData.NewRow();
-                        newRow["UserID"] = userid;
-                        newRow["City"] = City;
-                        newRow["DocumentType"] = "Umowa Kupna-Sprzedaży";
-                        newRow["Description"] = Description;
-                        newRow["TotalAmount"] = string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount);
-                        newRow["EstimatedValue"] = 0;
-                        newRow["Commision"] = 0;
-                        newRow["InvoiceDate"] = DateTime.TryParse(InvoiceDate, out DateTime invoiceDateTime) ? (object)invoiceDateTime : (object)new DateTime(1753, 1, 1);
-                        newRow["BuyDate"] = DateTime.TryParse(BuyDate, out DateTime buyDateTime) ? (object)buyDateTime : (object)new DateTime(1753, 1, 1);
-                        newRow["Notes"] = Notes;
-                        newRow["Days"] = string.IsNullOrEmpty(Days) ? 0 : int.Parse(Days);
-                        newRow["Percentage"] = Percentage;
-                        newRow["Fee"] = string.IsNullOrEmpty(Fee) ? 0 : decimal.Parse(Fee);
-                        newRow["LateFee"] = string.IsNullOrEmpty(LateFee) ? 0 : decimal.Parse(LateFee);
-                        newRow["BuyAmount"] = string.IsNullOrEmpty(BuyAmount) ? 0 : decimal.Parse(BuyAmount);
-                        newRow["DateOfReturn"] = DateTime.TryParse(DateOfReturn, out DateTime dateOfReturnDateTime) ? (object)dateOfReturnDateTime : (object)new DateTime(1753, 1, 1);
-                        newRow["SaleDate"] = DateTime.TryParse(SaleDate, out DateTime saleDateTime) ? (object)saleDateTime : (object)new DateTime(1753, 1, 1);
-                        newRow["SaleAmount"] = string.IsNullOrEmpty(SaleAmount) ? 0 : decimal.Parse(SaleAmount);
-                        newRow["NIP"] = null;
-
-                        invoiceData.Rows.Add(newRow);
-
-                        SaveInvoiceToDatabase(invoiceData);
-                    }
-
-                    processedCount++;
-
-                    int progressPercentage = (int)((processedCount / (double)totalCount) * 100);
-
-                    OnProgressChanged(progressPercentage);
-                    OnProgressTotalChanged(processedCount, totalCount);
                 }
 
                 generatedDatabaseConnection.Close();
@@ -1199,6 +1209,7 @@ namespace SKS_Service_Manager
                 CloseConnection();
             }
         }
+
 
 
         protected virtual void OnProgressChanged(int progressPercentage)
