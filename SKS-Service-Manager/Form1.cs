@@ -23,7 +23,7 @@ namespace SKS_Service_Manager
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
 
-        private string localVersion = "1.3.8.0";
+        private string localVersion = "1.4.0.0";
         private string latestVersion;
 
         private bool isUpdating = false;
