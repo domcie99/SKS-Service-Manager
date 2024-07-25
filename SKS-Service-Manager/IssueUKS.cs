@@ -83,6 +83,7 @@ namespace SKS_Service_Manager
             {
                 LoadInvoiceData(issueId);
             }
+            Value_Validation(Value, new EventArgs());
         }
 
         private void Load_Click(object sender, EventArgs e)
@@ -852,14 +853,14 @@ namespace SKS_Service_Manager
 
             // Oblicz liczbę dni pomiędzy datami
             TimeSpan span = pickupDate - issueDate;
-            int daysDifference = span.Days + 1;
+            int daysDifference = span.Days;
 
             if (pickupDate == issueDate)
             {
                 daysDifference = 0;
             }
             // Wpisz liczbę dni w pole Days
-            //Days.Text = daysDifference.ToString();
+            Days.Text = daysDifference.ToString();
         }
 
         private string GetValueAsText(decimal value)

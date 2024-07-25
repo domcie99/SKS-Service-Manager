@@ -1161,15 +1161,21 @@ namespace SKS_Service_Manager
                             DataRow newRow = invoiceData.NewRow();
                             newRow["UserID"] = userid;
                             newRow["City"] = City;
-                            newRow["DocumentType"] = "Umowa Kupna-Sprzedaży";
+                            newRow["DocumentType"] = string.IsNullOrEmpty(TotalAmount) ? "Umowa Kupna-Sprzedaży" : (decimal.Parse(TotalAmount) > 1000 ? "Umowa Komisowa" : "Umowa Kupna-Sprzedaży");
                             newRow["Description"] = Description;
                             newRow["TotalAmount"] = string.IsNullOrEmpty(TotalAmount) ? 0 : decimal.Parse(TotalAmount);
                             newRow["EstimatedValue"] = 0;
                             newRow["Commision"] = 0;
-                            newRow["InvoiceDate"] = DateTime.TryParse(InvoiceDate, out DateTime invoiceDateTime) ? (object)invoiceDateTime : (object)new DateTime(1753, 1, 1);
-                            newRow["BuyDate"] = DateTime.TryParse(BuyDate, out DateTime buyDateTime) ? (object)buyDateTime : (object)new DateTime(1753, 1, 1);
+
+                            DateTime invoiceDateTime = DateTime.TryParse(InvoiceDate, out DateTime parsedInvoiceDate) ? parsedInvoiceDate : new DateTime(1753, 1, 1);
+                            DateTime buyDateTime = DateTime.TryParse(BuyDate, out DateTime parsedBuyDate) ? parsedBuyDate : new DateTime(1753, 1, 1);
+
+                            newRow["InvoiceDate"] = invoiceDateTime;
+                            newRow["BuyDate"] = buyDateTime.Equals(invoiceDateTime) ? buyDateTime.AddMonths(1) : buyDateTime;
+
                             newRow["Notes"] = Notes;
-                            newRow["Days"] = string.IsNullOrEmpty(Days) ? 0 : int.Parse(Days);
+
+                            newRow["Days"] = string.IsNullOrEmpty(Days) || int.Parse(Days) == 0 ? 30 : int.Parse(Days);
                             newRow["Percentage"] = Percentage;
                             newRow["Fee"] = string.IsNullOrEmpty(Fee) ? 0 : decimal.Parse(Fee);
                             newRow["LateFee"] = string.IsNullOrEmpty(LateFee) ? 0 : decimal.Parse(LateFee);
