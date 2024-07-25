@@ -858,7 +858,7 @@ namespace SKS_Service_Manager
                 daysDifference = 0;
             }
             // Wpisz liczbę dni w pole Days
-            Days.Text = daysDifference.ToString();
+            //Days.Text = daysDifference.ToString();
         }
 
         private string GetValueAsText(decimal value)
@@ -973,7 +973,7 @@ namespace SKS_Service_Manager
         {
             if (int.TryParse(Days.Text, out int days))
             {
-                Pickup_Date.Value = Issue_Date.Value.AddDays(days - 1);
+                //Pickup_Date.Value = Issue_Date.Value.AddDays(days - 1);
             }
         }
 

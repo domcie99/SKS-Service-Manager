@@ -61,12 +61,8 @@
             host = new TextBox();
             label15 = new Label();
             port = new TextBox();
-            button6 = new Button();
-            button5 = new Button();
             button4 = new Button();
             toolTip1 = new ToolTip(components);
-            button1 = new Button();
-            button2 = new Button();
             label16 = new Label();
             label17 = new Label();
             label18 = new Label();
@@ -77,7 +73,13 @@
             label22 = new Label();
             REGON = new TextBox();
             label23 = new Label();
+            label24 = new Label();
+            percentage = new TextBox();
+            button1 = new Button();
+            button2 = new Button();
             button3 = new Button();
+            button5 = new Button();
+            button6 = new Button();
             SuspendLayout();
             // 
             // company_name
@@ -373,40 +375,6 @@
             port.Size = new Size(200, 23);
             port.TabIndex = 29;
             // 
-            // button6
-            // 
-            button6.BackColor = Color.Transparent;
-            button6.BackgroundImage = Properties.Resources.EdytujFakture;
-            button6.BackgroundImageLayout = ImageLayout.Zoom;
-            button6.Cursor = Cursors.Hand;
-            button6.FlatAppearance.BorderSize = 0;
-            button6.FlatStyle = FlatStyle.Flat;
-            button6.Location = new Point(396, 365);
-            button6.Name = "button6";
-            button6.Size = new Size(74, 88);
-            button6.TabIndex = 33;
-            toolTip1.SetToolTip(button6, "Edytuj Wzór Umowa Pożyczki z Przechowaniem");
-            button6.UseMnemonic = false;
-            button6.UseVisualStyleBackColor = false;
-            button6.Click += button6_Click;
-            // 
-            // button5
-            // 
-            button5.BackColor = Color.Transparent;
-            button5.BackgroundImage = Properties.Resources.EdytujFakture;
-            button5.BackgroundImageLayout = ImageLayout.Zoom;
-            button5.Cursor = Cursors.Hand;
-            button5.FlatAppearance.BorderSize = 0;
-            button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(256, 365);
-            button5.Name = "button5";
-            button5.Size = new Size(74, 88);
-            button5.TabIndex = 32;
-            toolTip1.SetToolTip(button5, "Edytuj Wzór Umowa Komisowa");
-            button5.UseMnemonic = false;
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
-            // 
             // button4
             // 
             button4.AccessibleDescription = "";
@@ -416,57 +384,23 @@
             button4.Cursor = Cursors.Hand;
             button4.FlatAppearance.BorderSize = 0;
             button4.FlatStyle = FlatStyle.Flat;
-            button4.Location = new Point(109, 365);
+            button4.Location = new Point(57, 397);
             button4.Name = "button4";
             button4.RightToLeft = RightToLeft.Yes;
-            button4.Size = new Size(74, 88);
+            button4.Size = new Size(62, 88);
             button4.TabIndex = 31;
             toolTip1.SetToolTip(button4, "Edytuj Wzór Umowa Kupna-Sprzedaży");
             button4.UseMnemonic = false;
             button4.UseVisualStyleBackColor = false;
             button4.Click += button4_Click;
             // 
-            // button1
-            // 
-            button1.BackColor = Color.Transparent;
-            button1.BackgroundImage = Properties.Resources.EdytujFakture;
-            button1.BackgroundImageLayout = ImageLayout.Zoom;
-            button1.Cursor = Cursors.Hand;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(671, 365);
-            button1.Name = "button1";
-            button1.Size = new Size(74, 88);
-            button1.TabIndex = 37;
-            toolTip1.SetToolTip(button1, "Edytuj Wzór Umowa Pożyczki z Przechowaniem");
-            button1.UseMnemonic = false;
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.Transparent;
-            button2.BackgroundImage = Properties.Resources.EdytujFakture;
-            button2.BackgroundImageLayout = ImageLayout.Zoom;
-            button2.Cursor = Cursors.Hand;
-            button2.FlatAppearance.BorderSize = 0;
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(794, 365);
-            button2.Name = "button2";
-            button2.Size = new Size(74, 88);
-            button2.TabIndex = 39;
-            toolTip1.SetToolTip(button2, "Edytuj Wzór Umowa Pożyczki z Przechowaniem");
-            button2.UseMnemonic = false;
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
-            // 
             // label16
             // 
             label16.BackColor = Color.Transparent;
-            label16.Font = new Font("Segoe UI", 12F);
-            label16.Location = new Point(69, 455);
+            label16.Font = new Font("Times New Roman", 8.25F);
+            label16.Location = new Point(17, 487);
             label16.Name = "label16";
-            label16.Size = new Size(150, 59);
+            label16.Size = new Size(138, 59);
             label16.TabIndex = 34;
             label16.Text = "Edytuj Umowa Kupna-Sprzedaży";
             label16.TextAlign = ContentAlignment.MiddleCenter;
@@ -474,10 +408,10 @@
             // label17
             // 
             label17.BackColor = Color.Transparent;
-            label17.Font = new Font("Segoe UI", 12F);
-            label17.Location = new Point(217, 457);
+            label17.Font = new Font("Times New Roman", 8.25F);
+            label17.Location = new Point(180, 489);
             label17.Name = "label17";
-            label17.Size = new Size(150, 59);
+            label17.Size = new Size(103, 57);
             label17.TabIndex = 35;
             label17.Text = "Edytuj Umowa Komisowa";
             label17.TextAlign = ContentAlignment.MiddleCenter;
@@ -485,10 +419,10 @@
             // label18
             // 
             label18.BackColor = Color.Transparent;
-            label18.Font = new Font("Segoe UI", 12F);
-            label18.Location = new Point(355, 456);
+            label18.Font = new Font("Times New Roman", 8.25F);
+            label18.Location = new Point(335, 488);
             label18.Name = "label18";
-            label18.Size = new Size(150, 59);
+            label18.Size = new Size(92, 59);
             label18.TabIndex = 36;
             label18.Text = "Umowa Pożyczki z Przechowaniem";
             label18.TextAlign = ContentAlignment.MiddleCenter;
@@ -496,8 +430,8 @@
             // label19
             // 
             label19.BackColor = Color.Transparent;
-            label19.Font = new Font("Segoe UI", 12F);
-            label19.Location = new Point(655, 455);
+            label19.Font = new Font("Times New Roman", 8.25F);
+            label19.Location = new Point(572, 494);
             label19.Name = "label19";
             label19.Size = new Size(111, 59);
             label19.TabIndex = 38;
@@ -507,8 +441,8 @@
             // label20
             // 
             label20.BackColor = Color.Transparent;
-            label20.Font = new Font("Segoe UI", 12F);
-            label20.Location = new Point(763, 456);
+            label20.Font = new Font("Times New Roman", 8.25F);
+            label20.Location = new Point(757, 494);
             label20.Name = "label20";
             label20.Size = new Size(135, 59);
             label20.TabIndex = 40;
@@ -554,52 +488,145 @@
             // label23
             // 
             label23.BackColor = Color.Transparent;
-            label23.Font = new Font("Segoe UI", 12F);
-            label23.Location = new Point(500, 450);
+            label23.Font = new Font("Times New Roman", 8.25F);
+            label23.Location = new Point(464, 480);
             label23.Name = "label23";
-            label23.Size = new Size(149, 73);
+            label23.Size = new Size(102, 73);
             label23.TabIndex = 46;
             label23.Text = "Umowa konsumenckiej pożyczki lombardowej";
             label23.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // label24
+            // 
+            label24.BackColor = Color.Transparent;
+            label24.Font = new Font("Segoe UI", 12F);
+            label24.Location = new Point(57, 349);
+            label24.Name = "label24";
+            label24.Size = new Size(150, 23);
+            label24.TabIndex = 48;
+            label24.Text = "Procent";
+            label24.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // percentage
+            // 
+            percentage.Location = new Point(213, 349);
+            percentage.Name = "percentage";
+            percentage.Size = new Size(200, 23);
+            percentage.TabIndex = 47;
+            // 
+            // button1
+            // 
+            button1.AccessibleDescription = "";
+            button1.BackColor = Color.Transparent;
+            button1.BackgroundImage = Properties.Resources.EdytujFakture;
+            button1.BackgroundImageLayout = ImageLayout.Zoom;
+            button1.Cursor = Cursors.Hand;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Location = new Point(202, 398);
+            button1.Name = "button1";
+            button1.RightToLeft = RightToLeft.Yes;
+            button1.Size = new Size(62, 88);
+            button1.TabIndex = 49;
+            toolTip1.SetToolTip(button1, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button1.UseMnemonic = false;
+            button1.UseVisualStyleBackColor = false;
+            // 
+            // button2
+            // 
+            button2.AccessibleDescription = "";
+            button2.BackColor = Color.Transparent;
+            button2.BackgroundImage = Properties.Resources.EdytujFakture;
+            button2.BackgroundImageLayout = ImageLayout.Zoom;
+            button2.Cursor = Cursors.Hand;
+            button2.FlatAppearance.BorderSize = 0;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Location = new Point(794, 419);
+            button2.Name = "button2";
+            button2.RightToLeft = RightToLeft.Yes;
+            button2.Size = new Size(62, 88);
+            button2.TabIndex = 50;
+            toolTip1.SetToolTip(button2, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button2.UseMnemonic = false;
+            button2.UseVisualStyleBackColor = false;
+            // 
             // button3
             // 
+            button3.AccessibleDescription = "";
             button3.BackColor = Color.Transparent;
             button3.BackgroundImage = Properties.Resources.EdytujFakture;
             button3.BackgroundImageLayout = ImageLayout.Zoom;
             button3.Cursor = Cursors.Hand;
             button3.FlatAppearance.BorderSize = 0;
             button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(540, 365);
+            button3.Location = new Point(351, 398);
             button3.Name = "button3";
-            button3.Size = new Size(74, 88);
-            button3.TabIndex = 45;
-            toolTip1.SetToolTip(button3, "Edytuj Wzór Umowa Pożyczki z Przechowaniem");
+            button3.RightToLeft = RightToLeft.Yes;
+            button3.Size = new Size(62, 88);
+            button3.TabIndex = 51;
+            toolTip1.SetToolTip(button3, "Edytuj Wzór Umowa Kupna-Sprzedaży");
             button3.UseMnemonic = false;
             button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            // 
+            // button5
+            // 
+            button5.AccessibleDescription = "";
+            button5.BackColor = Color.Transparent;
+            button5.BackgroundImage = Properties.Resources.EdytujFakture;
+            button5.BackgroundImageLayout = ImageLayout.Zoom;
+            button5.Cursor = Cursors.Hand;
+            button5.FlatAppearance.BorderSize = 0;
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(488, 397);
+            button5.Name = "button5";
+            button5.RightToLeft = RightToLeft.Yes;
+            button5.Size = new Size(62, 88);
+            button5.TabIndex = 52;
+            toolTip1.SetToolTip(button5, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button5.UseMnemonic = false;
+            button5.UseVisualStyleBackColor = false;
+            // 
+            // button6
+            // 
+            button6.AccessibleDescription = "";
+            button6.BackColor = Color.Transparent;
+            button6.BackgroundImage = Properties.Resources.EdytujFakture;
+            button6.BackgroundImageLayout = ImageLayout.Zoom;
+            button6.Cursor = Cursors.Hand;
+            button6.FlatAppearance.BorderSize = 0;
+            button6.FlatStyle = FlatStyle.Flat;
+            button6.Location = new Point(596, 398);
+            button6.Name = "button6";
+            button6.RightToLeft = RightToLeft.Yes;
+            button6.Size = new Size(62, 88);
+            button6.TabIndex = 53;
+            toolTip1.SetToolTip(button6, "Edytuj Wzór Umowa Kupna-Sprzedaży");
+            button6.UseMnemonic = false;
+            button6.UseVisualStyleBackColor = false;
             // 
             // Settings
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
-            ClientSize = new Size(904, 525);
-            Controls.Add(label23);
+            ClientSize = new Size(904, 562);
+            Controls.Add(button6);
+            Controls.Add(button5);
             Controls.Add(button3);
+            Controls.Add(button2);
+            Controls.Add(button1);
+            Controls.Add(label24);
+            Controls.Add(percentage);
+            Controls.Add(label23);
             Controls.Add(label22);
             Controls.Add(REGON);
             Controls.Add(label21);
             Controls.Add(KRS);
             Controls.Add(label20);
-            Controls.Add(button2);
             Controls.Add(label19);
-            Controls.Add(button1);
             Controls.Add(label18);
             Controls.Add(label17);
             Controls.Add(label16);
-            Controls.Add(button6);
-            Controls.Add(button5);
             Controls.Add(button4);
             Controls.Add(label15);
             Controls.Add(port);
@@ -673,22 +700,24 @@
         private TextBox host;
         private Label label15;
         private TextBox port;
-        private Button button6;
-        private Button button5;
         private Button button4;
         private ToolTip toolTip1;
         private Label label16;
         private Label label17;
         private Label label18;
         private Label label19;
-        private Button button1;
         private Label label20;
-        private Button button2;
         private Label label21;
         private TextBox KRS;
         private Label label22;
         private TextBox REGON;
         private Label label23;
+        private Label label24;
+        private TextBox percentage;
+        private Button button1;
+        private Button button2;
         private Button button3;
+        private Button button5;
+        private Button button6;
     }
 }
