@@ -62,45 +62,68 @@ namespace SKS_Service_Manager
         {
             dt = dataBase.uksLoadData();
             GridInsert();
-            SearchTextBox();
         }
 
         public void GridInsert()
         {
             if (dt != null)
             {
-                string selectedCity = IssuedCity.SelectedItem?.ToString() ?? "Wszystko";
-                string selectedFormType = FormType.SelectedItem?.ToString() ?? "Wszystko";
+                string selectedCity = IssuedCity.SelectedItem != null ? IssuedCity.SelectedItem.ToString() : "Wszystko";
+                string selectedFormType = FormType.SelectedItem != null ? FormType.SelectedItem.ToString() : "Wszystko";
 
-                DataRow[] filteredRows;
+                // Podziel frazę wyszukiwania na słowa
+                string searchPhrase = search.Text.Trim();
+                string[] searchWords = searchPhrase.Split(' ');
 
-                if (selectedCity == "Wszystko" && selectedFormType == "Wszystko")
+                string filterExpression = "";
+
+                if (selectedCity != "Wszystko")
                 {
-                    filteredRows = dt.Select();
-                }
-                else
-                {
-                    string filterExpression = "";
-
-                    if (selectedCity != "Wszystko")
-                    {
-                        filterExpression += $"[Miasto Wystawienia] = '{selectedCity}'";
-                    }
-
-                    if (selectedFormType != "Wszystko")
-                    {
-                        if (!string.IsNullOrEmpty(filterExpression))
-                            filterExpression += " AND ";
-                        filterExpression += $"[Typ Umowy] = '{selectedFormType}'";
-                    }
-
-                    filteredRows = dt.Select(filterExpression);
+                    filterExpression += $"[Miasto Wystawienia] = '{selectedCity}'";
                 }
 
+                if (selectedFormType != "Wszystko")
+                {
+                    if (!string.IsNullOrEmpty(filterExpression))
+                        filterExpression += " AND ";
+                    filterExpression += $"[Typ Umowy] = '{selectedFormType}'";
+                }
+
+                DataRow[] filteredRows = dt.Select(filterExpression);
                 DataTable filteredDataTable = dt.Clone();
+
                 foreach (DataRow row in filteredRows)
                 {
-                    filteredDataTable.ImportRow(row);
+                    DataRow newRow = filteredDataTable.NewRow();
+                    bool matchFound = false;
+
+                    foreach (DataColumn column in dt.Columns)
+                    {
+                        string cellValue = row[column].ToString();
+
+                        // Sprawdź, czy wszystkie słowa są zawarte w wartości komórki
+                        bool allWordsMatch = true;
+                        foreach (string word in searchWords)
+                        {
+                            if (cellValue.IndexOf(word, StringComparison.OrdinalIgnoreCase) < 0)
+                            {
+                                allWordsMatch = false;
+                                break;
+                            }
+                        }
+
+                        if (allWordsMatch)
+                        {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+
+                    if (matchFound)
+                    {
+                        newRow.ItemArray = row.ItemArray;
+                        filteredDataTable.Rows.Add(newRow);
+                    }
                 }
 
                 DataView dv = filteredDataTable.DefaultView;
@@ -121,62 +144,8 @@ namespace SKS_Service_Manager
 
         public void SearchUserValueChange(object sender, EventArgs e)
         {
-            SearchTextBox();
+            GridInsert();
         }
-
-        public void SearchTextBox()
-        {
-            string searchPhrase = search.Text.Trim();
-            DataTable filteredUserData = dt.Clone();
-
-            // Podziel frazę wyszukiwania na słowa
-            string[] searchWords = searchPhrase.Split(' ');
-
-            foreach (DataRow row in dt.Rows)
-            {
-                DataRow newRow = filteredUserData.NewRow();
-                bool matchFound = false;
-
-                foreach (DataColumn column in dt.Columns)
-                {
-                    string cellValue = row[column].ToString();
-
-                    // Sprawdź, czy wszystkie słowa są zawarte w wartości komórki
-                    bool allWordsMatch = true;
-                    foreach (string word in searchWords)
-                    {
-                        if (cellValue.IndexOf(word, StringComparison.OrdinalIgnoreCase) < 0)
-                        {
-                            allWordsMatch = false;
-                            break;
-                        }
-                    }
-
-                    if (allWordsMatch)
-                    {
-                        matchFound = true;
-                        break;
-                    }
-                }
-
-                if (matchFound)
-                {
-                    newRow.ItemArray = row.ItemArray;
-                    filteredUserData.Rows.Add(newRow);
-                }
-            }
-
-            if (filteredUserData.Rows.Count > maxRows)
-            {
-                DataTable limitedDataTable = filteredUserData.AsEnumerable().Take(maxRows).CopyToDataTable();
-                dataGridView1.DataSource = limitedDataTable;
-            }
-            else
-            {
-                dataGridView1.DataSource = filteredUserData;
-            }
-        }
-
 
         private void Add_Click(object sender, EventArgs e)
         {
