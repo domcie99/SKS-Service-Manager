@@ -257,7 +257,7 @@ namespace SKS_Service_Manager
 
             try
             {
-                
+
                 File.Copy(docxFilePath, editedDocxFilePath, true);
 
                 using (WordprocessingDocument doc = WordprocessingDocument.Open(editedDocxFilePath, true))
@@ -1027,6 +1027,34 @@ namespace SKS_Service_Manager
             // Sprawdź, czy kod pocztowy ma format XX-XXX, gdzie X jest cyfrą
             Regex regex = new Regex(@"^\d{2}-\d{3}$");
             return regex.IsMatch(postalCode);
+        }
+
+        private void delete_Click(object sender, EventArgs e)
+        {
+            if (issueId > 0)
+            {
+                int selectedIssueID = issueId;
+
+                DialogResult result = MessageBox.Show("Czy na pewno chcesz usunąć ten wpis?", "Potwierdź Usunięcie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    if (dataBase.DeleteUks(selectedIssueID))
+                    {
+                        MessageBox.Show("Wpis został pomyślnie usunięty.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        this.Close();
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Błąd podczas usuwania wpisu.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Wpis nie istnieje jeszcze w bazie danych.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

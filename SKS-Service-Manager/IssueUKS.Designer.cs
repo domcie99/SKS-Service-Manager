@@ -102,6 +102,7 @@
             label32 = new Label();
             FormType = new ComboBox();
             attachment = new CheckBox();
+            delete = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -937,12 +938,27 @@
             attachment.UseVisualStyleBackColor = true;
             attachment.Visible = false;
             // 
+            // delete
+            // 
+            delete.BackColor = Color.Transparent;
+            delete.BackgroundImage = Properties.Resources.delete;
+            delete.BackgroundImageLayout = ImageLayout.Zoom;
+            delete.FlatAppearance.BorderSize = 0;
+            delete.FlatStyle = FlatStyle.Flat;
+            delete.Location = new Point(637, 583);
+            delete.Name = "delete";
+            delete.Size = new Size(50, 50);
+            delete.TabIndex = 121;
+            delete.UseVisualStyleBackColor = false;
+            delete.Click += delete_Click;
+            // 
             // IssueUKS
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(818, 650);
+            Controls.Add(delete);
             Controls.Add(attachment);
             Controls.Add(label32);
             Controls.Add(FormType);
@@ -1039,5 +1055,6 @@
         private CheckBox attachment;
         private Button uploadImageButton;
         private Label imageFileName;
+        private Button delete;
     }
 }

@@ -199,24 +199,24 @@ namespace SKS_Service_Manager
             {
                 int selectedIssueID = int.Parse(dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString());
 
-                DialogResult result = MessageBox.Show("Czy na pewno chcesz usunąć tę fakturę UKS?", "Potwierdź Usunięcie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show("Czy na pewno chcesz usunąć ten wpis?", "Potwierdź Usunięcie", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
                     if (dataBase.DeleteUks(selectedIssueID))
                     {
-                        MessageBox.Show("Faktura UKS została pomyślnie usunięta.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Wpis został pomyślnie usunięty.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadData();
                     }
                     else
                     {
-                        MessageBox.Show("Błąd podczas usuwania faktury UKS.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Błąd podczas usuwania wpisu.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Proszę najpierw wybrać fakturę UKS do usunięcia.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Wpis nie istnieje jeszcze w bazie danych.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 

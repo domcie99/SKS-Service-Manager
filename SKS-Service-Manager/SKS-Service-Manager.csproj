@@ -9,8 +9,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <Version>$(VersionPrefix)</Version>
-    <FileVersion>1.4.1.0</FileVersion>
-    <AssemblyVersion>1.4.1.0</AssemblyVersion>
+    <FileVersion>1.4.2.0</FileVersion>
+    <AssemblyVersion>1.4.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -173,6 +173,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="firebird.msg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="handle.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="ib_util.dll">

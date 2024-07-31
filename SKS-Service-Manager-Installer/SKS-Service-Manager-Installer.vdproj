@@ -168,6 +168,17 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_37E45EB216064EA29B8FAD8459AB55DA"
+                    {
+                    "Name" = "8:SKS"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_3201C3A5504446819CBF87ACE35C75EA"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_A5A1C5056E46478DBAB58C9B3253FE7D"
@@ -198,15 +209,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SKS-Service-Manager"
-        "ProductCode" = "8:{3F22FFBA-AC73-4B5C-BD4D-EEB0FD820ADA}"
-        "PackageCode" = "8:{48CC292C-0619-458B-B9A1-377DD3978076}"
+        "ProductCode" = "8:{E1F7E123-61F8-432D-AF8B-89941303C8D9}"
+        "PackageCode" = "8:{D6BFCFA4-C637-4F49-A47B-70B333E6802D}"
         "UpgradeCode" = "8:{E0B1CF2E-2426-4BC8-809A-A41031EDD0C2}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.4.1"
+        "ProductVersion" = "8:1.4.2"
         "Manufacturer" = "8:SKS"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -328,7 +339,7 @@
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_5BD857627A144E609DE1FBEBF9094DC8"
-            "Folder" = "8:_A397A72905CF44C794DAA6BB83DC7B4A"
+            "Folder" = "8:_37E45EB216064EA29B8FAD8459AB55DA"
             "WorkingFolder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"
             "Icon" = "8:_EDB44AFDFA4C4E4598109B0DF1C67EA7"
             "Feature" = "8:"
