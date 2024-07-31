@@ -175,9 +175,6 @@
     <None Update="firebird.msg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="handle.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="ib_util.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
