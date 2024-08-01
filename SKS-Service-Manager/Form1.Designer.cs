@@ -222,6 +222,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "SKS-Service Manager";
+            FormClosing += Form1_FormClosing;
             Load += Form1_Load;
             Shown += Form1_Shown;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();

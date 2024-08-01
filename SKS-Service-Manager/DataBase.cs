@@ -16,6 +16,7 @@ namespace SKS_Service_Manager
         Logger logger;
         public bool useMySQL;
         private string connectionString;
+        private string sqliteConnectionString;
 
         public event EventHandler<int> ProgressChanged;
         public event EventHandler<int[]> ProgressTotal;
@@ -29,17 +30,38 @@ namespace SKS_Service_Manager
             mainForms = mainForm;
             useMySQL = IsMySQLConnectionAvailable(mainForm); // Sprawdzamy dostępność połączenia MySQL
 
+            InitializeSQLiteConnection();
+
             if (useMySQL)
             {
                 InitializeMySQLConnection(mainForm);
             }
-            else
-            {
-                InitializeSQLiteConnection();
-            }
+
             CreateUsersTableIfNotExists();
             CreateInvoicesTableIfNotExists();
 
+        }
+
+        public string GetMySQLConnectionString()
+        {
+            return connectionString;
+        }
+
+        public string GetSQLiteConnectionString()
+        {
+            return sqliteConnectionString;
+        }
+
+        public SQLiteConnection GetSQLiteConnection()
+        {
+            InitializeSQLiteConnection();
+            return sqliteConnection;
+        }
+
+        public MySqlConnection GetMySqlConnection()
+        {
+            InitializeMySQLConnection(mainForms);
+            return mySqlConnection;
         }
 
         public bool IsMySQLConnectionAvailable(Form1 mainForm)
@@ -124,7 +146,7 @@ namespace SKS_Service_Manager
                 SQLiteConnection.CreateFile(dataBaseFile);
             }
 
-            string sqliteConnectionString = $"Data Source={dataBaseFile};Version=3;";
+            sqliteConnectionString = $"Data Source={dataBaseFile};Version=3;";
             sqliteConnection = new SQLiteConnection(sqliteConnectionString);
             //MessageBox.Show("Test", "Test", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
@@ -419,6 +441,8 @@ namespace SKS_Service_Manager
 
                 if (rowsAffected > 0)
                 {
+                    // Buffer the delete operation for synchronization
+                    mainForms.getDbSynchronizer().BufferDeleteOperation("UKS", uksId);
                     return true;
                 }
             }
@@ -433,6 +457,7 @@ namespace SKS_Service_Manager
 
             return false; // Zwracamy false w przypadku błędu lub braku faktury do usunięcia
         }
+
 
         public DataTable loadUserData(int userIdToEdit)
         {
