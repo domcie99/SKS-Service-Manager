@@ -183,12 +183,15 @@ namespace SKS_Service_Manager
             {
                 FormType.SelectedIndex = GetFormTypeIndex("Umowa Kupna-Sprzedaży");
             }
+
+            Commision.Text = (val * 0.10m).ToString("F2");
         }
 
         private void ReplaceAll(Body body, MainDocumentPart mainPart)
         {
             decimal value = decimal.Parse(Value.Text);
             decimal total = CalculateTotalPrice(value, int.Parse(Days.Text), int.Parse(Percentage.Text));
+            int days = int.Parse(Days.Text.ToString());
 
             ReplaceText(body, "#[firma-nazwa]", settingsForm.GetCompanyName());
             ReplaceText(body, "#[firma-imie-nazwisko]", settingsForm.GetName() + " " + settingsForm.GetSurname());
@@ -215,24 +218,26 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[sprzedajacy-uwagi]", Notes.Text);
 
             ReplaceText(body, "#[przedmiot-opis]", Description.Text);
-            ReplaceText(body, "#[przedmiot-wartosc]", value.ToString());
+            ReplaceText(body, "#[przedmiot-wartosc]", value.ToString("F2"));
             ReplaceText(body, "#[przedmiot-wartosc-slownie]", GetValueAsText(value));
 
-            ReplaceText(body, "#[przedmiot-wartosc-odestki]", totalIntrest.ToString());
-            ReplaceText(body, "#[przedmiot-wartosc-calkowita]", total.ToString());
+            ReplaceText(body, "#[przedmiot-wartosc-odestki]", totalIntrest.ToString("F2"));
+            ReplaceText(body, "#[przedmiot-wartosc-calkowita]", total.ToString("F2"));
             ReplaceText(body, "#[przedmiot-wartosc-calkowita-slownie]", GetValueAsText(value));
             ReplaceText(body, "#[przedmiot-wartosc-prowizja]", Commision.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa]", Estimated_Value.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa-slownie]", GetValueAsText(decimal.Parse(Estimated_Value.Text)));
-            ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (totalIntrest + decimal.Parse(Commision.Text)) + "");
+            ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (totalIntrest + decimal.Parse(Commision.Text)).ToString("F2"));
 
             ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[przedmiot-data-odbioru]", Pickup_Date.Value.ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+30]", Issue_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+23]", Issue_Date.Value.AddDays(23).ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[przedmiot-ilosc-dni]", Days.Text);
             ReplaceText(body, "#[przedmiot-procent]", Percentage.Text);
 
             ReplaceText(body, "#[przedmiot-oplata]", Fee.Text);
+            ReplaceText(body, "#[przedmiot-oplata-dziennie]", CalculateInterestByDay(value, int.Parse(Percentage.Text)).ToString("F2"));
             ReplaceText(body, "#[przedmiot-oplata-opoznienia]", LateFee.Text);
             ReplaceText(body, "#[przedmiot-kwota-wykupu]", BuyAmount.Text);
 
@@ -888,11 +893,31 @@ namespace SKS_Service_Manager
 
             decimal comm = decimal.Parse(Commision.Text);
 
+            if (FormType.Text == "Umowa Konsumenckiej Pożyczki Lombardowej")
+            {
+                if (days > 7)
+                {
+                    days = days - 7;
+                }
+                else
+                {
+                    days = 0;
+                }
+            }
+
             totalIntrest = intrestByDay * days;
             // Obliczamy całkowitą cenę przedmiotu
             decimal totalPrice = initialPrice + totalIntrest + comm;
 
             return totalPrice;
+        }
+
+        public decimal CalculateInterestByDay(decimal value, int percentage) 
+        {
+            decimal decimalPercentage = (decimal)percentage / 100;
+            decimal interest = value * decimalPercentage;
+            decimal intrestByDay = interest / 30;
+            return intrestByDay;
         }
 
 
@@ -959,10 +984,11 @@ namespace SKS_Service_Manager
             if (days < 0) { days = 0; }
             if (perc < 0) { perc = 0; }
 
-            totalBuyOut = CalculateTotalPrice(value, days, perc);
 
+            totalBuyOut = CalculateTotalPrice(value, days, perc);
             Fee.Text = totalIntrest.ToString("F2");
             BuyAmount.Text = totalBuyOut.ToString("F2");
+            Commision.Text = (value * 0.10m).ToString("F2");
         }
 
 

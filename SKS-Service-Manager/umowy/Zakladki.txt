@@ -39,6 +39,7 @@
 #[przedmiot-data-przyjecia]
 #[przedmiot-data-odbioru]
 #[przedmiot-data-odbioru+30]
+#[przedmiot-data-odbioru+23]
 #[przedmiot-ilosc-dni]
 #[przedmiot-procent]
 

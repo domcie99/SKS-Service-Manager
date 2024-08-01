@@ -577,7 +577,7 @@
             label34.Name = "label34";
             label34.Size = new Size(123, 23);
             label34.TabIndex = 116;
-            label34.Text = "Prowizja";
+            label34.Text = "Prowizja 10%";
             label34.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label29

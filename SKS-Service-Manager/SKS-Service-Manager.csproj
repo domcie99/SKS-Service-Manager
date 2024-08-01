@@ -9,8 +9,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <Version>$(VersionPrefix)</Version>
-    <FileVersion>1.4.3.0</FileVersion>
-    <AssemblyVersion>1.4.3.0</AssemblyVersion>
+    <FileVersion>1.4.4.0</FileVersion>
+    <AssemblyVersion>1.4.4.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -88,9 +88,6 @@
     <None Update="convert\msvcr100.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="convert\readme.url">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="convert\ssleay32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -157,13 +154,7 @@
     <None Update="convert\unins000.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="convert\uninstall.url">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="convert\unrar.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="convert\website.url">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="convert\word2pdf.exe">
