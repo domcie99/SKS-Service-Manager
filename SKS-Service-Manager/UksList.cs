@@ -3,6 +3,7 @@ using MySqlConnector;
 using System;
 using System.Data;
 using System.Data.Entity;
+using System.Linq;
 using System.Windows.Forms;
 
 #pragma warning disable
@@ -54,14 +55,15 @@ namespace SKS_Service_Manager
 
             LoadData();
 
-            dataGridView1.Columns[4].Width = 200;
-            dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
 
         public void LoadData()
         {
             dt = dataBase.uksLoadData();
             GridInsert();
+            AutoResizeColumns();
         }
 
         public void GridInsert()
@@ -139,7 +141,19 @@ namespace SKS_Service_Manager
                 {
                     dataGridView1.DataSource = filteredDataTable;
                 }
+
+                AutoResizeColumns();
             }
+        }
+
+        private void AutoResizeColumns()
+        {
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            dataGridView1.AutoResizeColumns();
         }
 
         public void SearchUserValueChange(object sender, EventArgs e)
