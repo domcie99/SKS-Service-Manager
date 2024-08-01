@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FirebirdSql.Data.FirebirdClient;
 
+#pragma warning disable
 namespace SKS_Service_Manager
 {
     public partial class DataBaseInsert : Form

@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Diagnostics;
 
+#pragma warning disable
 namespace SKS_Service_Manager
 {
     public partial class PrintRecords : Form
