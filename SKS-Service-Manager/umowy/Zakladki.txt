@@ -1,5 +1,3 @@
-#[data-wystawienia]
-
 #[firma-nazwa]
 #[firma-nip]
 #[firma-krs]
@@ -36,10 +34,16 @@
 #[przedmiot-wartosc-szacunkowa-slownie]
 #[przedmiot-wartosc-calkowita-slownie]
 
+#[data-wystawienia]
+#[data-wystawienia+7]
+#[data-wystawienia+23]
+#[data-wystawienia+30]
+
 #[przedmiot-data-przyjecia]
 #[przedmiot-data-odbioru]
-#[przedmiot-data-odbioru+30]
+#[przedmiot-data-odbioru+7]
 #[przedmiot-data-odbioru+23]
+#[przedmiot-data-odbioru+30]
 #[przedmiot-ilosc-dni]
 #[przedmiot-procent]
 

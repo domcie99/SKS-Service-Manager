@@ -202,7 +202,11 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[firma-nip]", settingsForm.GetNIP());
             ReplaceText(body, "#[firma-krs]", settingsForm.GetKRS());
             ReplaceText(body, "#[firma-regon]", settingsForm.GetREGON());
+
             ReplaceText(body, "#[data-wystawienia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[data-wystawienia+7]", Issue_Date.Value.AddDays(7).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[data-wystawienia+23]", Issue_Date.Value.AddDays(23).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[data-wystawienia+30]", Issue_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
 
             ReplaceText(body, "#[sprzedajacy-imie-nazwisko]", FullName.Text);
             ReplaceText(body, "#[sprzedajacy-nazwa-firmy]", Company_Name.Text);
@@ -230,9 +234,12 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (totalIntrest + decimal.Parse(Commision.Text)).ToString("F2"));
 
             ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
+
             ReplaceText(body, "#[przedmiot-data-odbioru]", Pickup_Date.Value.ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[przedmiot-data-odbioru+30]", Issue_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[przedmiot-data-odbioru+23]", Issue_Date.Value.AddDays(23).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+7]", Pickup_Date.Value.AddDays(7).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+23]", Pickup_Date.Value.AddDays(23).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
+
             ReplaceText(body, "#[przedmiot-ilosc-dni]", Days.Text);
             ReplaceText(body, "#[przedmiot-procent]", Percentage.Text);
 
