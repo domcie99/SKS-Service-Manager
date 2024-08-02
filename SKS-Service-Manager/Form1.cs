@@ -11,11 +11,8 @@ namespace SKS_Service_Manager
         private IssueUKS issueUksForm;
         private UserList userlistForm;
         private UksList uksListForm;
-        private DatabaseSynchronizer dbSynchronizer;
-        private System.Timers.Timer syncTimer;
         private DataBase database;
-
-        Logger logger = new Logger("log.txt");
+        private System.Timers.Timer syncTimer;
 
         private string appdataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
@@ -26,7 +23,7 @@ namespace SKS_Service_Manager
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
 
-        private string localVersion = "1.4.5.0";
+        private string localVersion = "1.4.4.0";
         private string latestVersion;
 
         private bool isUpdating = false;
@@ -201,7 +198,11 @@ namespace SKS_Service_Manager
             CreateIssueUKSForm();
             CreateUksListForm();
             CreateUserListForm();
-            await Task.Run(() => dbSynchronizer.SynchronizeAsync());
+
+            button1.Invoke(new Action(() => button1.Enabled = true));
+            button2.Invoke(new Action(() => button2.Enabled = true));
+            button7.Invoke(new Action(() => button7.Enabled = true));
+            button8.Invoke(new Action(() => button8.Enabled = true));
         }
 
         private void CreateIssueUKSForm()
@@ -303,8 +304,12 @@ namespace SKS_Service_Manager
 
         private async Task DownloadFileAsync(string fileUrl, string zipPath, string unzipPath)
         {
-            ShowLoadingUI(true);
-            UpdateProgress("Pobieranie 0%", 0);
+            label2.Invoke(new Action(() => label2.Visible = true));
+            progressBar1.Invoke(new Action(() => progressBar1.Visible = true));
+
+
+            label2.Invoke(new Action(() => label2.Text = "Pobieranie 0%"));
+            progressBar1.Invoke(new Action(() => progressBar1.Value = 0));
 
             using (var httpClient = new HttpClient())
             {
@@ -382,10 +387,15 @@ namespace SKS_Service_Manager
 
                         entriesExtracted++;
                         double progressPercentage = (double)entriesExtracted / totalEntries * 100;
-                        UpdateProgress("Wypakowywanie {progressPercentage:F1}%", (int)progressPercentage);
+                        UpdateProgressBar((int)progressPercentage);
+                        label2.Invoke(new Action(() => label2.Text = $"Wypakowywanie {progressPercentage:F1}%"));
                     }
-                    UpdateProgress("Wypakowywanie 100%", 100);
-                    ShowLoadingUI(false);
+
+                    // Po zakoñczeniu wypakowywania pliku, zaktualizuj pasek postêpu na 100% (pe³ny postêp)
+                    UpdateProgressBar(100);
+
+                    progressBar1.Invoke(new Action(() => progressBar1.Visible = false));
+                    label2.Invoke(new Action(() => label2.Visible = false));
 
                     MessageBox.Show("Zainstalowano pakiet LibreOffice", "MSG", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -398,77 +408,21 @@ namespace SKS_Service_Manager
 
         private async void Form1_Shown(object sender, EventArgs e)
         {
-            ShowLoadingUI(true);
-
-            UpdateProgress("Uruchamianie 0%", 0);
             settingsForm = new Settings(this);
             database = new DataBase(this);
-            dbSynchronizer = new DatabaseSynchronizer(database, logger);
-
-            UpdateProgress("Uruchamianie 10%", 10);
             await Task.Run(() => CheckMySQLConnection());
-
-            UpdateProgress("Uruchamianie 50%", 50);
             await Task.Run(() => CheckForUpdates());
-
-            UpdateProgress("Uruchamianie 70%", 70);
             await Task.Run(() => CheckDependanceInstalled());
-
-            UpdateProgress("Uruchamianie 80%", 80);
-            await Task.Run(() => dbSynchronizer.SynchronizeAsync());
-
-            UpdateProgress("Uruchamianie 90%", 90);
-            setDataBase();
-            CheckMySQLConnection();
-
-            UpdateProgress("Uruchamianie 100%", 100);
-            EnableButtons(true);
-
-            ShowLoadingUI(false);
-        }
-
-        private void UpdateProgress(string message, int value)
-        {
-            label2.Invoke(new Action(() => label2.Text = message));
-            progressBar1.Invoke(new Action(() => progressBar1.Value = value));
-        }
-
-        private void ShowLoadingUI(bool show)
-        {
-            label2.Invoke(new Action(() => label2.Visible = show));
-            progressBar1.Invoke(new Action(() => progressBar1.Visible = show));
-        }
-
-        private void EnableButtons(bool enable)
-        {
-            button1.Invoke(new Action(() => button1.Enabled = enable));
-            button2.Invoke(new Action(() => button2.Enabled = enable));
-            button7.Invoke(new Action(() => button7.Enabled = enable));
-            button8.Invoke(new Action(() => button8.Enabled = enable));
-        }
-
-        public DatabaseSynchronizer getDbSynchronizer() {
-            return dbSynchronizer;
         }
 
         private async Task CompareAndSyncDataAsync()
         {
             await Task.Run(() => CheckMySQLConnection());
-            await Task.Run(() => dbSynchronizer.SynchronizeAsync());
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            button1.Enabled = false;
-            button2.Enabled = false;
-            button7.Enabled = false;
-            button8.Enabled = false;
-        }
 
-        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            dbSynchronizer = new DatabaseSynchronizer(database, logger);
-            await Task.Run(() => dbSynchronizer.SynchronizeAsync());
         }
     }
 }
