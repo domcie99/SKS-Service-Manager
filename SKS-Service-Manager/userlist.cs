@@ -23,6 +23,9 @@ namespace SKS_Service_Manager
 
             UpdateReference();
             LoadUserData();
+
+            // Ustawienie AutoSizeColumnsMode dla DataGridView
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
 
         public void UpdateReference()
@@ -32,7 +35,7 @@ namespace SKS_Service_Manager
 
         public void LoadUserData()
         {
-            userData = database.LoadAllUserData();
+            userData = database.GetAlphabeticalRecords("Users", "FullName");
 
             if (userData != null)
             {
@@ -40,30 +43,39 @@ namespace SKS_Service_Manager
             }
         }
 
+
         public void SearchUserValueChange(object sender, EventArgs e)
         {
-            string searchPhrase = search.Text.Trim(); // Pobierz frazę do wyszukiwania
-            DataTable filteredUserData = userData.Clone(); // Utwórz kopię struktury userData
-
-            foreach (DataRow row in userData.Rows)
-            {
-                DataRow newRow = filteredUserData.NewRow(); // Utwórz nowy wiersz w wynikowej tabeli
-
-                foreach (DataColumn column in userData.Columns)
-                {
-                    if (row[column].ToString().IndexOf(searchPhrase, StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        // Jeśli znaleziono dopasowanie, dodaj dane z tego wiersza do nowego wiersza w wynikowej tabeli
-                        newRow.ItemArray = row.ItemArray;
-                        filteredUserData.Rows.Add(newRow);
-                        break; // Przeszukuj wszystkie komórki w danym wierszu
-                    }
-                }
-            }
-
-            // Wyświetl wyniki w DataGridView
-            dataGridView1.DataSource = filteredUserData;
+            string searchPhrase = search.Text.Trim();
+            FilterData(searchPhrase);
         }
+
+        private void FilterData(string searchValue)
+        {
+            string[] searchableColumns =
+            {
+                "FullName",
+                "Address",
+                "PostalCode",
+                "City",
+                "Phone",
+                "Email",
+                "DocumentType",
+                "DocumentNumber",
+                "NIP",
+                "Name",
+                "Pesel",
+                "Notes"
+            };
+
+            DataTable filteredUserData = database.GetFilteredUsers(searchValue, searchableColumns);
+
+            if (filteredUserData != null)
+            {
+                dataGridView1.DataSource = filteredUserData;
+            }
+        }
+
 
         private void Add_Click(object sender, EventArgs e)
         {
@@ -152,7 +164,8 @@ namespace SKS_Service_Manager
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (selectUser) {
+            if (selectUser)
+            {
                 // Sprawdź, czy użytkownik wybrał wiersz w DataGridView
                 if (dataGridView1.SelectedRows.Count > 0)
                 {
@@ -186,6 +199,12 @@ namespace SKS_Service_Manager
                     MessageBox.Show("Wybierz użytkownika do edycji.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private void LoadLatestRecords()
+        {
+            DataTable latestRecords = database.GetLatestRecords("Users", "DateColumn");
+            // Code to load data into UI components
         }
     }
 }
