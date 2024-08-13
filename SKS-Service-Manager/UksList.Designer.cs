@@ -40,12 +40,9 @@
             print = new Button();
             IssuedCity = new ComboBox();
             label2 = new Label();
-            label3 = new Label();
-            maxRowsDt = new NumericUpDown();
             FormType = new ComboBox();
             label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)maxRowsDt).BeginInit();
             SuspendLayout();
             // 
             // delete
@@ -93,7 +90,7 @@
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.BackgroundColor = Color.Gainsboro;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
@@ -176,25 +173,6 @@
             label2.TabIndex = 129;
             label2.Text = "Miasto Wystawienia:";
             // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.BackColor = Color.Transparent;
-            label3.Location = new Point(816, 46);
-            label3.Name = "label3";
-            label3.Size = new Size(78, 15);
-            label3.TabIndex = 131;
-            label3.Text = "Max Wpisów:";
-            // 
-            // maxRowsDt
-            // 
-            maxRowsDt.Location = new Point(816, 64);
-            maxRowsDt.Maximum = new decimal(new int[] { 99999, 0, 0, 0 });
-            maxRowsDt.Name = "maxRowsDt";
-            maxRowsDt.Size = new Size(120, 23);
-            maxRowsDt.TabIndex = 132;
-            maxRowsDt.ValueChanged += maxRowsDt_ValueChanged;
-            // 
             // FormType
             // 
             FormType.AutoCompleteCustomSource.AddRange(new string[] { "Wszystko", "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
@@ -226,8 +204,6 @@
             ClientSize = new Size(1143, 480);
             Controls.Add(label4);
             Controls.Add(FormType);
-            Controls.Add(maxRowsDt);
-            Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(IssuedCity);
             Controls.Add(print);
@@ -241,10 +217,8 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "UksList";
             Text = "Umowy Kupna-Sprzedaży";
-            Load += UksList_Load;
             SizeChanged += UksList_SizeChanged;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)maxRowsDt).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -259,8 +233,6 @@
         private Button print;
         private ComboBox IssuedCity;
         private Label label2;
-        private Label label3;
-        private NumericUpDown maxRowsDt;
         private ComboBox FormType;
         private Label label4;
     }

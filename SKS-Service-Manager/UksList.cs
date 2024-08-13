@@ -16,7 +16,7 @@ namespace SKS_Service_Manager
         private Settings settingsForm;
         private PrintRecords printRecords;
 
-        private int maxRows = 50;
+        private int maxRows = 20;
 
         DataTable dt;
 
@@ -34,7 +34,6 @@ namespace SKS_Service_Manager
 
             IssuedCity.Items.Insert(0, "Wszystko");
             IssuedCity.Items.AddRange(dataBase.GetUniqueCities().ToArray());
-            maxRowsDt.Value = maxRows;
 
             FormType.Items.Insert(0, "Wszystko");
             FormType.SelectedIndex = 0;
@@ -60,7 +59,7 @@ namespace SKS_Service_Manager
 
         public void LoadData()
         {
-            dt = dataBase.uksLoadData();
+            dt = dataBase.GetLatestRecords("UKS", "InvoiceDate");
             GridInsert();
         }
 
@@ -70,77 +69,52 @@ namespace SKS_Service_Manager
             {
                 string selectedCity = IssuedCity.SelectedItem != null ? IssuedCity.SelectedItem.ToString() : "Wszystko";
                 string selectedFormType = FormType.SelectedItem != null ? FormType.SelectedItem.ToString() : "Wszystko";
-
-                // Podziel frazę wyszukiwania na słowa
                 string searchPhrase = search.Text.Trim();
-                string[] searchWords = searchPhrase.Split(' ');
 
-                string filterExpression = "";
+                var filters = new Dictionary<string, string>();
 
                 if (selectedCity != "Wszystko")
                 {
-                    filterExpression += $"[Miasto Wystawienia] = '{selectedCity}'";
+                    filters.Add("City", selectedCity);
                 }
 
                 if (selectedFormType != "Wszystko")
                 {
-                    if (!string.IsNullOrEmpty(filterExpression))
-                        filterExpression += " AND ";
-                    filterExpression += $"[Typ Umowy] = '{selectedFormType}'";
+                    filters.Add("DocumentType", selectedFormType);
                 }
 
-                DataRow[] filteredRows = dt.Select(filterExpression);
-                DataTable filteredDataTable = dt.Clone();
-
-                foreach (DataRow row in filteredRows)
+                // Rzeczywiste nazwy kolumn, które mają być przeszukiwane
+                string[] searchableColumns =
                 {
-                    DataRow newRow = filteredDataTable.NewRow();
-                    bool matchFound = false;
+                    "UKS.City",
+                    "UKS.DocumentType",
+                    "UKS.Description",
+                    "UKS.InvoiceDate",
+                    "Users.FullName",
+                    "Users.Address",
+                    "UKS.Notes",
+                    "Users.Pesel",
+                    "Users.Phone"
+                };
 
-                    foreach (DataColumn column in dt.Columns)
-                    {
-                        string cellValue = row[column].ToString();
+                dt = dataBase.GetFilteredRecords("UKS", filters, searchPhrase, searchableColumns);
 
-                        // Sprawdź, czy wszystkie słowa są zawarte w wartości komórki
-                        bool allWordsMatch = true;
-                        foreach (string word in searchWords)
-                        {
-                            if (cellValue.IndexOf(word, StringComparison.OrdinalIgnoreCase) < 0)
-                            {
-                                allWordsMatch = false;
-                                break;
-                            }
-                        }
+                DataView dv = dt.DefaultView;
+                dv.Sort = "[Data Wystawienia] DESC";  // Używaj aliasu z zapytania SQL
+                dt = dv.ToTable();
 
-                        if (allWordsMatch)
-                        {
-                            matchFound = true;
-                            break;
-                        }
-                    }
-
-                    if (matchFound)
-                    {
-                        newRow.ItemArray = row.ItemArray;
-                        filteredDataTable.Rows.Add(newRow);
-                    }
-                }
-
-                DataView dv = filteredDataTable.DefaultView;
-                dv.Sort = "Data Wystawienia DESC";
-                filteredDataTable = dv.ToTable();
-
-                if (filteredDataTable.Rows.Count > maxRows)
+                if (dt.Rows.Count > maxRows)
                 {
-                    DataTable limitedDataTable = filteredDataTable.AsEnumerable().Take(maxRows).CopyToDataTable();
+                    DataTable limitedDataTable = dt.AsEnumerable().Take(maxRows).CopyToDataTable();
                     dataGridView1.DataSource = limitedDataTable;
                 }
                 else
                 {
-                    dataGridView1.DataSource = filteredDataTable;
+                    dataGridView1.DataSource = dt;
                 }
             }
         }
+
 
         public void SearchUserValueChange(object sender, EventArgs e)
         {
@@ -237,17 +211,6 @@ namespace SKS_Service_Manager
         private void IssuedCity_TextChanged(object sender, EventArgs e)
         {
             GridInsert();
-        }
-
-        private void maxRowsDt_ValueChanged(object sender, EventArgs e)
-        {
-            maxRows = (int)maxRowsDt.Value;
-            GridInsert();
-        }
-
-        private void UksList_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void search_KeyDown(object sender, KeyEventArgs e)
