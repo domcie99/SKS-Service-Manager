@@ -16,7 +16,7 @@ namespace SKS_Service_Manager
         private Settings settingsForm;
         private PrintRecords printRecords;
 
-        private int maxRows = 20;
+        private int maxRows = 35;
 
         DataTable dt;
 
@@ -37,6 +37,8 @@ namespace SKS_Service_Manager
 
             FormType.Items.Insert(0, "Wszystko");
             FormType.SelectedIndex = 0;
+
+            recordCount.Text = maxRows.ToString();
 
             int mainCity = IssuedCity.Items.IndexOf(settingsForm.GetCity());
 
@@ -97,7 +99,7 @@ namespace SKS_Service_Manager
                     "Users.Phone"
                 };
 
-                dt = dataBase.GetFilteredRecords("UKS", filters, searchPhrase, searchableColumns);
+                dt = dataBase.GetFilteredRecords("UKS", filters, searchPhrase, searchableColumns, maxRows);
 
                 DataView dv = dt.DefaultView;
                 dv.Sort = "[Data Wystawienia] DESC";  // Używaj aliasu z zapytania SQL
@@ -220,5 +222,26 @@ namespace SKS_Service_Manager
                 SearchUserValueChange(sender, e);
             }
         }
+        private void recordCount_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(recordCount.Text.Trim(), out int count))
+            {
+                maxRows = count;
+                GridInsert();
+            }
+            else 
+            {
+                MessageBox.Show("Blad niewiadomo jaki", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void recordCount_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
     }
 }

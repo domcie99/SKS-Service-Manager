@@ -42,6 +42,8 @@
             label2 = new Label();
             FormType = new ComboBox();
             label4 = new Label();
+            label3 = new Label();
+            recordCount = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -123,7 +125,7 @@
             search.Location = new Point(942, 64);
             search.Name = "search";
             search.Size = new Size(189, 23);
-            search.TabIndex = 29;
+            search.TabIndex = 4;
             search.TextChanged += SearchUserValueChange;
             search.KeyDown += search_KeyDown;
             // 
@@ -160,7 +162,7 @@
             IssuedCity.Location = new Point(590, 64);
             IssuedCity.Name = "IssuedCity";
             IssuedCity.Size = new Size(220, 23);
-            IssuedCity.TabIndex = 128;
+            IssuedCity.TabIndex = 2;
             IssuedCity.TextChanged += IssuedCity_TextChanged;
             // 
             // label2
@@ -182,7 +184,7 @@
             FormType.Location = new Point(364, 63);
             FormType.Name = "FormType";
             FormType.Size = new Size(220, 23);
-            FormType.TabIndex = 133;
+            FormType.TabIndex = 1;
             FormType.TextChanged += IssuedCity_TextChanged;
             // 
             // label4
@@ -195,6 +197,27 @@
             label4.TabIndex = 134;
             label4.Text = "Rodzaj Umowy";
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.BackColor = Color.Transparent;
+            label3.Location = new Point(830, 45);
+            label3.Name = "label3";
+            label3.Size = new Size(76, 15);
+            label3.TabIndex = 136;
+            label3.Text = "Ilość Wpisów";
+            // 
+            // recordCount
+            // 
+            recordCount.Location = new Point(830, 63);
+            recordCount.Name = "recordCount";
+            recordCount.Size = new Size(76, 23);
+            recordCount.TabIndex = 3;
+            recordCount.Text = "35";
+            recordCount.TextAlign = HorizontalAlignment.Center;
+            recordCount.TextChanged += recordCount_TextChanged;
+            recordCount.KeyPress += recordCount_KeyPress;
+            // 
             // UksList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -202,6 +225,8 @@
             BackgroundImage = Properties.Resources.background;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1143, 480);
+            Controls.Add(label3);
+            Controls.Add(recordCount);
             Controls.Add(label4);
             Controls.Add(FormType);
             Controls.Add(label2);
@@ -235,5 +260,7 @@
         private Label label2;
         private ComboBox FormType;
         private Label label4;
+        private Label label3;
+        private TextBox recordCount;
     }
 }

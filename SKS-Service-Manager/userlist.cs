@@ -12,6 +12,7 @@ namespace SKS_Service_Manager
         private DataBase database;
         DataTable userData;
         public bool selectUser = false;
+        private int maxRows = 35;
 
         public UserList(Form1 Form1)
         {
@@ -20,9 +21,10 @@ namespace SKS_Service_Manager
 
             mainForm = Form1;
             settingsForm = new Settings(mainForm);
-
             UpdateReference();
             LoadUserData();
+
+            recordCount.Text = maxRows.ToString();
 
             // Ustawienie AutoSizeColumnsMode dla DataGridView
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -68,7 +70,7 @@ namespace SKS_Service_Manager
                 "Notes"
             };
 
-            DataTable filteredUserData = database.GetFilteredUsers(searchValue, searchableColumns);
+            DataTable filteredUserData = database.GetFilteredUsers(searchValue, searchableColumns, maxRows);
 
             if (filteredUserData != null)
             {
@@ -139,10 +141,8 @@ namespace SKS_Service_Manager
 
         private void button1_Click(object sender, EventArgs e)
         {
-            // Sprawdź, czy użytkownik wybrał wiersz w DataGridView
             if (dataGridView1.SelectedRows.Count > 0)
             {
-                // Pobierz ID wybranego wiersza
                 string dataID = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
                 issueUserId = int.Parse(dataID);
 
@@ -157,7 +157,7 @@ namespace SKS_Service_Manager
 
         private void UserList_SizeChanged(object sender, EventArgs e)
         {
-            int margin = 20; // Możesz dostosować marginesy i inne wartości
+            int margin = 20;
             dataGridView1.Width = this.ClientSize.Width - margin;
             dataGridView1.Height = this.ClientSize.Height - 100;
         }
@@ -166,10 +166,8 @@ namespace SKS_Service_Manager
         {
             if (selectUser)
             {
-                // Sprawdź, czy użytkownik wybrał wiersz w DataGridView
                 if (dataGridView1.SelectedRows.Count > 0)
                 {
-                    // Pobierz ID wybranego wiersza
                     string dataID = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
                     issueUserId = int.Parse(dataID);
 
@@ -186,10 +184,8 @@ namespace SKS_Service_Manager
             {
                 if (dataGridView1.SelectedRows.Count > 0)
                 {
-                    // Pobierz ID wybranego wiersza
                     int selectedUserID = int.Parse(dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString());
 
-                    // Otwórz formularz EditUser w trybie edycji (przekazując ID użytkownika i referencję do formularza userlist)
                     EditUser editUserForm = new EditUser(selectedUserID, this, mainForm);
                     editUserForm.ShowDialog();
                     LoadUserData();
@@ -204,7 +200,27 @@ namespace SKS_Service_Manager
         private void LoadLatestRecords()
         {
             DataTable latestRecords = database.GetLatestRecords("Users", "DateColumn");
-            // Code to load data into UI components
+        }
+
+        private void recordCount_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(recordCount.Text.Trim(), out int count))
+            {
+                maxRows = count;
+                SearchUserValueChange(sender, e);
+            }
+            else
+            {
+                MessageBox.Show("Blad niewiadomo jaki", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void recordCount_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
         }
     }
 }

@@ -39,6 +39,8 @@
             button1 = new Button();
             label2 = new Label();
             search = new TextBox();
+            label3 = new Label();
+            recordCount = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -158,12 +160,35 @@
             search.TabIndex = 31;
             search.TextChanged += SearchUserValueChange;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.BackColor = Color.Transparent;
+            label3.Location = new Point(419, 47);
+            label3.Name = "label3";
+            label3.Size = new Size(76, 15);
+            label3.TabIndex = 138;
+            label3.Text = "Ilość Wpisów";
+            // 
+            // recordCount
+            // 
+            recordCount.Location = new Point(419, 65);
+            recordCount.Name = "recordCount";
+            recordCount.Size = new Size(76, 23);
+            recordCount.TabIndex = 137;
+            recordCount.Text = "35";
+            recordCount.TextAlign = HorizontalAlignment.Center;
+            recordCount.TextChanged += recordCount_TextChanged;
+            recordCount.KeyPress += recordCount_KeyPress;
+            // 
             // UserList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(800, 450);
+            Controls.Add(label3);
+            Controls.Add(recordCount);
             Controls.Add(label2);
             Controls.Add(search);
             Controls.Add(label1);
@@ -191,5 +216,7 @@
         private Button button1;
         private Label label2;
         private TextBox search;
+        private Label label3;
+        private TextBox recordCount;
     }
 }

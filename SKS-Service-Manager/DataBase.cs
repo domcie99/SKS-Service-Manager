@@ -1125,7 +1125,6 @@ namespace SKS_Service_Manager
             ProgressTotal?.Invoke(this, progress);
         }
 
-        // Method to get the latest 25 records
         public DataTable GetLatestRecords(string tableName, string dateColumn)
         {
             string query = $"SELECT UKS.ID, " +
@@ -1154,7 +1153,7 @@ namespace SKS_Service_Manager
             return dataTable;
         }
 
-        public DataTable GetFilteredRecords(string tableName, Dictionary<string, string> filters, string searchValue = "", string[] searchableColumns = null)
+        public DataTable GetFilteredRecords(string tableName, Dictionary<string, string> filters, string searchValue = "", string[] searchableColumns = null, int count = 25)
         {
             string query = $"SELECT UKS.ID, " +
                            "UKS.InvoiceDate AS 'Data Wystawienia', " +
@@ -1176,18 +1175,15 @@ namespace SKS_Service_Manager
 
             foreach (var filter in filters)
             {
-                // Dodajemy prefiks do nazw kolumn, aby były jednoznaczne
                 query += $" AND {tableName}.{filter.Key} = @{filter.Key}";
             }
 
             if (!string.IsNullOrEmpty(searchValue) && searchableColumns != null && searchableColumns.Length > 0)
             {
-                // Podziel frazę wyszukiwania na słowa
                 string[] searchWords = searchValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                 query += " AND (";
 
-                // Tworzenie warunków dla każdego słowa w każdej kolumnie
                 var searchConditions = new List<string>();
                 foreach (var word in searchWords)
                 {
@@ -1199,8 +1195,7 @@ namespace SKS_Service_Manager
                 query += ")";
             }
 
-            // Dodanie limitu do zapytania
-            query += " LIMIT 25";
+            query += $" ORDER BY UKS.InvoiceDate DESC LIMIT {count}";
 
             MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
             foreach (var filter in filters)
@@ -1223,7 +1218,6 @@ namespace SKS_Service_Manager
             return dataTable;
         }
 
-
         public DataTable GetAlphabeticalRecords(string tableName, string sortColumn)
         {
             string query = $"SELECT * FROM {tableName} ORDER BY {sortColumn} ASC LIMIT 25;";
@@ -1234,7 +1228,7 @@ namespace SKS_Service_Manager
             return dataTable;
         }
 
-        public DataTable GetFilteredUsers(string searchValue = "", string[] searchableColumns = null)
+        public DataTable GetFilteredUsers(string searchValue = "", string[] searchableColumns = null, int count = 25)
         {
             try
             {
@@ -1256,12 +1250,10 @@ namespace SKS_Service_Manager
 
                 if (!string.IsNullOrEmpty(searchValue) && searchableColumns != null && searchableColumns.Length > 0)
                 {
-                    // Podziel frazę wyszukiwania na słowa
                     string[] searchWords = searchValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                     query += " AND (";
 
-                    // Tworzenie warunków dla każdego słowa w każdej kolumnie
                     var searchConditions = new List<string>();
                     foreach (var word in searchWords)
                     {
@@ -1273,8 +1265,7 @@ namespace SKS_Service_Manager
                     query += ")";
                 }
 
-                // Sortowanie alfabetyczne według 'FullName' i ograniczenie do 25 rekordów
-                query += " ORDER BY FullName ASC LIMIT 25";
+                query += $" ORDER BY FullName ASC LIMIT {count}";
 
                 DataTable dt = new DataTable();
 
@@ -1324,6 +1315,5 @@ namespace SKS_Service_Manager
             }
             return null;
         }
-
     }
 }
