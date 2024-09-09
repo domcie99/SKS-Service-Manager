@@ -23,7 +23,7 @@ namespace SKS_Service_Manager
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
 
-        private string localVersion = "1.5.2.0";
+        private string localVersion = "1.5.4.0";
         private string latestVersion;
 
         private bool isUpdating = false;
@@ -73,6 +73,8 @@ namespace SKS_Service_Manager
         private async void DownloadAndInstallUpdate(string latestVersion)
         {
             isUpdating = true;
+            SetButtonsEnabled(false);
+            Cursor = Cursors.WaitCursor;
 
             label2.Invoke(new Action(() => label2.Visible = true));
             progressBar1.Invoke(new Action(() => progressBar1.Visible = true));
@@ -116,6 +118,8 @@ namespace SKS_Service_Manager
             finally
             {
                 isUpdating = false;
+                SetButtonsEnabled(true);
+                Cursor = Cursors.Default;
             }
         }
 
@@ -304,6 +308,9 @@ namespace SKS_Service_Manager
 
         private async Task DownloadFileAsync(string fileUrl, string zipPath, string unzipPath)
         {
+            SetButtonsEnabled(false);
+            Cursor = Cursors.WaitCursor;
+
             label2.Invoke(new Action(() => label2.Visible = true));
             progressBar1.Invoke(new Action(() => progressBar1.Visible = true));
 
@@ -356,6 +363,11 @@ namespace SKS_Service_Manager
                 {
                     // Obs³u¿ inne b³êdy
                     MessageBox.Show("B³¹d: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    SetButtonsEnabled(true);
+                    Cursor = Cursors.Default;
                 }
             }
         }
@@ -420,9 +432,13 @@ namespace SKS_Service_Manager
             await Task.Run(() => CheckMySQLConnection());
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void SetButtonsEnabled(bool isEnabled)
         {
-
+            button1.Invoke(new Action(() => button1.Enabled = isEnabled));
+            button2.Invoke(new Action(() => button2.Enabled = isEnabled));
+            button7.Invoke(new Action(() => button7.Enabled = isEnabled));
+            button8.Invoke(new Action(() => button8.Enabled = isEnabled));
         }
+
     }
 }
