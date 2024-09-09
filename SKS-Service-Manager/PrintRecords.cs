@@ -28,12 +28,43 @@ namespace SKS_Service_Manager
 
             IssuedCity.Items.Insert(0, "Wszystko");
             IssuedCity.Items.AddRange(dataBase.GetUniqueCities().ToArray());
-            IssuedCity.SelectedIndex = 0;
+
+            // Pobranie domyślnego miasta z ustawień
+            Settings settingsForm = new Settings(Form1);
+            string defaultCity = settingsForm.GetCity();
+
+            // Znajdź miasto, ignorując wielkość liter
+            int defaultCityIndex = -1;
+
+            for (int i = 0; i < IssuedCity.Items.Count; i++)
+            {
+                if (string.Equals(IssuedCity.Items[i].ToString(), defaultCity, StringComparison.OrdinalIgnoreCase))
+                {
+                    defaultCityIndex = i;
+                    break;
+                }
+            }
+
+            // Ustaw domyślne miasto, jeśli istnieje
+            if (defaultCityIndex >= 0)
+            {
+                IssuedCity.SelectedIndex = defaultCityIndex;
+            }
+            else
+            {
+                IssuedCity.SelectedIndex = 0; // Jeśli nie ma domyślnego miasta, ustaw na "Wszystko"
+            }
+
             DocumentType.SelectedIndex = 0;
         }
 
         private void print_Click(object sender, EventArgs e)
         {
+
+            print.Enabled = false;
+            this.Cursor = Cursors.WaitCursor;
+            OverlayForm overlay = new OverlayForm();
+            overlay.ShowOverlay(this);
 
             string issuedCity = IssuedCity.Text.ToString();
             string documentType = DocumentType.Text.ToString();
@@ -64,6 +95,10 @@ namespace SKS_Service_Manager
             }
             finally
             {
+                overlay.Close();
+                this.Cursor = Cursors.Default;
+                print.Enabled = true;
+
                 try
                 {
                     Process.Start("cmd", $"/c start {outputRaportFile}");
@@ -71,6 +106,63 @@ namespace SKS_Service_Manager
                 catch (Exception ex)
                 {
                     MessageBox.Show("Błąd podczas otwierania pliku PDF: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void FromDate_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MonthsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (MonthsComboBox.SelectedIndex != -1)
+            {
+                int selectedMonth = MonthsComboBox.SelectedIndex + 1;
+                int year = DateTime.Now.Year;
+
+                DateTime firstDayOfMonth = new DateTime(year, selectedMonth, 1);
+                DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                FromDate.Value = firstDayOfMonth;
+                ToDate.Value = lastDayOfMonth;
+            }
+        }
+
+        private void minusButton_Click(object sender, EventArgs e)
+        {
+            if (MonthsComboBox.SelectedIndex == -1)
+            {
+                MonthsComboBox.SelectedIndex = DateTime.Now.Month - 1;
+            }
+            else
+            {
+                int currentIndex = MonthsComboBox.SelectedIndex;
+                if (currentIndex > 0)
+                {
+                    MonthsComboBox.SelectedIndex = currentIndex - 1;
+                }
+            }
+        }
+
+        private void currentMonthButton_Click(object sender, EventArgs e)
+        {
+            MonthsComboBox.SelectedIndex = DateTime.Now.Month - 1;
+        }
+
+        private void plusButton_Click(object sender, EventArgs e)
+        {
+            if (MonthsComboBox.SelectedIndex == -1)
+            {
+                MonthsComboBox.SelectedIndex = DateTime.Now.Month - 1;
+            }
+            else
+            {
+                int currentIndex = MonthsComboBox.SelectedIndex;
+                if (currentIndex < 11)
+                {
+                    MonthsComboBox.SelectedIndex = currentIndex + 1;
                 }
             }
         }

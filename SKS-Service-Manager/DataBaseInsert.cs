@@ -30,8 +30,22 @@ namespace SKS_Service_Manager
             dataBase.ProgressTotal += Database_ProgressTotal;
         }
 
+        private void buttonsEnabled(bool enabled) {
+            if (enabled)
+            {
+                button1.Enabled = true;
+                button2.Enabled = true;
+            }
+            else
+            {
+                button1.Enabled = false;
+                button2.Enabled = false;
+            }
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
+            buttonsEnabled(false);
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Pliki bazy danych Firebird (*.gdb; *.bak)|*.gdb; *.bak|Wszystkie pliki (*.*)|*.*";
 
@@ -40,10 +54,12 @@ namespace SKS_Service_Manager
                 selectedFilePath = openFileDialog.FileName;
                 textBox1.Text = selectedFilePath;
             }
+            buttonsEnabled(true);
         }
 
         private async void button2_Click(object sender, EventArgs e)
         {
+            buttonsEnabled(false);
             if (!string.IsNullOrEmpty(selectedFilePath))
             {
                 firebirdConnectionString = $"Database={selectedFilePath};User=SYSDBA;Password=masterkey;DataSource=localhost;Port=3050;";
@@ -67,6 +83,7 @@ namespace SKS_Service_Manager
             {
                 MessageBox.Show("Najpierw wybierz plik bazy danych Firebird .gdb.");
             }
+            buttonsEnabled(true);
         }
 
         private async Task ExportFirebirdToSQLiteAsync()

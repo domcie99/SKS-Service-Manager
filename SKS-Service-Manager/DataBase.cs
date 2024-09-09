@@ -321,7 +321,6 @@ namespace SKS_Service_Manager
                         adapter.Fill(dt);
                     }
                 }
-
                 else
                 {
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
@@ -331,7 +330,14 @@ namespace SKS_Service_Manager
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    cities.Add(row["City"].ToString());
+                    string city = row["City"].ToString();
+
+                    // Sprawdź, czy miasto nie jest puste, a następnie sformatuj je: pierwsza litera wielka, reszta mała
+                    if (!string.IsNullOrWhiteSpace(city))
+                    {
+                        city = char.ToUpper(city[0]) + city.Substring(1).ToLower();
+                        cities.Add(city);
+                    }
                 }
             }
             catch (Exception ex)
@@ -340,6 +346,7 @@ namespace SKS_Service_Manager
             }
             return cities;
         }
+
 
 
         public bool DeleteUks(int uksId)
@@ -1144,13 +1151,38 @@ namespace SKS_Service_Manager
                            "Users.Name AS 'Nazwa Firmy' " +
                            $"FROM {tableName} " +
                            "INNER JOIN Users ON UKS.UserID = Users.ID " +
-                           $"ORDER BY {dateColumn} DESC LIMIT 25;";
+                           $"ORDER BY {dateColumn} DESC LIMIT 25;"; // Ograniczenie do 25 rekordów
 
-            MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
-            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
             DataTable dataTable = new DataTable();
-            adapter.Fill(dataTable);
-            return dataTable;
+
+            try
+            {
+                OpenConnection();
+
+                if (useMySQL) // Jeśli używasz MySQL
+                {
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dataTable);
+                }
+                else // Jeśli używasz SQLite
+                {
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                    adapter.Fill(dataTable);
+                }
+
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas pobierania rekordów: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+            finally
+            {
+                CloseConnection();
+            }
         }
 
         public DataTable GetFilteredRecords(string tableName, Dictionary<string, string> filters, string searchValue = "", string[] searchableColumns = null, int count = 25)
@@ -1173,10 +1205,145 @@ namespace SKS_Service_Manager
                            $"FROM {tableName} " +
                            "INNER JOIN Users ON UKS.UserID = Users.ID WHERE 1=1";
 
+            // Dodawanie filtrów do zapytania
             foreach (var filter in filters)
             {
                 query += $" AND {tableName}.{filter.Key} = @{filter.Key}";
             }
+
+            // Dodawanie warunków wyszukiwania
+            if (!string.IsNullOrEmpty(searchValue) && searchableColumns != null && searchableColumns.Length > 0)
+            {
+                string[] searchWords = searchValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                query += " AND (";
+
+                var searchConditions = new List<string>();
+                foreach (var word in searchWords)
+                {
+                    var wordConditions = searchableColumns.Select(col => $"{col} LIKE @searchValue_{word}");
+                    searchConditions.Add($"({string.Join(" OR ", wordConditions)})");
+                }
+
+                query += string.Join(" AND ", searchConditions);
+                query += ")";
+            }
+
+            // Sortowanie i ograniczenie liczby wyników
+            query += $" ORDER BY UKS.InvoiceDate DESC LIMIT {count}";
+
+            DataTable dataTable = new DataTable();
+            try
+            {
+                OpenConnection();
+
+                if (useMySQL) // Jeśli używasz MySQL
+                {
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    foreach (var filter in filters)
+                    {
+                        cmd.Parameters.AddWithValue($"@{filter.Key}", filter.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(searchValue))
+                    {
+                        string[] searchWords = searchValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var word in searchWords)
+                        {
+                            cmd.Parameters.AddWithValue($"@searchValue_{word}", "%" + word + "%");
+                        }
+                    }
+
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dataTable);
+                }
+                else // Jeśli używasz SQLite
+                {
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    foreach (var filter in filters)
+                    {
+                        cmd.Parameters.AddWithValue($"@{filter.Key}", filter.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(searchValue))
+                    {
+                        string[] searchWords = searchValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var word in searchWords)
+                        {
+                            cmd.Parameters.AddWithValue($"@searchValue_{word}", "%" + word + "%");
+                        }
+                    }
+
+                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                    adapter.Fill(dataTable);
+                }
+
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas filtrowania danych: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
+
+        public DataTable GetAlphabeticalRecords(string tableName, string sortColumn)
+        {
+            string query = $"SELECT * FROM {tableName} ORDER BY {sortColumn} ASC LIMIT 25;";
+
+            DataTable dataTable = new DataTable();
+            try
+            {
+                OpenConnection();
+
+                if (useMySQL) // Jeśli używasz MySQL
+                {
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dataTable);
+                }
+                else // Jeśli używasz SQLite
+                {
+                    SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
+                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                    adapter.Fill(dataTable);
+                }
+
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd podczas pobierania rekordów: " + ex.Message, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
+        public DataTable GetFilteredUsers(string searchValue = "", string[] searchableColumns = null, int count = 25)
+        {
+            string query = "SELECT " +
+                           "ID, " +
+                           "FullName AS 'Imię Nazwisko', " +
+                           "Address AS 'Ulica Numer', " +
+                           "PostalCode AS 'Kod Pocztowy', " +
+                           "City AS 'Miasto', " +
+                           "Phone AS 'Telefon', " +
+                           "Email AS 'E-Mail', " +
+                           "DocumentType AS 'Typ Dok.', " +
+                           "DocumentNumber AS 'Numer Dok.', " +
+                           "NIP AS 'NIP', " +
+                           "Name AS 'Nazwa Firmy', " +
+                           "Pesel AS 'Pesel', " +
+                           "Notes AS 'Uwagi' " +
+                           "FROM Users WHERE 1=1";
 
             if (!string.IsNullOrEmpty(searchValue) && searchableColumns != null && searchableColumns.Length > 0)
             {
@@ -1195,82 +1362,15 @@ namespace SKS_Service_Manager
                 query += ")";
             }
 
-            query += $" ORDER BY UKS.InvoiceDate DESC LIMIT {count}";
+            query += $" ORDER BY FullName ASC LIMIT {count}";
 
-            MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
-            foreach (var filter in filters)
-            {
-                cmd.Parameters.AddWithValue($"@{filter.Key}", filter.Value);
-            }
+            DataTable dt = new DataTable();
 
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                string[] searchWords = searchValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var word in searchWords)
-                {
-                    cmd.Parameters.AddWithValue($"@searchValue_{word}", "%" + word + "%");
-                }
-            }
-
-            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-            DataTable dataTable = new DataTable();
-            adapter.Fill(dataTable);
-            return dataTable;
-        }
-
-        public DataTable GetAlphabeticalRecords(string tableName, string sortColumn)
-        {
-            string query = $"SELECT * FROM {tableName} ORDER BY {sortColumn} ASC LIMIT 25;";
-            MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
-            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-            DataTable dataTable = new DataTable();
-            adapter.Fill(dataTable);
-            return dataTable;
-        }
-
-        public DataTable GetFilteredUsers(string searchValue = "", string[] searchableColumns = null, int count = 25)
-        {
             try
             {
-                string query = "SELECT " +
-                               "ID, " +
-                               "FullName AS 'Imię Nazwisko', " +
-                               "Address AS 'Ulica Numer', " +
-                               "PostalCode AS 'Kod Pocztowy', " +
-                               "City AS 'Miasto', " +
-                               "Phone AS 'Telefon', " +
-                               "Email AS 'E-Mail', " +
-                               "DocumentType AS 'Typ Dok.', " +
-                               "DocumentNumber AS 'Numer Dok.', " +
-                               "NIP AS 'NIP', " +
-                               "Name AS 'Nazwa Firmy', " +
-                               "Pesel AS 'Pesel', " +
-                               "Notes AS 'Uwagi' " +
-                               "FROM Users WHERE 1=1";
-
-                if (!string.IsNullOrEmpty(searchValue) && searchableColumns != null && searchableColumns.Length > 0)
-                {
-                    string[] searchWords = searchValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    query += " AND (";
-
-                    var searchConditions = new List<string>();
-                    foreach (var word in searchWords)
-                    {
-                        var wordConditions = searchableColumns.Select(col => $"{col} LIKE @searchValue_{word}");
-                        searchConditions.Add($"({string.Join(" OR ", wordConditions)})");
-                    }
-
-                    query += string.Join(" AND ", searchConditions);
-                    query += ")";
-                }
-
-                query += $" ORDER BY FullName ASC LIMIT {count}";
-
-                DataTable dt = new DataTable();
-
                 OpenConnection();
-                if (useMySQL)
+
+                if (useMySQL) // MySQL obsługa
                 {
                     MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
 
@@ -1286,7 +1386,7 @@ namespace SKS_Service_Manager
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     adapter.Fill(dt);
                 }
-                else
+                else // SQLite obsługa
                 {
                     SQLiteCommand cmd = new SQLiteCommand(query, sqliteConnection);
 
@@ -1307,13 +1407,15 @@ namespace SKS_Service_Manager
             }
             catch (Exception ex)
             {
-                logger.LogError("GetFilteredUsers() - Błąd podczas odczytu danych: " + ex.Message);
+                logger.LogError($"GetFilteredUsers() - Błąd podczas odczytu danych: {ex.Message}");
+                return null;
             }
             finally
             {
                 CloseConnection();
             }
-            return null;
         }
+
+
     }
 }

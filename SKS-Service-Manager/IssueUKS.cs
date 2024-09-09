@@ -267,6 +267,9 @@ namespace SKS_Service_Manager
             Print.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
 
+            OverlayForm overlay = new OverlayForm();
+            overlay.ShowOverlay(this);
+
             try
             {
 
@@ -313,6 +316,8 @@ namespace SKS_Service_Manager
                 Save.Enabled = true;
                 Print.Enabled = true;
                 generated = true;
+
+                overlay.Close();
 
                 UpdateUserInDatabase(dataBase.CheckUserExists(Pesel.Text, DocumentNumber.Text, Adress.Text, City.Text, FullName.Text));
 
@@ -462,40 +467,29 @@ namespace SKS_Service_Manager
 
         public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate)
         {
-            // Skopiowanie istniejącego dokumentu DOCX jako wzorca
             File.Copy(ewidPath, outputDocxFile, true);
 
-            // Otwarcie skopiowanego dokumentu
             using (WordprocessingDocument doc = WordprocessingDocument.Open(outputDocxFile, true))
             {
-                // Otrzymaj dostęp do głównego dokumentu
                 MainDocumentPart mainPart = doc.MainDocumentPart;
-
-                // Otrzymaj dostęp do treści dokumentu
                 Body body = mainPart.Document.Body;
 
-                // Znajdź i zaktualizuj tekst nagłówka
                 var headerText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-title]"));
                 if (headerText != null)
                 {
                     headerText.Text = headerText.Text.Replace("#[ewidencja-title]", $"Ewidencja kupna sprzedaży w okresie od {fromDate.ToShortDateString()} do {toDate.ToShortDateString()}");
                 }
 
-                // Znajdź i zaktualizuj tekst tabeli
                 var tableText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-tabela]"));
                 if (tableText != null)
                 {
-                    // Otrzymaj tabelę, która zawiera znacznik tekstowy
                     var table = tableText.Ancestors<Table>().FirstOrDefault();
 
-                    // Usuń istniejącą zawartość tabeli
                     foreach (var row in table.Elements<TableRow>().Skip(1).ToList())
                     {
                         row.Remove();
                     }
 
-                    // Wstaw nowe dane do tabeli na podstawie danych DataTable
-                    // Wstaw nowe dane do tabeli na podstawie danych DataTable
                     foreach (DataRow row in data.Rows)
                     {
                         TableRow dataRow = new TableRow();
@@ -504,33 +498,35 @@ namespace SKS_Service_Manager
                             TableCell cell = new TableCell();
                             Paragraph paragraph = new Paragraph();
 
-                            // Ustawianie właściwości justowania tekstu na środek
                             ParagraphProperties paragraphProperties = new ParagraphProperties();
                             Justification justification = new Justification() { Val = JustificationValues.Center };
                             paragraphProperties.Append(justification);
 
-                            // Dodanie centrowania w pionie
                             TableCellProperties cellProperties = new TableCellProperties();
                             TableCellVerticalAlignment verticalAlignment = new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Center };
                             cellProperties.Append(verticalAlignment);
 
-                            // Dodanie właściwości paragrafu i komórki
                             paragraph.Append(paragraphProperties);
                             cell.Append(cellProperties);
 
                             Run run = new Run();
                             RunProperties runProperties = new RunProperties();
-                            FontSize fontSize = new FontSize() { Val = "18" };
+                            FontSize fontSize = new FontSize() { Val = "14" };
                             runProperties.Append(fontSize);
 
-                            // Formatowanie wartości jako liczba z dwoma miejscami po przecinku, jeśli to możliwe
                             if (TryFormatAsDecimal(item, out string formattedValue))
                             {
                                 if (dataRow.Elements<TableCell>().Count() == 8)
                                 {
-                                    Color color = new Color() { Val = "000000" }; // Kolor czerwony
-                                    if (decimal.Parse(formattedValue) < 0) { color = new Color() { Val = "CC0000" }; } // Kolor czerwony
-                                    if (decimal.Parse(formattedValue) > 0) { color = new Color() { Val = "00CC00" }; } // Kolor zielony
+                                    Color color = new Color() { Val = "000000" };
+                                    if (decimal.Parse(formattedValue) < 0)
+                                    {
+                                        color = new Color() { Val = "CC0000" };
+                                    }
+                                    else if (decimal.Parse(formattedValue) > 0)
+                                    {
+                                        color = new Color() { Val = "00CC00" };
+                                    }
 
                                     runProperties.Append(color);
                                     run.Append(runProperties);
@@ -546,25 +542,20 @@ namespace SKS_Service_Manager
                             }
                             else if (dataRow.Elements<TableCell>().Count() == 6 || dataRow.Elements<TableCell>().Count() == 7)
                             {
-                                string[] parts = item.ToString().Split(':'); // Rozdziel tekst na część przed i po dwukropku
-                                if (parts.Length == 2) // Upewnij się, że są dwie części
+                                string[] parts = item.ToString().Split(':');
+                                if (parts.Length == 2)
                                 {
-                                    string valuePart = parts[1].Trim(); // Pobierz część z wartością
+                                    string valuePart = parts[1].Trim();
                                     decimal numericValue;
-                                    if (decimal.TryParse(valuePart, out numericValue)) // Sprawdź, czy wartość jest liczbą
+                                    if (decimal.TryParse(valuePart, out numericValue))
                                     {
-                                        string formattedNumericValue = numericValue.ToString("0.00"); // Formatuj wartość do dwóch miejsc po przecinku
-                                        parts[1] = formattedNumericValue; // Zaktualizuj część z wartością
+                                        string formattedNumericValue = numericValue.ToString("0.00");
+                                        parts[1] = formattedNumericValue;
 
-                                        // Dodaj pierwszą linię do Run
                                         run.Append(runProperties);
                                         run.Append(new Text(parts[0]));
-
-                                        // Dodaj znacznik nowej linii
                                         run.Append(new Break());
                                         run.Append(new Break());
-
-                                        // Dodaj drugą linię do Run
                                         run.Append(new Text(parts[1]));
 
                                         paragraph.Append(run);
@@ -584,15 +575,13 @@ namespace SKS_Service_Manager
                         table.Append(dataRow);
                     }
 
-
-                    // Usuń znacznik tekstowy z dokumentu
                     tableText.Text = tableText.Text.Replace("#[ewidencja-tabela]", "");
                 }
 
-                // Zapisywanie dokumetu DOCX
                 mainPart.Document.Save();
             }
         }
+
 
         // Funkcja do zastępowania tekstu w dokumencie
         private void ReplaceTextInDocument(WordprocessingDocument doc, string token, string replacementText)
