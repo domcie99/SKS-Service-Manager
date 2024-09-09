@@ -470,7 +470,7 @@ namespace SKS_Service_Manager
         }
 
 
-        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate)
+        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate,string documentType)
         {
             File.Copy(ewidPath, outputDocxFile, true);
 
@@ -479,10 +479,35 @@ namespace SKS_Service_Manager
                 MainDocumentPart mainPart = doc.MainDocumentPart;
                 Body body = mainPart.Document.Body;
 
+                // Zdefiniuj tytuł w zależności od wybranego typu umowy
+                string reportTitle = "Ewidencja ";
+                if (documentType == "Umowa Kupna-Sprzedaży")
+                {
+                    reportTitle += "umów kupna sprzedaży";
+                }
+                else if (documentType == "Umowa Komisowa")
+                {
+                    reportTitle += "umów komisowych";
+                }
+                else if (documentType == "Umowa Konsumenckiej Pożyczki Lombardowej")
+                {
+                    reportTitle += "umów konsumenckiej pożyczki lombardowej";
+                }
+                else if (documentType == "Umowa Pożyczki z Przechowaniem")
+                {
+                    reportTitle += "umów pożyczki z przechowaniem";
+                }
+                else
+                {
+                    reportTitle += "wszystkich umów";
+                }
+
+                // Znajdź i zaktualizuj tekst nagłówka
                 var headerText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-title]"));
                 if (headerText != null)
                 {
-                    headerText.Text = headerText.Text.Replace("#[ewidencja-title]", $"Ewidencja kupna sprzedaży w okresie od {fromDate.ToShortDateString()} do {toDate.ToShortDateString()}");
+                    // Ustaw odpowiedni tytuł, uwzględniając okres
+                    headerText.Text = headerText.Text.Replace("#[ewidencja-title]", $"{reportTitle} w okresie od {fromDate.ToShortDateString()} do {toDate.ToShortDateString()}");
                 }
 
                 var tableText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-tabela]"));

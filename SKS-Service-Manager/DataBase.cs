@@ -240,26 +240,28 @@ namespace SKS_Service_Manager
             try
             {
                 string query = "SELECT DATE(UKS.InvoiceDate) AS 'Data Przyjęcia', " +
-                                "Users.FullName || ', ' || Users.Address || ', ' || Users.PostalCode || ' ' || Users.City AS 'Imię i Nazwisko oraz adres sprzedającego', " +
-                                "CAST(UKS.TotalAmount AS decimal(10, 2)) AS 'Kwota zapłacona sprzedającemu', " +
-                                "UKS.Description AS 'Dokładny opis kupionych (używanych) rzeczy', " +
-                                "CAST(UKS.BuyAmount AS decimal(10, 2)) AS 'Wartość sprzedaży minus zużycie', " +
-                                "DATE(UKS.BuyDate) AS 'Ostateczny termin do odkupu', " +
+                               "Users.FullName || ', ' || Users.Address || ', ' || Users.PostalCode || ' ' || Users.City AS 'Imię i Nazwisko oraz adres sprzedającego', " +
+                               "CAST(UKS.TotalAmount AS decimal(10, 2)) AS 'Kwota zapłacona sprzedającemu', " +
+                               "UKS.Description AS 'Dokładny opis kupionych (używanych) rzeczy', " +
+                               "CAST(UKS.BuyAmount AS decimal(10, 2)) AS 'Wartość sprzedaży minus zużycie', " +
+                               "DATE(UKS.BuyDate) AS 'Ostateczny termin do odkupu', " +
+                               "CASE WHEN(DATE(UKS.DateOfReturn) >= '1800-01-01') THEN DATE(UKS.DateOfReturn) || ' : ' || CAST(UKS.SaleAmount AS decimal(10, 2)) ELSE NULL END AS 'Zwrot rzeczy z odkupem \n\n(Data : Kwota)', " +
+                               "CASE WHEN(DATE(UKS.SaleDate) >= '1800-01-01') THEN DATE(UKS.SaleDate) || ' : ' || CAST(UKS.SaleAmount AS decimal(10, 2)) ELSE NULL END AS 'Sprzedaż kupionej rzeczy \n\n(Data : Kwota)', " +
+                               "CAST((UKS.SaleAmount - UKS.TotalAmount) AS decimal(10, 2)) AS 'Kwota uzyskanej prowizji albo odkupu', " +
+                               "UKS.Notes AS 'Uwagi' " +
+                               "FROM UKS " +
+                               "INNER JOIN Users ON UKS.UserID = Users.ID " +  // Prawidłowy JOIN po UserID
+                               "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
 
-                                "CASE WHEN(DATE(UKS.DateOfReturn) >= '1800-01-01') THEN DATE(UKS.DateOfReturn) || ' : ' || CAST(UKS.SaleAmount AS decimal(10, 2)) ELSE NULL END AS 'Zwrot rzeczy z odkupem \n\n(Data : Kwota)'," +
-                                "CASE WHEN(DATE(UKS.SaleDate) >= '1800-01-01') THEN DATE(UKS.SaleDate) || ' : ' || CAST(UKS.SaleAmount AS decimal(10, 2)) ELSE NULL END AS 'Sprzedaż kupionej rzeczy \n\n(Data : Kwota)'," +
-
-                                "CAST((UKS.SaleAmount - UKS.TotalAmount) AS decimal(10, 2)) AS 'Kwota uzyskanej prowizji albo odkupu'," +
-                                "UKS.Notes AS 'Uwagi' " +
-                                "FROM UKS " +
-                                "INNER JOIN Users ON UKS.UserID = Users.ID " +
-                                "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
-
-
-
-                if (!string.IsNullOrEmpty(city) && city != "Wszystko") { query += "AND UKS.City = @City"; }
-                if (!string.IsNullOrEmpty(documentType) && documentType != "Wszystko") { query += "AND UKS.DocumentType = @DocumentType"; }
-
+                // Dodaj warunki dla miasta i rodzaju umowy
+                if (!string.IsNullOrEmpty(city) && city != "Wszystko")
+                {
+                    query += " AND UKS.City = @City ";
+                }
+                if (!string.IsNullOrEmpty(documentType) && documentType != "Wszystko")
+                {
+                    query += " AND UKS.DocumentType = @DocumentType ";
+                }
 
                 DataTable dt = new DataTable();
 
@@ -301,6 +303,8 @@ namespace SKS_Service_Manager
             }
             return null;
         }
+
+
 
         public List<string> GetUniqueCities()
         {

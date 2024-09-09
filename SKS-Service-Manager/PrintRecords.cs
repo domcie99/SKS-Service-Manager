@@ -86,7 +86,7 @@ namespace SKS_Service_Manager
 
             try
             {
-                issueUKS.CreateDocxFromData(dt, inputRaportFile, fromDate, toDate);
+                issueUKS.CreateDocxFromData(dt, inputRaportFile, fromDate, toDate, documentType);
                 issueUKS.ConvertDocxToPdf(inputRaportFile, outputRaportPath);
             }
             catch (Exception ex)
