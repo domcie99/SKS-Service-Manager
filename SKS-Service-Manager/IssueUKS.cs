@@ -584,6 +584,11 @@ namespace SKS_Service_Manager
                                 // Dodaj wartość do sumy
                                 totalCommissionOrRepurchase += commissionValue;
                             }
+                            else if (i == 7 && decimal.TryParse(row[i].ToString(), out decimal saleAmount) && saleAmount == 0) // Ukryj "Kwota sprzedaży", jeśli wynosi 0
+                            {
+                                run.Append(runProperties);
+                                run.AppendChild(new Text("")); // Nie wyświetlaj wartości 0
+                            }
                             else
                             {
                                 run.Append(runProperties);
