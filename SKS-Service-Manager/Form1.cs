@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Net;
+using System.Reflection;
 using Ionic.Zip;
+using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 #pragma warning disable
 namespace SKS_Service_Manager
@@ -23,7 +25,7 @@ namespace SKS_Service_Manager
         private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
         private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
 
-        private string localVersion = "1.5.6.0";
+        private string localVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         private string latestVersion;
 
         private bool isUpdating = false;
