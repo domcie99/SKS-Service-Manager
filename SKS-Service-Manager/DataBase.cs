@@ -239,19 +239,41 @@ namespace SKS_Service_Manager
         {
             try
             {
-                string query = "SELECT DATE(UKS.InvoiceDate) AS 'Data Przyjęcia', " +
-                               "Users.FullName || ', ' || Users.Address || ', ' || Users.PostalCode || ' ' || Users.City AS 'Imię i Nazwisko oraz adres sprzedającego', " +
-                               "CAST(UKS.TotalAmount AS decimal(10, 2)) AS 'Kwota zapłacona sprzedającemu', " +
-                               "UKS.Description AS 'Dokładny opis kupionych (używanych) rzeczy', " +
-                               "CAST(UKS.BuyAmount AS decimal(10, 2)) AS 'Wartość sprzedaży minus zużycie', " +
-                               "DATE(UKS.BuyDate) AS 'Ostateczny termin do odkupu', " +
-                               "CASE WHEN(DATE(UKS.DateOfReturn) >= '1800-01-01') THEN DATE(UKS.DateOfReturn) || ' : ' || CAST(UKS.SaleAmount AS decimal(10, 2)) ELSE NULL END AS 'Zwrot rzeczy z odkupem \n\n(Data : Kwota)', " +
-                               "CASE WHEN(DATE(UKS.SaleDate) >= '1800-01-01') THEN DATE(UKS.SaleDate) || ' : ' || CAST(UKS.SaleAmount AS decimal(10, 2)) ELSE NULL END AS 'Sprzedaż kupionej rzeczy \n\n(Data : Kwota)', " +
-                               "CAST((UKS.SaleAmount - UKS.TotalAmount) AS decimal(10, 2)) AS 'Kwota uzyskanej prowizji albo odkupu', " +
-                               "UKS.Notes AS 'Uwagi' " +
-                               "FROM UKS " +
-                               "INNER JOIN Users ON UKS.UserID = Users.ID " +  // Prawidłowy JOIN po UserID
-                               "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
+                string query = "";
+                if (useMySQL)
+                {
+                    // Zapytanie dla MySQL
+                    query = "SELECT " +
+                            "DATE_FORMAT(UKS.InvoiceDate, '%d.%m.%Y') AS 'Data Przyjęcia', " +
+                            "CAST(UKS.TotalAmount AS decimal(10, 2)) AS 'Kwota zapłacona klientowi', " +
+                            "UKS.Description AS 'Dokładny opis przedmiotów', " +
+                            "CAST(UKS.BuyAmount AS decimal(10, 2)) AS 'Wartość sprzedaży minus zużycie', " +
+                            "DATE_FORMAT(UKS.BuyDate, '%d.%m.%Y') AS 'Ostateczny termin do odkupu', " +
+                            "DATE_FORMAT(UKS.DateOfReturn, '%d.%m.%Y') AS 'Data zwrotu', " +
+                            "DATE_FORMAT(UKS.SaleDate, '%d.%m.%Y') AS 'Data sprzedaży', " +
+                            "CAST(UKS.SaleAmount AS decimal(10, 2)) AS 'Kwota sprzedaży', " +
+                            "CAST((UKS.SaleAmount - UKS.TotalAmount) AS decimal(10, 2)) AS 'Kwota uzyskanej prowizji albo odkupu', " +
+                            "UKS.Notes AS 'Uwagi' " +
+                            "FROM UKS " +
+                            "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate";
+                }
+                else
+                {
+                    // Zapytanie dla SQLite
+                    query = "SELECT " +
+                            "strftime('%d.%m.%Y', UKS.InvoiceDate) AS 'Data Przyjęcia', " +
+                            "CAST(UKS.TotalAmount AS decimal(10, 2)) AS 'Kwota zapłacona klientowi', " +
+                            "UKS.Description AS 'Dokładny opis przedmiotów', " +
+                            "CAST(UKS.BuyAmount AS decimal(10, 2)) AS 'Wartość sprzedaży minus zużycie', " +
+                            "strftime('%d.%m.%Y', UKS.BuyDate) AS 'Ostateczny termin do odkupu', " +
+                            "strftime('%d.%m.%Y', UKS.DateOfReturn) AS 'Data zwrotu', " +
+                            "strftime('%d.%m.%Y', UKS.SaleDate) AS 'Data sprzedaży', " +
+                            "CAST(UKS.SaleAmount AS decimal(10, 2)) AS 'Kwota sprzedaży', " +
+                            "CAST((UKS.SaleAmount - UKS.TotalAmount) AS decimal(10, 2)) AS 'Kwota uzyskanej prowizji albo odkupu', " +
+                            "UKS.Notes AS 'Uwagi' " +
+                            "FROM UKS " +
+                            "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate";
+                }
 
                 // Dodaj warunki dla miasta i rodzaju umowy
                 if (!string.IsNullOrEmpty(city) && city != "Wszystko")
@@ -303,6 +325,7 @@ namespace SKS_Service_Manager
             }
             return null;
         }
+
 
 
 

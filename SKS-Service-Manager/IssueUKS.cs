@@ -469,10 +469,42 @@ namespace SKS_Service_Manager
             }
         }
 
-
-        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate,string documentType)
+        private string raportTitle(string documentType) 
         {
+            string reportTitle = "Ewidencja ";
+            if (documentType == "Umowa Kupna-Sprzedaży")
+            {
+                reportTitle += "umów kupna sprzedaży";
+            }
+            else if (documentType == "Umowa Komisowa")
+            {
+                reportTitle += "umów komisowych";
+            }
+            else if (documentType == "Umowa Konsumenckiej Pożyczki Lombardowej")
+            {
+                reportTitle += "umów konsumenckiej pożyczki lombardowej";
+            }
+            else if (documentType == "Umowa Pożyczki z Przechowaniem")
+            {
+                reportTitle += "umów pożyczki z przechowaniem";
+            }
+            else
+            {
+                reportTitle += "wszystkich umów";
+            }
+            return reportTitle;
+        }
+
+        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate, string documentType)
+        {
+            // Skopiowanie istniejącego dokumentu jako wzorca
             File.Copy(ewidPath, outputDocxFile, true);
+
+            // Suma dla kolumn do zsumowania
+            decimal totalAmountPaidToCustomer = 0;
+            decimal totalSalesValueMinusWear = 0;
+            decimal totalSaleAmount = 0;
+            decimal totalCommissionOrRepurchase = 0; // Kwota uzyskanej prowizji albo odkupu
 
             using (WordprocessingDocument doc = WordprocessingDocument.Open(outputDocxFile, true))
             {
@@ -480,50 +512,32 @@ namespace SKS_Service_Manager
                 Body body = mainPart.Document.Body;
 
                 // Zdefiniuj tytuł w zależności od wybranego typu umowy
-                string reportTitle = "Ewidencja ";
-                if (documentType == "Umowa Kupna-Sprzedaży")
-                {
-                    reportTitle += "umów kupna sprzedaży";
-                }
-                else if (documentType == "Umowa Komisowa")
-                {
-                    reportTitle += "umów komisowych";
-                }
-                else if (documentType == "Umowa Konsumenckiej Pożyczki Lombardowej")
-                {
-                    reportTitle += "umów konsumenckiej pożyczki lombardowej";
-                }
-                else if (documentType == "Umowa Pożyczki z Przechowaniem")
-                {
-                    reportTitle += "umów pożyczki z przechowaniem";
-                }
-                else
-                {
-                    reportTitle += "wszystkich umów";
-                }
+                string reportTitle = raportTitle(documentType);
 
                 // Znajdź i zaktualizuj tekst nagłówka
                 var headerText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-title]"));
                 if (headerText != null)
                 {
-                    // Ustaw odpowiedni tytuł, uwzględniając okres
                     headerText.Text = headerText.Text.Replace("#[ewidencja-title]", $"{reportTitle} w okresie od {fromDate.ToShortDateString()} do {toDate.ToShortDateString()}");
                 }
 
+                // Znajdź i zaktualizuj tabelę
                 var tableText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-tabela]"));
                 if (tableText != null)
                 {
                     var table = tableText.Ancestors<Table>().FirstOrDefault();
 
+                    // Usuń istniejącą zawartość tabeli
                     foreach (var row in table.Elements<TableRow>().Skip(1).ToList())
                     {
                         row.Remove();
                     }
 
+                    // Wypełnij tabelę danymi z DataTable
                     foreach (DataRow row in data.Rows)
                     {
                         TableRow dataRow = new TableRow();
-                        foreach (object item in row.ItemArray)
+                        for (int i = 0; i < row.ItemArray.Length; i++)
                         {
                             TableCell cell = new TableCell();
                             Paragraph paragraph = new Paragraph();
@@ -544,72 +558,102 @@ namespace SKS_Service_Manager
                             FontSize fontSize = new FontSize() { Val = "14" };
                             runProperties.Append(fontSize);
 
-                            if (TryFormatAsDecimal(item, out string formattedValue))
+                            // Sprawdź, czy wartość to data i czy jest starsza niż rok 1800
+                            if (DateTime.TryParse(row[i].ToString(), out DateTime parsedDate) && parsedDate.Year < 1800)
                             {
-                                if (dataRow.Elements<TableCell>().Count() == 8)
-                                {
-                                    Color color = new Color() { Val = "000000" };
-                                    if (decimal.Parse(formattedValue) < 0)
-                                    {
-                                        color = new Color() { Val = "CC0000" };
-                                    }
-                                    else if (decimal.Parse(formattedValue) > 0)
-                                    {
-                                        color = new Color() { Val = "00CC00" };
-                                    }
-
-                                    runProperties.Append(color);
-                                    run.Append(runProperties);
-                                    run.AppendChild(new Text(formattedValue));
-                                    paragraph.Append(run);
-                                }
-                                else
-                                {
-                                    run.Append(runProperties);
-                                    run.AppendChild(new Text(formattedValue));
-                                    paragraph.Append(run);
-                                }
+                                run.Append(runProperties);
+                                run.AppendChild(new Text("")); // Nie wyświetlaj daty
                             }
-                            else if (dataRow.Elements<TableCell>().Count() == 6 || dataRow.Elements<TableCell>().Count() == 7)
+                            else if (i == 8 && decimal.TryParse(row[i].ToString(), out decimal commissionValue)) // Dla kolumny "Kwota uzyskanej prowizji albo odkupu"
                             {
-                                string[] parts = item.ToString().Split(':');
-                                if (parts.Length == 2)
+                                Color color = new Color() { Val = "000000" }; // Domyślny kolor czarny
+                                if (commissionValue < 0)
                                 {
-                                    string valuePart = parts[1].Trim();
-                                    decimal numericValue;
-                                    if (decimal.TryParse(valuePart, out numericValue))
-                                    {
-                                        string formattedNumericValue = numericValue.ToString("0.00");
-                                        parts[1] = formattedNumericValue;
-
-                                        run.Append(runProperties);
-                                        run.Append(new Text(parts[0]));
-                                        run.Append(new Break());
-                                        run.Append(new Break());
-                                        run.Append(new Text(parts[1]));
-
-                                        paragraph.Append(run);
-                                    }
+                                    color = new Color() { Val = "CC0000" }; // Kolor czerwony dla wartości ujemnych
                                 }
+                                else if (commissionValue > 0)
+                                {
+                                    color = new Color() { Val = "00CC00" }; // Kolor zielony dla wartości dodatnich
+                                }
+
+                                runProperties.Append(color);
+                                run.Append(runProperties);
+                                run.AppendChild(new Text(commissionValue.ToString("F2")));
+                                paragraph.Append(run);
+
+                                // Dodaj wartość do sumy
+                                totalCommissionOrRepurchase += commissionValue;
                             }
                             else
                             {
                                 run.Append(runProperties);
-                                run.AppendChild(new Text(item.ToString()));
+                                run.AppendChild(new Text(row[i].ToString()));
                                 paragraph.Append(run);
                             }
 
                             cell.Append(paragraph);
                             dataRow.Append(cell);
+
+                            // Sumowanie wartości dla wybranych kolumn
+                            if (i == 1 && decimal.TryParse(row[i].ToString(), out decimal value1)) // Kwota zapłacona klientowi
+                            {
+                                totalAmountPaidToCustomer += value1;
+                            }
+                            else if (i == 3 && decimal.TryParse(row[i].ToString(), out decimal value2)) // Wartość sprzedaży minus zużycie
+                            {
+                                totalSalesValueMinusWear += value2;
+                            }
+                            else if (i == 7 && decimal.TryParse(row[i].ToString(), out decimal value3)) // Kwota sprzedaży
+                            {
+                                totalSaleAmount += value3;
+                            }
                         }
                         table.Append(dataRow);
                     }
+
+                    // Dodaj wiersz z podsumowaniem na końcu tabeli z cieniowaniem #BFBFBF
+                    TableRow summaryRow = new TableRow();
+
+                    summaryRow.Append(CreateSummaryCell("Suma", true));
+                    summaryRow.Append(CreateSummaryCell(totalAmountPaidToCustomer.ToString("F2"), true));
+                    summaryRow.Append(CreateSummaryCell("", true)); // Pusta komórka dla innych kolumn
+                    summaryRow.Append(CreateSummaryCell(totalSalesValueMinusWear.ToString("F2"), true));
+                    summaryRow.Append(CreateSummaryCell("", true));
+                    summaryRow.Append(CreateSummaryCell("", true));
+                    summaryRow.Append(CreateSummaryCell("", true));
+                    summaryRow.Append(CreateSummaryCell(totalSaleAmount.ToString("F2"), true));
+                    summaryRow.Append(CreateSummaryCell(totalCommissionOrRepurchase.ToString("F2"), true));
+                    summaryRow.Append(CreateSummaryCell("", true));
+                    table.Append(summaryRow);
 
                     tableText.Text = tableText.Text.Replace("#[ewidencja-tabela]", "");
                 }
 
                 mainPart.Document.Save();
             }
+        }
+
+        // Metoda pomocnicza do tworzenia komórek podsumowania z opcjonalnym cieniowaniem
+        private TableCell CreateSummaryCell(string text, bool shaded = false)
+        {
+            TableCell cell = new TableCell();
+            Paragraph paragraph = new Paragraph(new Run(new Text(text)));
+            ParagraphProperties paragraphProperties = new ParagraphProperties();
+            Justification justification = new Justification() { Val = JustificationValues.Center };
+            paragraphProperties.Append(justification);
+            paragraph.PrependChild(paragraphProperties);
+
+            // Dodaj cieniowanie, jeśli ustawione
+            if (shaded)
+            {
+                TableCellProperties cellProperties = new TableCellProperties();
+                Shading shading = new Shading() { Fill = "BFBFBF" }; // Cieniowanie w kolorze #BFBFBF
+                cellProperties.Append(shading);
+                cell.Append(cellProperties);
+            }
+
+            cell.Append(paragraph);
+            return cell;
         }
 
 
