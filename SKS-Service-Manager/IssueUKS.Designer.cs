@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssueUKS));
             groupBox1 = new GroupBox();
             label1 = new Label();
@@ -103,6 +104,7 @@
             FormType = new ComboBox();
             attachment = new CheckBox();
             delete = new Button();
+            imageList1 = new ImageList(components);
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -156,6 +158,7 @@
             // 
             // Company_Name
             // 
+            Company_Name.Cursor = Cursors.IBeam;
             Company_Name.Location = new Point(182, 199);
             Company_Name.Name = "Company_Name";
             Company_Name.Size = new Size(200, 23);
@@ -174,6 +177,7 @@
             // 
             // Nip
             // 
+            Nip.Cursor = Cursors.IBeam;
             Nip.Location = new Point(182, 170);
             Nip.Name = "Nip";
             Nip.Size = new Size(200, 23);
@@ -181,6 +185,7 @@
             // 
             // Notes
             // 
+            Notes.Cursor = Cursors.IBeam;
             Notes.Location = new Point(587, 109);
             Notes.Name = "Notes";
             Notes.Size = new Size(200, 55);
@@ -201,6 +206,7 @@
             // DocumentType
             // 
             DocumentType.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
+            DocumentType.Cursor = Cursors.Hand;
             DocumentType.DropDownStyle = ComboBoxStyle.DropDownList;
             DocumentType.FormattingEnabled = true;
             DocumentType.Items.AddRange(new object[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
@@ -233,6 +239,7 @@
             // 
             // Pesel
             // 
+            Pesel.Cursor = Cursors.IBeam;
             Pesel.Location = new Point(587, 80);
             Pesel.Name = "Pesel";
             Pesel.Size = new Size(200, 23);
@@ -251,6 +258,7 @@
             // 
             // DocumentNumber
             // 
+            DocumentNumber.Cursor = Cursors.IBeam;
             DocumentNumber.Location = new Point(587, 51);
             DocumentNumber.Name = "DocumentNumber";
             DocumentNumber.Size = new Size(200, 23);
@@ -269,6 +277,7 @@
             // 
             // EMail
             // 
+            EMail.Cursor = Cursors.IBeam;
             EMail.Location = new Point(182, 141);
             EMail.Name = "EMail";
             EMail.Size = new Size(200, 23);
@@ -276,6 +285,7 @@
             // 
             // City
             // 
+            City.Cursor = Cursors.IBeam;
             City.Location = new Point(248, 80);
             City.Name = "City";
             City.Size = new Size(134, 23);
@@ -294,6 +304,7 @@
             // 
             // Phone
             // 
+            Phone.Cursor = Cursors.IBeam;
             Phone.Location = new Point(182, 112);
             Phone.Name = "Phone";
             Phone.Size = new Size(200, 23);
@@ -312,6 +323,7 @@
             // 
             // Post_Code
             // 
+            Post_Code.Cursor = Cursors.IBeam;
             Post_Code.Location = new Point(182, 80);
             Post_Code.Name = "Post_Code";
             Post_Code.PlaceholderText = "00-000";
@@ -333,6 +345,7 @@
             // 
             // Adress
             // 
+            Adress.Cursor = Cursors.IBeam;
             Adress.Location = new Point(182, 51);
             Adress.Name = "Adress";
             Adress.Size = new Size(200, 23);
@@ -352,6 +365,7 @@
             // 
             // FullName
             // 
+            FullName.Cursor = Cursors.IBeam;
             FullName.Location = new Point(182, 22);
             FullName.Name = "FullName";
             FullName.Size = new Size(200, 23);
@@ -415,6 +429,7 @@
             // 
             // uploadImageButton
             // 
+            uploadImageButton.Cursor = Cursors.Hand;
             uploadImageButton.Location = new Point(538, 80);
             uploadImageButton.Name = "uploadImageButton";
             uploadImageButton.Size = new Size(100, 23);
@@ -436,6 +451,7 @@
             // 
             // Estimated_Value
             // 
+            Estimated_Value.Cursor = Cursors.IBeam;
             Estimated_Value.Location = new Point(439, 81);
             Estimated_Value.Name = "Estimated_Value";
             Estimated_Value.Size = new Size(60, 23);
@@ -469,6 +485,7 @@
             // 
             // Value
             // 
+            Value.Cursor = Cursors.IBeam;
             Value.Location = new Point(182, 81);
             Value.Name = "Value";
             Value.Size = new Size(60, 23);
@@ -491,6 +508,7 @@
             // 
             // Description
             // 
+            Description.Cursor = Cursors.IBeam;
             Description.Location = new Point(182, 19);
             Description.Name = "Description";
             Description.Size = new Size(605, 56);
@@ -560,6 +578,7 @@
             // 
             // Commision
             // 
+            Commision.Cursor = Cursors.IBeam;
             Commision.Location = new Point(422, 80);
             Commision.Name = "Commision";
             Commision.Size = new Size(77, 23);
@@ -593,6 +612,7 @@
             // 
             // SaleAmount
             // 
+            SaleAmount.Cursor = Cursors.IBeam;
             SaleAmount.Location = new Point(681, 80);
             SaleAmount.Name = "SaleAmount";
             SaleAmount.Size = new Size(77, 23);
@@ -615,6 +635,7 @@
             // 
             // SaleDate
             // 
+            SaleDate.Cursor = Cursors.Hand;
             SaleDate.CustomFormat = "dd.MM.yyyy";
             SaleDate.Format = DateTimePickerFormat.Short;
             SaleDate.Location = new Point(681, 51);
@@ -636,6 +657,7 @@
             // 
             // DateOfReturn
             // 
+            DateOfReturn.Cursor = Cursors.Hand;
             DateOfReturn.CustomFormat = "dd.MM.yyyy";
             DateOfReturn.Format = DateTimePickerFormat.Short;
             DateOfReturn.Location = new Point(681, 22);
@@ -668,6 +690,7 @@
             // 
             // BuyAmount
             // 
+            BuyAmount.Cursor = Cursors.IBeam;
             BuyAmount.Location = new Point(422, 109);
             BuyAmount.Name = "BuyAmount";
             BuyAmount.Size = new Size(77, 23);
@@ -690,6 +713,7 @@
             // 
             // LateFee
             // 
+            LateFee.Cursor = Cursors.IBeam;
             LateFee.Location = new Point(422, 51);
             LateFee.Name = "LateFee";
             LateFee.Size = new Size(77, 23);
@@ -734,6 +758,7 @@
             // 
             // Fee
             // 
+            Fee.Cursor = Cursors.IBeam;
             Fee.Location = new Point(422, 22);
             Fee.Name = "Fee";
             Fee.Size = new Size(77, 23);
@@ -767,6 +792,7 @@
             // 
             // Comments
             // 
+            Comments.Cursor = Cursors.Hand;
             Comments.Location = new Point(182, 138);
             Comments.Name = "Comments";
             Comments.Size = new Size(585, 56);
@@ -786,6 +812,7 @@
             // 
             // Percentage
             // 
+            Percentage.Cursor = Cursors.IBeam;
             Percentage.Location = new Point(182, 109);
             Percentage.Name = "Percentage";
             Percentage.Size = new Size(60, 23);
@@ -809,6 +836,7 @@
             // 
             // Days
             // 
+            Days.Cursor = Cursors.IBeam;
             Days.Location = new Point(182, 80);
             Days.Name = "Days";
             Days.Size = new Size(60, 23);
@@ -832,6 +860,7 @@
             // 
             // Pickup_Date
             // 
+            Pickup_Date.Cursor = Cursors.Hand;
             Pickup_Date.CustomFormat = "dd.MM.yyyy";
             Pickup_Date.Format = DateTimePickerFormat.Short;
             Pickup_Date.Location = new Point(182, 51);
@@ -854,6 +883,7 @@
             // 
             // Issue_Date
             // 
+            Issue_Date.Cursor = Cursors.Hand;
             Issue_Date.CustomFormat = "dd.MM.yyyy";
             Issue_Date.Format = DateTimePickerFormat.Short;
             Issue_Date.Location = new Point(182, 22);
@@ -917,6 +947,7 @@
             // FormType
             // 
             FormType.AutoCompleteCustomSource.AddRange(new string[] { "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            FormType.Cursor = Cursors.Hand;
             FormType.DropDownStyle = ComboBoxStyle.DropDownList;
             FormType.FormattingEnabled = true;
             FormType.Items.AddRange(new object[] { "Umowa Kupna-Sprzedaży", "Umowa Komisowa", "Umowa Konsumenckiej Pożyczki Lombardowej", "Umowa Pożyczki z Przechowaniem" });
@@ -930,6 +961,7 @@
             // attachment
             // 
             attachment.AutoSize = true;
+            attachment.Cursor = Cursors.Hand;
             attachment.Location = new Point(424, 597);
             attachment.Name = "attachment";
             attachment.Size = new Size(110, 19);
@@ -943,6 +975,7 @@
             delete.BackColor = Color.Transparent;
             delete.BackgroundImage = Properties.Resources.delete;
             delete.BackgroundImageLayout = ImageLayout.Zoom;
+            delete.Cursor = Cursors.Hand;
             delete.FlatAppearance.BorderSize = 0;
             delete.FlatStyle = FlatStyle.Flat;
             delete.Location = new Point(637, 583);
@@ -951,6 +984,12 @@
             delete.TabIndex = 121;
             delete.UseVisualStyleBackColor = false;
             delete.Click += delete_Click;
+            // 
+            // imageList1
+            // 
+            imageList1.ColorDepth = ColorDepth.Depth32Bit;
+            imageList1.ImageSize = new Size(16, 16);
+            imageList1.TransparentColor = Color.Transparent;
             // 
             // IssueUKS
             // 
@@ -1056,5 +1095,6 @@
         private Button uploadImageButton;
         private Label imageFileName;
         private Button delete;
+        private ImageList imageList1;
     }
 }

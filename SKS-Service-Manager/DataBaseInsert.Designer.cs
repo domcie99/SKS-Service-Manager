@@ -38,6 +38,7 @@
             // 
             // button1
             // 
+            button1.Cursor = Cursors.Hand;
             button1.Location = new Point(12, 12);
             button1.Name = "button1";
             button1.Size = new Size(122, 23);
@@ -48,6 +49,7 @@
             // 
             // button2
             // 
+            button2.Cursor = Cursors.Hand;
             button2.Location = new Point(429, 12);
             button2.Name = "button2";
             button2.Size = new Size(113, 23);

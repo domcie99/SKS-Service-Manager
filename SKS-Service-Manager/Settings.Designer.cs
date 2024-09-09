@@ -242,6 +242,7 @@
             Abort.BackColor = Color.Transparent;
             Abort.BackgroundImage = Properties.Resources.abort;
             Abort.BackgroundImageLayout = ImageLayout.Zoom;
+            Abort.Cursor = Cursors.Hand;
             Abort.FlatAppearance.BorderSize = 0;
             Abort.FlatStyle = FlatStyle.Flat;
             Abort.Location = new Point(695, 234);
@@ -256,6 +257,7 @@
             Save.BackColor = Color.Transparent;
             Save.BackgroundImage = Properties.Resources.save;
             Save.BackgroundImageLayout = ImageLayout.Zoom;
+            Save.Cursor = Cursors.Hand;
             Save.FlatAppearance.BorderSize = 0;
             Save.FlatStyle = FlatStyle.Flat;
             Save.Location = new Point(794, 234);
@@ -386,7 +388,7 @@
             button4.Cursor = Cursors.Hand;
             button4.FlatAppearance.BorderSize = 0;
             button4.FlatStyle = FlatStyle.Flat;
-            button4.Location = new Point(57, 397);
+            button4.Location = new Point(68, 398);
             button4.Name = "button4";
             button4.RightToLeft = RightToLeft.Yes;
             button4.Size = new Size(62, 88);
@@ -424,7 +426,7 @@
             button2.Cursor = Cursors.Hand;
             button2.FlatAppearance.BorderSize = 0;
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(794, 419);
+            button2.Location = new Point(794, 398);
             button2.Name = "button2";
             button2.RightToLeft = RightToLeft.Yes;
             button2.Size = new Size(62, 88);
@@ -495,7 +497,7 @@
             // 
             label16.BackColor = Color.Transparent;
             label16.Font = new Font("Times New Roman", 8.25F);
-            label16.Location = new Point(17, 487);
+            label16.Location = new Point(27, 480);
             label16.Name = "label16";
             label16.Size = new Size(138, 59);
             label16.TabIndex = 34;
@@ -506,7 +508,7 @@
             // 
             label17.BackColor = Color.Transparent;
             label17.Font = new Font("Times New Roman", 8.25F);
-            label17.Location = new Point(180, 489);
+            label17.Location = new Point(182, 480);
             label17.Name = "label17";
             label17.Size = new Size(103, 57);
             label17.TabIndex = 35;
@@ -517,7 +519,7 @@
             // 
             label18.BackColor = Color.Transparent;
             label18.Font = new Font("Times New Roman", 8.25F);
-            label18.Location = new Point(335, 488);
+            label18.Location = new Point(334, 480);
             label18.Name = "label18";
             label18.Size = new Size(92, 59);
             label18.TabIndex = 36;
@@ -528,7 +530,7 @@
             // 
             label19.BackColor = Color.Transparent;
             label19.Font = new Font("Times New Roman", 8.25F);
-            label19.Location = new Point(572, 494);
+            label19.Location = new Point(572, 480);
             label19.Name = "label19";
             label19.Size = new Size(111, 59);
             label19.TabIndex = 38;
@@ -539,7 +541,7 @@
             // 
             label20.BackColor = Color.Transparent;
             label20.Font = new Font("Times New Roman", 8.25F);
-            label20.Location = new Point(757, 494);
+            label20.Location = new Point(757, 479);
             label20.Name = "label20";
             label20.Size = new Size(135, 59);
             label20.TabIndex = 40;
@@ -586,7 +588,7 @@
             // 
             label23.BackColor = Color.Transparent;
             label23.Font = new Font("Times New Roman", 8.25F);
-            label23.Location = new Point(464, 480);
+            label23.Location = new Point(464, 473);
             label23.Name = "label23";
             label23.Size = new Size(102, 73);
             label23.TabIndex = 46;
@@ -686,6 +688,7 @@
             Controls.Add(NIP);
             Controls.Add(label1);
             Controls.Add(company_name);
+            Cursor = Cursors.Default;
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Settings";

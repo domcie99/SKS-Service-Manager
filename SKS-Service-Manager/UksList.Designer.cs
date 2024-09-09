@@ -52,6 +52,7 @@
             delete.BackColor = Color.Transparent;
             delete.BackgroundImage = Properties.Resources.delete;
             delete.BackgroundImageLayout = ImageLayout.Zoom;
+            delete.Cursor = Cursors.Hand;
             delete.FlatAppearance.BorderSize = 0;
             delete.FlatStyle = FlatStyle.Flat;
             delete.Location = new Point(124, 25);
@@ -66,6 +67,7 @@
             Edit.BackColor = Color.Transparent;
             Edit.BackgroundImage = Properties.Resources.edit;
             Edit.BackgroundImageLayout = ImageLayout.Zoom;
+            Edit.Cursor = Cursors.Hand;
             Edit.FlatAppearance.BorderSize = 0;
             Edit.FlatStyle = FlatStyle.Flat;
             Edit.Location = new Point(68, 25);
@@ -80,6 +82,7 @@
             Add.BackColor = Color.Transparent;
             Add.BackgroundImage = Properties.Resources.add;
             Add.BackgroundImageLayout = ImageLayout.Zoom;
+            Add.Cursor = Cursors.Hand;
             Add.FlatAppearance.BorderSize = 0;
             Add.FlatStyle = FlatStyle.Flat;
             Add.Location = new Point(12, 25);
@@ -157,6 +160,7 @@
             // IssuedCity
             // 
             IssuedCity.AutoCompleteCustomSource.AddRange(new string[] { "Dowód Osobisty", "Prawo Jazdy", "Paszport" });
+            IssuedCity.Cursor = Cursors.Hand;
             IssuedCity.DropDownStyle = ComboBoxStyle.DropDownList;
             IssuedCity.FormattingEnabled = true;
             IssuedCity.Location = new Point(590, 64);
@@ -178,6 +182,7 @@
             // FormType
             // 
             FormType.AutoCompleteCustomSource.AddRange(new string[] { "Wszystko", "Umowa Komisowa", "Umowa Kupna-Sprzedaży", "Umowa Pożyczki z Przechowaniem" });
+            FormType.Cursor = Cursors.Hand;
             FormType.DropDownStyle = ComboBoxStyle.DropDownList;
             FormType.FormattingEnabled = true;
             FormType.Items.AddRange(new object[] { "Umowa Kupna-Sprzedaży", "Umowa Komisowa", "Umowa Konsumenckiej Pożyczki Lombardowej", "Umowa Pożyczki z Przechowaniem" });
