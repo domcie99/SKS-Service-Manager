@@ -68,6 +68,8 @@
             Description = new RichTextBox();
             label9 = new Label();
             groupBox3 = new GroupBox();
+            button2 = new Button();
+            button1 = new Button();
             label33 = new Label();
             Commision = new TextBox();
             label34 = new Label();
@@ -529,6 +531,8 @@
             // groupBox3
             // 
             groupBox3.BackColor = Color.Transparent;
+            groupBox3.Controls.Add(button2);
+            groupBox3.Controls.Add(button1);
             groupBox3.Controls.Add(label33);
             groupBox3.Controls.Add(Commision);
             groupBox3.Controls.Add(label34);
@@ -564,6 +568,26 @@
             groupBox3.Size = new Size(787, 216);
             groupBox3.TabIndex = 91;
             groupBox3.TabStop = false;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(652, 51);
+            button2.Name = "button2";
+            button2.Size = new Size(23, 23);
+            button2.TabIndex = 120;
+            button2.Text = "X";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(652, 22);
+            button1.Name = "button1";
+            button1.Size = new Size(23, 23);
+            button1.TabIndex = 119;
+            button1.Text = "X";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // label33
             // 
@@ -643,6 +667,8 @@
             SaleDate.Size = new Size(100, 23);
             SaleDate.TabIndex = 113;
             SaleDate.Value = new DateTime(1753, 1, 1, 0, 0, 0, 0);
+            SaleDate.DropDown += SaleDate_DropDown;
+            SaleDate.MouseDown += SaleDate_MouseDown;
             // 
             // label28
             // 
@@ -665,6 +691,8 @@
             DateOfReturn.Size = new Size(100, 23);
             DateOfReturn.TabIndex = 112;
             DateOfReturn.Value = new DateTime(1753, 1, 1, 0, 0, 0, 0);
+            DateOfReturn.DropDown += DateOfReturn_DropDown;
+            DateOfReturn.MouseDown += DateOfReturn_MouseDown;
             // 
             // label27
             // 
@@ -1096,5 +1124,7 @@
         private Label imageFileName;
         private Button delete;
         private ImageList imageList1;
+        private Button button2;
+        private Button button1;
     }
 }

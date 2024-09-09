@@ -56,6 +56,11 @@ namespace SKS_Service_Manager
             dataBase = mainForm.getDataBase();
             dataBase.CreateInvoicesTableIfNotExists();
 
+            DateOfReturn.CustomFormat = " ";
+            DateOfReturn.Format = DateTimePickerFormat.Custom;
+            SaleDate.CustomFormat = " ";
+            SaleDate.Format = DateTimePickerFormat.Custom;
+
             DocumentType.SelectedIndex = 0;
             FormType.SelectedIndex = 1;
 
@@ -908,7 +913,7 @@ namespace SKS_Service_Manager
             return totalPrice;
         }
 
-        public decimal CalculateInterestByDay(decimal value, int percentage) 
+        public decimal CalculateInterestByDay(decimal value, int percentage)
         {
             decimal decimalPercentage = (decimal)percentage / 100;
             decimal interest = value * decimalPercentage;
@@ -1076,6 +1081,54 @@ namespace SKS_Service_Manager
             else
             {
                 MessageBox.Show("Wpis nie istnieje jeszcze w bazie danych.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void DateOfReturn_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (DateOfReturn.Value == new DateTime(1753, 1, 1))
+            {
+                DateOfReturn.Value = DateTime.Now;
+            }
+
+            DateOfReturn.CustomFormat = "dd.MM.yyyy";
+        }
+
+        private void SaleDate_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (SaleDate.Value == new DateTime(1753, 1, 1))
+            {
+                SaleDate.Value = DateTime.Now;
+            }
+
+            SaleDate.CustomFormat = "dd.MM.yyyy";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DateOfReturn.Value = new DateTime(1753, 1, 1);
+            DateOfReturn.CustomFormat = " ";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SaleDate.Value = new DateTime(1753, 1, 1);
+            SaleDate.CustomFormat = " ";
+        }
+
+        private void DateOfReturn_DropDown(object sender, EventArgs e)
+        {
+            if (DateOfReturn.Value == new DateTime(1753, 1, 1))
+            {
+                Task.Delay(200).ContinueWith(_ => this.Invoke(new Action(() => SendKeys.Send("%{DOWN}"))));
+            }
+        }
+
+        private void SaleDate_DropDown(object sender, EventArgs e)
+        {
+            if (SaleDate.Value == new DateTime(1753, 1, 1))
+            {
+                Task.Delay(200).ContinueWith(_ => this.Invoke(new Action(() => SendKeys.Send("%{DOWN}"))));
             }
         }
     }
