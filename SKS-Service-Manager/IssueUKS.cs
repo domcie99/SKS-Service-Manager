@@ -501,7 +501,7 @@ namespace SKS_Service_Manager
             string reportTitle = "Ewidencja ";
             if (onlyRealized)
             {
-                reportTitle += "zrealizowanych";
+                reportTitle += "zrealizowanych ";
             }
 
             if (documentType == "Umowa Kupna-Sprzedaży")
