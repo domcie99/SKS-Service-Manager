@@ -60,7 +60,6 @@ namespace SKS_Service_Manager
 
         private void print_Click(object sender, EventArgs e)
         {
-
             print.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
             OverlayForm overlay = new OverlayForm();
@@ -68,7 +67,6 @@ namespace SKS_Service_Manager
 
             string issuedCity = IssuedCity.Text.ToString();
             string documentType = DocumentType.Text.ToString();
-
             DateTime fromDate = FromDate.Value.Date;
             DateTime toDate = ToDate.Value.Date;
 
@@ -79,10 +77,34 @@ namespace SKS_Service_Manager
                 return;
             }
 
-            inputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + fromDate.ToShortDateString().ToString() + "-" + toDate.ToShortDateString().ToString() + ".docx";
+            inputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + fromDate.ToShortDateString() + "-" + toDate.ToShortDateString() + ".docx";
             outputRaportPath = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\Wystawione";
-            outputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\Wystawione\\ewidencja_" + fromDate.ToShortDateString().ToString() + "-" + toDate.ToShortDateString().ToString() + ".pdf";
+            outputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\Wystawione\\ewidencja_" + fromDate.ToShortDateString() + "-" + toDate.ToShortDateString() + ".pdf";
+
             DataTable dt = dataBase.uksLoadDataByDateRange(fromDate, toDate, issuedCity, documentType);
+
+            bool onlyRealized = cbOnlyRealized.Checked;
+
+            if (onlyRealized)
+            {
+                var realizedRecords = dt.AsEnumerable()
+                    .Where(row =>
+                    {
+                        DateTime saleDate, returnDate;
+
+                        bool saleDateParsed = DateTime.TryParse(row.Field<string>("Data sprzedaży"), out saleDate);
+                        bool saleDateValid = saleDateParsed && saleDate.Year >= 1800;
+
+                        bool returnDateParsed = DateTime.TryParse(row.Field<string>("Data zwrotu"), out returnDate);
+                        bool returnDateValid = returnDateParsed && returnDate.Year >= 1800;
+
+                        return saleDateValid || returnDateValid;
+                    })
+                    .CopyToDataTable();
+
+                dt = realizedRecords;
+            }
+
 
             try
             {
@@ -109,6 +131,7 @@ namespace SKS_Service_Manager
                 }
             }
         }
+
 
         private void FromDate_ValueChanged(object sender, EventArgs e)
         {

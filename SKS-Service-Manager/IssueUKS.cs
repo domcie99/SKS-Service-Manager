@@ -169,6 +169,27 @@ namespace SKS_Service_Manager
                 if (decimal.TryParse(textBox.Text, out value))
                 {
                     textBox.Text = value.ToString("0.00");
+                }
+                else
+                {
+                    MessageBox.Show("Nieprawidłowa wartość.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBox.Text = "0,00";
+                }
+            }
+        }
+
+        private void Value_ValidationAndCalculate(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            decimal value = 0;
+
+            if (!string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                textBox.Text = textBox.Text.Replace(".", ",");
+
+                if (decimal.TryParse(textBox.Text, out value))
+                {
+                    textBox.Text = value.ToString("0.00");
                     Interest_ValueChanged(sender, e);
                 }
                 else
@@ -1005,7 +1026,7 @@ namespace SKS_Service_Manager
         {
             TextBox textBox = (TextBox)sender;
 
-            int newValue = int.Parse(textBox.Text.ToString());
+            int newValue = !string.IsNullOrEmpty(Percentage.Text) ? int.Parse(Percentage.Text) : 0;
             // Sprawdź, czy wartość mieści się w zakresie od 0 do 100
             if (newValue < 0)
             {
@@ -1145,9 +1166,10 @@ namespace SKS_Service_Manager
 
         private void Interest_ValueChanged(object sender, EventArgs e)
         {
-            decimal value = decimal.Parse(Value.Text);
-            int days = int.Parse(Days.Text.ToString());
-            int perc = int.Parse(Percentage.Text);
+            decimal value = !string.IsNullOrEmpty(Value.Text) ? decimal.Parse(Value.Text) : 0;
+            int days = !string.IsNullOrEmpty(Days.Text) ? int.Parse(Days.Text) : 0;
+            int perc = !string.IsNullOrEmpty(Percentage.Text) ? int.Parse(Percentage.Text) : 0;
+
 
             if (value < 0) { value = 0; }
             if (days < 0) { days = 0; }
@@ -1168,7 +1190,9 @@ namespace SKS_Service_Manager
 
         private void Days_TextChanged(object sender, EventArgs e)
         {
-            settingsForm.SetDays(int.Parse(Days.Text.ToString()));
+            int days = !string.IsNullOrEmpty(Days.Text) ? int.Parse(Days.Text) : 0;
+            Days.Text = days.ToString();
+            settingsForm.SetDays(days);
         }
 
         private void uploadImageButton_Click(object sender, EventArgs e)

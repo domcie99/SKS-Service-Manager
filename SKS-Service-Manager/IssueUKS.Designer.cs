@@ -461,7 +461,7 @@
             Estimated_Value.Text = "0,00";
             Estimated_Value.TextAlign = HorizontalAlignment.Right;
             Estimated_Value.KeyPress += Value_KeyPress;
-            Estimated_Value.Leave += Value_Validation;
+            Estimated_Value.Leave += Value_ValidationAndCalculate;
             // 
             // label36
             // 
@@ -495,7 +495,7 @@
             Value.Text = "0,00";
             Value.TextAlign = HorizontalAlignment.Right;
             Value.KeyPress += Value_KeyPress;
-            Value.Leave += Value_Validate;
+            Value.Leave += Value_ValidationAndCalculate;
             // 
             // label10
             // 
@@ -610,7 +610,7 @@
             Commision.Text = "0,00";
             Commision.TextAlign = HorizontalAlignment.Right;
             Commision.KeyPress += Value_KeyPress;
-            Commision.Leave += Value_Validation;
+            Commision.Leave += Value_ValidationAndCalculate;
             // 
             // label34
             // 
@@ -749,7 +749,7 @@
             LateFee.Text = "0,00";
             LateFee.TextAlign = HorizontalAlignment.Right;
             LateFee.KeyPress += Value_KeyPress;
-            LateFee.Leave += Value_Validation;
+            LateFee.Leave += Value_ValidationAndCalculate;
             // 
             // label24
             // 
@@ -794,7 +794,7 @@
             Fee.Text = "0,00";
             Fee.TextAlign = HorizontalAlignment.Right;
             Fee.KeyPress += Value_KeyPress;
-            Fee.Leave += Value_Validation;
+            Fee.Leave += Value_ValidationAndCalculate;
             // 
             // label22
             // 
@@ -849,7 +849,7 @@
             Percentage.TextAlign = HorizontalAlignment.Right;
             Percentage.TextChanged += Interest_ValueChanged;
             Percentage.KeyPress += IsInt_KeyPress;
-            Percentage.Leave += Percentage_Leave;
+            Percentage.Leave += PercentageChanged;
             // 
             // label17
             // 

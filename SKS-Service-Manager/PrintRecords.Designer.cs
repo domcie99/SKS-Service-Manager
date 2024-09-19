@@ -44,6 +44,7 @@
             minusButton = new Button();
             currentMonthButton = new Button();
             plusButton = new Button();
+            cbOnlyRealized = new CheckBox();
             SuspendLayout();
             // 
             // print
@@ -216,12 +217,27 @@
             plusButton.UseVisualStyleBackColor = true;
             plusButton.Click += plusButton_Click;
             // 
+            // cbOnlyRealized
+            // 
+            cbOnlyRealized.AutoSize = true;
+            cbOnlyRealized.BackColor = Color.Transparent;
+            cbOnlyRealized.Checked = true;
+            cbOnlyRealized.CheckState = CheckState.Checked;
+            cbOnlyRealized.Font = new Font("Segoe UI", 12F);
+            cbOnlyRealized.Location = new Point(149, 223);
+            cbOnlyRealized.Name = "cbOnlyRealized";
+            cbOnlyRealized.Size = new Size(208, 25);
+            cbOnlyRealized.TabIndex = 134;
+            cbOnlyRealized.Text = "Drukuj tylko zrealizowane";
+            cbOnlyRealized.UseVisualStyleBackColor = false;
+            // 
             // PrintRecords
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
             ClientSize = new Size(443, 277);
+            Controls.Add(cbOnlyRealized);
             Controls.Add(plusButton);
             Controls.Add(currentMonthButton);
             Controls.Add(minusButton);
@@ -240,6 +256,7 @@
             Name = "PrintRecords";
             Text = "Ewidencja Kupna Sprzedaży";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -260,5 +277,6 @@
         private Button minusButton;
         private Button currentMonthButton;
         private Button plusButton;
+        private CheckBox cbOnlyRealized;
     }
 }
