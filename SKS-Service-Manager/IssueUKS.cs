@@ -496,9 +496,14 @@ namespace SKS_Service_Manager
             }
         }
 
-        private string raportTitle(string documentType) 
+        private string raportTitle(string documentType, bool onlyRealized) 
         {
             string reportTitle = "Ewidencja ";
+            if (onlyRealized)
+            {
+                reportTitle += "zrealizowanych";
+            }
+
             if (documentType == "Umowa Kupna-Sprzedaży")
             {
                 reportTitle += "umów kupna sprzedaży";
@@ -522,7 +527,7 @@ namespace SKS_Service_Manager
             return reportTitle;
         }
 
-        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate, string documentType)
+        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate, string documentType, bool onlyRealized)
         {
             // Skopiowanie istniejącego dokumentu jako wzorca
             File.Copy(ewidPath, outputDocxFile, true);
@@ -540,7 +545,7 @@ namespace SKS_Service_Manager
                 Body body = mainPart.Document.Body;
 
                 // Zdefiniuj tytuł w zależności od wybranego typu umowy
-                string reportTitle = raportTitle(documentType);
+                string reportTitle = raportTitle(documentType, onlyRealized);
 
                 // Znajdź i zaktualizuj tekst nagłówka
                 var headerText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-title]"));
