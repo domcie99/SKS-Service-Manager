@@ -610,7 +610,7 @@
             Commision.Text = "0,00";
             Commision.TextAlign = HorizontalAlignment.Right;
             Commision.KeyPress += Value_KeyPress;
-            Commision.Leave += Value_ValidationAndCalculate;
+            Commision.Leave += Value_Validation;
             // 
             // label34
             // 
@@ -749,7 +749,7 @@
             LateFee.Text = "0,00";
             LateFee.TextAlign = HorizontalAlignment.Right;
             LateFee.KeyPress += Value_KeyPress;
-            LateFee.Leave += Value_ValidationAndCalculate;
+            LateFee.Leave += Value_Validation;
             // 
             // label24
             // 
@@ -794,7 +794,7 @@
             Fee.Text = "0,00";
             Fee.TextAlign = HorizontalAlignment.Right;
             Fee.KeyPress += Value_KeyPress;
-            Fee.Leave += Value_ValidationAndCalculate;
+            Fee.Leave += Value_Validation;
             // 
             // label22
             // 

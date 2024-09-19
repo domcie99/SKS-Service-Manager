@@ -222,7 +222,7 @@ namespace SKS_Service_Manager
         private void ReplaceAll(Body body, MainDocumentPart mainPart)
         {
             decimal value = decimal.Parse(Value.Text);
-            decimal total = CalculateTotalPrice(value, int.Parse(Days.Text), int.Parse(Percentage.Text));
+            decimal total = decimal.Parse(BuyAmount.Text);
             int days = int.Parse(Days.Text.ToString());
 
             ReplaceText(body, "#[firma-nazwa]", settingsForm.GetCompanyName());
@@ -263,7 +263,8 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-wartosc-prowizja]", Commision.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa]", Estimated_Value.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa-slownie]", GetValueAsText(decimal.Parse(Estimated_Value.Text)));
-            ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (totalIntrest + decimal.Parse(Commision.Text)).ToString("F2"));
+            
+            ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (value + decimal.Parse(Fee.Text) + decimal.Parse(LateFee.Text) + decimal.Parse(Commision.Text)).ToString("F2"));
 
             ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
 
