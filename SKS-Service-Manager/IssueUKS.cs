@@ -178,6 +178,29 @@ namespace SKS_Service_Manager
             }
         }
 
+        private void Value_ValidationIntrest(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            decimal value = 0;
+
+            if (!string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                textBox.Text = textBox.Text.Replace(".", ",");
+
+                if (decimal.TryParse(textBox.Text, out value))
+                {
+                    textBox.Text = value.ToString("0.00");
+                    BuyAmount.Text = (decimal.Parse(Value.Text) + decimal.Parse(Fee.Text) + decimal.Parse(LateFee.Text) + decimal.Parse(Commision.Text)).ToString("F2");
+                    
+                }
+                else
+                {
+                    MessageBox.Show("Nieprawidłowa wartość.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBox.Text = "0,00";
+                }
+            }
+        }
+
         private void Value_ValidationAndCalculate(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
@@ -264,7 +287,7 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa]", Estimated_Value.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa-slownie]", GetValueAsText(decimal.Parse(Estimated_Value.Text)));
             
-            ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (value + decimal.Parse(Fee.Text) + decimal.Parse(LateFee.Text) + decimal.Parse(Commision.Text)).ToString("F2"));
+            ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (decimal.Parse(Fee.Text) + decimal.Parse(LateFee.Text) + decimal.Parse(Commision.Text)).ToString("F2"));
 
             ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
 
