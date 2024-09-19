@@ -757,7 +757,7 @@
             label24.Font = new Font("Segoe UI", 12F);
             label24.Location = new Point(288, 109);
             label24.Name = "label24";
-            label24.Size = new Size(123, 23);
+            label24.Size = new Size(137, 23);
             label24.TabIndex = 102;
             label24.Text = "Kwota Wykupu";
             label24.TextAlign = ContentAlignment.MiddleLeft;

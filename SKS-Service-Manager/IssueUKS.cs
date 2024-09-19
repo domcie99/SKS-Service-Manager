@@ -283,6 +283,9 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-wartosc-odestki]", totalIntrest.ToString("F2"));
             ReplaceText(body, "#[przedmiot-wartosc-calkowita]", total.ToString("F2"));
             ReplaceText(body, "#[przedmiot-wartosc-calkowita-slownie]", GetValueAsText(value));
+
+            ReplaceText(body, "#[przedmiot-wartosc-calkowita-obliczona]", (value + decimal.Parse(Fee.Text) + decimal.Parse(LateFee.Text) + decimal.Parse(Commision.Text)).ToString("F2"));
+
             ReplaceText(body, "#[przedmiot-wartosc-prowizja]", Commision.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa]", Estimated_Value.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa-slownie]", GetValueAsText(decimal.Parse(Estimated_Value.Text)));

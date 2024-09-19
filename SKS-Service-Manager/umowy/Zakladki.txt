@@ -30,6 +30,7 @@
 #[przedmiot-wartosc-prowizja]
 #[przedmiot-wartosc-koszt-pozyczki]
 #[przedmiot-wartosc-calkowita]
+#[przedmiot-wartosc-calkowita-obliczona]
 #[przedmiot-wartosc-szacunkowa]
 #[przedmiot-wartosc-szacunkowa-slownie]
 #[przedmiot-wartosc-calkowita-slownie]
