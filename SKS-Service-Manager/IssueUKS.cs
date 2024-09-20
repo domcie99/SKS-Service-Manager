@@ -298,6 +298,7 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-data-odbioru+7]", Pickup_Date.Value.AddDays(7).ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[przedmiot-data-odbioru+23]", Pickup_Date.Value.AddDays(23).ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+37]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
 
             ReplaceText(body, "#[przedmiot-ilosc-dni]", Days.Text);
             ReplaceText(body, "#[przedmiot-procent]", Percentage.Text);
