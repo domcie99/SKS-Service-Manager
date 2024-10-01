@@ -52,25 +52,33 @@ namespace SKS_Service_Manager
         {
             try
             {
-                WebClient webClient = new WebClient();
-                latestVersion = webClient.DownloadString(versionUrl).Trim();
-
-                if (latestVersion != localVersion)
+                using (WebClient webClient = new WebClient())
                 {
-                    DialogResult result = MessageBox.Show($"Nowa aktualizacja ({latestVersion}) jest dostêpna, czy chcesz j¹ pobraæ teraz?", "Aktualizacja", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    // Dodaj losowy parametr do URL, aby unikn¹æ cache'owania
+                    string versionUrlWithNoCache = $"{versionUrl}?nocache={Guid.NewGuid()}";
 
-                    if (result == DialogResult.Yes)
+                    // Pobierz najnowsz¹ wersjê z serwera
+                    latestVersion = await webClient.DownloadStringTaskAsync(versionUrlWithNoCache).ConfigureAwait(false);
+                    latestVersion = latestVersion.Trim();
+
+                    if (latestVersion != localVersion)
                     {
-                        DownloadAndInstallUpdate(latestVersion);
+                        DialogResult result = MessageBox.Show($"Nowa aktualizacja ({latestVersion}) jest dostêpna, czy chcesz j¹ pobraæ teraz?",
+                                                              "Aktualizacja", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            DownloadAndInstallUpdate(latestVersion);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Obs³uga b³êdów
-                MessageBox.Show($"B³¹d sprawdzania aktualizacji:" + ex, "Aktualizacja", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                MessageBox.Show($"B³¹d sprawdzania aktualizacji: {ex.Message}", "Aktualizacja", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private async void DownloadAndInstallUpdate(string latestVersion)
         {
