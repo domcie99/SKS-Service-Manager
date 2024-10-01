@@ -28,6 +28,10 @@
 #[przedmiot-wartosc-slownie]
 #[przedmiot-wartosc-odestki]
 #[przedmiot-wartosc-prowizja]
+
+#[przedmiot-wartosc-i-prowizja]
+#[przedmiot-wartosc-i-prowizja-slownie]
+
 #[przedmiot-wartosc-koszt-pozyczki]
 #[przedmiot-wartosc-calkowita]
 #[przedmiot-wartosc-calkowita-obliczona]
