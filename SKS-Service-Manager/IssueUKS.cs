@@ -287,6 +287,10 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-wartosc-calkowita-obliczona]", (value + decimal.Parse(Fee.Text) + decimal.Parse(LateFee.Text) + decimal.Parse(Commision.Text)).ToString("F2"));
 
             ReplaceText(body, "#[przedmiot-wartosc-prowizja]", Commision.Text);
+
+            ReplaceText(body, "#[przedmiot-wartosc-i-prowizja]", (value + decimal.Parse(Commision.Text)).ToString("F2"));
+            ReplaceText(body, "#[przedmiot-wartosc-i-prowizja-slownie]", GetValueAsText((value + decimal.Parse(Commision.Text))));
+
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa]", Estimated_Value.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa-slownie]", GetValueAsText(decimal.Parse(Estimated_Value.Text)));
             
@@ -1118,11 +1122,7 @@ namespace SKS_Service_Manager
 
             if (FormType.Text == "Umowa Konsumenckiej Pożyczki Lombardowej")
             {
-                if (days > 7)
-                {
-                    days = days - 7;
-                }
-                else
+                if (days < 8)
                 {
                     days = 0;
                 }
@@ -1210,6 +1210,7 @@ namespace SKS_Service_Manager
 
 
             totalBuyOut = CalculateTotalPrice(value, days, perc);
+
             Fee.Text = totalIntrest.ToString("F2");
             BuyAmount.Text = totalBuyOut.ToString("F2");
             Commision.Text = (value * 0.10m).ToString("F2");

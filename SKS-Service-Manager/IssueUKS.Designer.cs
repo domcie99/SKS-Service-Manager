@@ -593,7 +593,7 @@
             // 
             label33.BackColor = Color.Transparent;
             label33.Font = new Font("Segoe UI", 12F);
-            label33.Location = new Point(500, 80);
+            label33.Location = new Point(500, 19);
             label33.Name = "label33";
             label33.Size = new Size(22, 23);
             label33.TabIndex = 117;
@@ -603,7 +603,7 @@
             // Commision
             // 
             Commision.Cursor = Cursors.IBeam;
-            Commision.Location = new Point(422, 80);
+            Commision.Location = new Point(422, 19);
             Commision.Name = "Commision";
             Commision.Size = new Size(77, 23);
             Commision.TabIndex = 118;
@@ -616,7 +616,7 @@
             // 
             label34.BackColor = Color.Transparent;
             label34.Font = new Font("Segoe UI", 12F);
-            label34.Location = new Point(288, 80);
+            label34.Location = new Point(288, 19);
             label34.Name = "label34";
             label34.Size = new Size(123, 23);
             label34.TabIndex = 116;
@@ -732,7 +732,7 @@
             // 
             label25.BackColor = Color.Transparent;
             label25.Font = new Font("Segoe UI", 12F);
-            label25.Location = new Point(500, 51);
+            label25.Location = new Point(500, 80);
             label25.Name = "label25";
             label25.Size = new Size(22, 23);
             label25.TabIndex = 104;
@@ -742,7 +742,7 @@
             // LateFee
             // 
             LateFee.Cursor = Cursors.IBeam;
-            LateFee.Location = new Point(422, 51);
+            LateFee.Location = new Point(422, 80);
             LateFee.Name = "LateFee";
             LateFee.Size = new Size(77, 23);
             LateFee.TabIndex = 110;
@@ -766,7 +766,7 @@
             // 
             label23.BackColor = Color.Transparent;
             label23.Font = new Font("Segoe UI", 12F);
-            label23.Location = new Point(288, 51);
+            label23.Location = new Point(288, 80);
             label23.Name = "label23";
             label23.Size = new Size(123, 23);
             label23.TabIndex = 101;
@@ -777,7 +777,7 @@
             // 
             label21.BackColor = Color.Transparent;
             label21.Font = new Font("Segoe UI", 12F);
-            label21.Location = new Point(500, 22);
+            label21.Location = new Point(500, 51);
             label21.Name = "label21";
             label21.Size = new Size(22, 23);
             label21.TabIndex = 100;
@@ -787,7 +787,7 @@
             // Fee
             // 
             Fee.Cursor = Cursors.IBeam;
-            Fee.Location = new Point(422, 22);
+            Fee.Location = new Point(422, 51);
             Fee.Name = "Fee";
             Fee.Size = new Size(77, 23);
             Fee.TabIndex = 109;
@@ -800,7 +800,7 @@
             // 
             label22.BackColor = Color.Transparent;
             label22.Font = new Font("Segoe UI", 12F);
-            label22.Location = new Point(288, 22);
+            label22.Location = new Point(288, 51);
             label22.Name = "label22";
             label22.Size = new Size(94, 23);
             label22.TabIndex = 98;

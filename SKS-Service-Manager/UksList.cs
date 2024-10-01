@@ -40,16 +40,7 @@ namespace SKS_Service_Manager
 
             recordCount.Text = maxRows.ToString();
 
-            int mainCity = IssuedCity.Items.IndexOf(settingsForm.GetCity());
-
-            if (mainCity >= 0)
-            {
-                IssuedCity.SelectedIndex = mainCity;
-            }
-            else
-            {
-                IssuedCity.SelectedIndex = 0;
-            }
+            SetDefaultCity();
 
             dataBase.CreateInvoicesTableIfNotExists();
 
@@ -57,6 +48,30 @@ namespace SKS_Service_Manager
 
             dataGridView1.Columns[4].Width = 200;
             dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+        }
+
+        private void SetDefaultCity()
+        {
+            int mainCity = -1;
+            string defaultCity = settingsForm.GetCity();
+
+            for (int i = 0; i < IssuedCity.Items.Count; i++)
+            {
+                if (string.Equals(IssuedCity.Items[i].ToString(), defaultCity, StringComparison.OrdinalIgnoreCase))
+                {
+                    mainCity = i;
+                    break;
+                }
+            }
+
+            if (mainCity >= 0)
+            {
+                IssuedCity.SelectedIndex = mainCity;
+            }
+            else
+            {
+                IssuedCity.SelectedIndex = 0; 
+            }
         }
 
         public void LoadData()
@@ -85,7 +100,6 @@ namespace SKS_Service_Manager
                     filters.Add("DocumentType", selectedFormType);
                 }
 
-                // Rzeczywiste nazwy kolumn, które mają być przeszukiwane
                 string[] searchableColumns =
                 {
                     "UKS.City",
@@ -116,6 +130,7 @@ namespace SKS_Service_Manager
                 }
             }
         }
+
 
 
         public void SearchUserValueChange(object sender, EventArgs e)

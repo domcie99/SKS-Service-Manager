@@ -86,6 +86,8 @@ namespace SKS_Service_Manager
                 string updateUrlFormatted = string.Format(updateUrl, latestVersion);
                 string msiPath = Path.Combine(Path.GetTempPath(), "SKS-Service-Manager.msi");
 
+                if (File.Exists(msiPath)) { File.Delete(msiPath); }
+
                 client.DownloadProgressChanged += Client_DownloadProgressChanged; // Dodajemy obs³ugê zdarzenia postêpu pobierania
 
                 await client.DownloadFileTaskAsync(new Uri(updateUrlFormatted), msiPath);
