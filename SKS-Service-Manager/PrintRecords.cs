@@ -56,6 +56,7 @@ namespace SKS_Service_Manager
             }
 
             DocumentType.SelectedIndex = 0;
+            realized.SelectedIndex = 0;
         }
 
         private void print_Click(object sender, EventArgs e)
@@ -77,15 +78,29 @@ namespace SKS_Service_Manager
                 return;
             }
 
+            // Sprawdź, czy szukamy po datach realizacji
+            bool byRealizedDate = cbByRealizedDate.Checked;
+
             inputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\backup\\ewidencja_" + fromDate.ToShortDateString() + "-" + toDate.ToShortDateString() + ".docx";
             outputRaportPath = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\Wystawione";
             outputRaportFile = AppDomain.CurrentDomain.BaseDirectory + "\\umowy\\Wystawione\\ewidencja_" + fromDate.ToShortDateString() + "-" + toDate.ToShortDateString() + ".pdf";
 
-            DataTable dt = dataBase.uksLoadDataByDateRange(fromDate, toDate, issuedCity, documentType);
+            DataTable dt = dataBase.uksLoadDataByDateRange(fromDate, toDate, issuedCity, documentType, byRealizedDate);
 
-            bool onlyRealized = cbOnlyRealized.Checked;
+            // Sprawdź, czy tabela wynikowa jest pusta
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                overlay.Close();
+                this.Cursor = Cursors.Default;
+                print.Enabled = true;
+                MessageBox.Show("Nie znaleziono żadnych danych dla wybranego zakresu dat.", "Brak danych", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
-            if (onlyRealized)
+            // Zmienna przechowująca wybraną opcję
+            string selectedRealizedOption = realized.SelectedItem.ToString();
+
+            if (selectedRealizedOption == "Zrealizowane")
             {
                 var realizedRecords = dt.AsEnumerable()
                     .Where(row =>
@@ -99,16 +114,53 @@ namespace SKS_Service_Manager
                         bool returnDateValid = returnDateParsed && returnDate.Year >= 1800;
 
                         return saleDateValid || returnDateValid;
-                    })
-                    .CopyToDataTable();
+                    });
 
-                dt = realizedRecords;
+                // Sprawdzenie, czy są jakiekolwiek zrealizowane rekordy
+                if (!realizedRecords.Any())
+                {
+                    overlay.Close();
+                    this.Cursor = Cursors.Default;
+                    print.Enabled = true;
+                    MessageBox.Show("Nie znaleziono żadnych zrealizowanych umów dla wybranego zakresu dat.", "Brak danych", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                dt = realizedRecords.CopyToDataTable();
             }
+            else if (selectedRealizedOption == "Niezrealizowane")
+            {
+                var unrealizedRecords = dt.AsEnumerable()
+                    .Where(row =>
+                    {
+                        DateTime saleDate, returnDate;
 
+                        bool saleDateParsed = DateTime.TryParse(row.Field<string>("Data sprzedaży"), out saleDate);
+                        bool saleDateValid = saleDateParsed && saleDate.Year < 1800; // Niezrealizowane mają datę sprzedaży przed rokiem 1800
+
+                        bool returnDateParsed = DateTime.TryParse(row.Field<string>("Data zwrotu"), out returnDate);
+                        bool returnDateValid = returnDateParsed && returnDate.Year < 1800; // Niezrealizowane mają datę zwrotu przed rokiem 1800
+
+                        return saleDateValid && returnDateValid; // Obie daty muszą być niepoprawne
+                    });
+
+                // Sprawdzenie, czy są jakiekolwiek niezrealizowane rekordy
+                if (!unrealizedRecords.Any())
+                {
+                    overlay.Close();
+                    this.Cursor = Cursors.Default;
+                    print.Enabled = true;
+                    MessageBox.Show("Nie znaleziono żadnych niezrealizowanych umów dla wybranego zakresu dat.", "Brak danych", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                dt = unrealizedRecords.CopyToDataTable();
+            }
 
             try
             {
-                issueUKS.CreateDocxFromData(dt, inputRaportFile, fromDate, toDate, documentType, onlyRealized);
+                // Zaktualizowana linia z przekazywaniem realizedType
+                issueUKS.CreateDocxFromData(dt, inputRaportFile, fromDate, toDate, documentType, selectedRealizedOption);
                 issueUKS.ConvertDocxToPdf(inputRaportFile, outputRaportPath);
             }
             catch (Exception ex)
@@ -131,6 +183,7 @@ namespace SKS_Service_Manager
                 }
             }
         }
+
 
 
         private void FromDate_ValueChanged(object sender, EventArgs e)

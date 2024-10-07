@@ -39,6 +39,8 @@ namespace SKS_Service_Manager
         private string attachmentPdfPath;
         private string imageFilePath;
 
+        private string issuedCity;
+
         private string word2Pdf = AppDomain.CurrentDomain.BaseDirectory + "convert\\word2pdf.exe";
 
         public IssueUKS(int Id, Form1 form1)
@@ -78,6 +80,9 @@ namespace SKS_Service_Manager
 
             Percentage.Text = settingsForm.GetPercentage().ToString();
             Days.Text = settingsForm.GetDays().ToString();
+
+            issuedCity = FormatCityName(settingsForm.GetCity());
+
 
             if (issueId > 0)
             {
@@ -252,7 +257,7 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[firma-imie-nazwisko]", settingsForm.GetName() + " " + settingsForm.GetSurname());
             ReplaceText(body, "#[firma-adres]", settingsForm.GetStreetNumber());
             ReplaceText(body, "#[firma-kod]", settingsForm.GetPostCode());
-            ReplaceText(body, "#[firma-miasto]", settingsForm.GetCity());
+            ReplaceText(body, "#[firma-miasto]", issuedCity);
             ReplaceText(body, "#[firma-telefon]", settingsForm.GetPhone());
             ReplaceText(body, "#[firma-nip]", settingsForm.GetNIP());
             ReplaceText(body, "#[firma-krs]", settingsForm.GetKRS());
@@ -528,38 +533,43 @@ namespace SKS_Service_Manager
             }
         }
 
-        private string raportTitle(string documentType, bool onlyRealized) 
+        private string raportTitle(string documentType, string realizedType)
         {
             string reportTitle = "Ewidencja ";
-            if (onlyRealized)
+
+            switch (realizedType)
             {
-                reportTitle += "zrealizowanych ";
+                case "Zrealizowane":
+                    reportTitle += "zrealizowanych ";
+                    break;
+                case "Niezrealizowane":
+                    reportTitle += "niezrealizowanych ";
+                    break;
+                    // W przypadku "Wszystkie" nie dodajemy nic
             }
 
-            if (documentType == "Umowa Kupna-Sprzedaży")
+            switch (documentType)
             {
-                reportTitle += "umów kupna sprzedaży";
-            }
-            else if (documentType == "Umowa Komisowa")
-            {
-                reportTitle += "umów komisowych";
-            }
-            else if (documentType == "Umowa Konsumenckiej Pożyczki Lombardowej")
-            {
-                reportTitle += "umów konsumenckiej pożyczki lombardowej";
-            }
-            else if (documentType == "Umowa Pożyczki z Przechowaniem")
-            {
-                reportTitle += "umów pożyczki z przechowaniem";
-            }
-            else
-            {
-                reportTitle += "wszystkich umów";
+                case "Umowa Kupna-Sprzedaży":
+                    reportTitle += "umów kupna sprzedaży";
+                    break;
+                case "Umowa Komisowa":
+                    reportTitle += "umów komisowych";
+                    break;
+                case "Umowa Konsumenckiej Pożyczki Lombardowej":
+                    reportTitle += "umów konsumenckiej pożyczki lombardowej";
+                    break;
+                case "Umowa Pożyczki z Przechowaniem":
+                    reportTitle += "umów pożyczki z przechowaniem";
+                    break;
+                default:
+                    reportTitle += "wszystkich umów";
+                    break;
             }
             return reportTitle;
         }
 
-        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate, string documentType, bool onlyRealized)
+        public void CreateDocxFromData(DataTable data, string outputDocxFile, DateTime fromDate, DateTime toDate, string documentType, string realizedType)
         {
             // Skopiowanie istniejącego dokumentu jako wzorca
             File.Copy(ewidPath, outputDocxFile, true);
@@ -577,7 +587,7 @@ namespace SKS_Service_Manager
                 Body body = mainPart.Document.Body;
 
                 // Zdefiniuj tytuł w zależności od wybranego typu umowy
-                string reportTitle = raportTitle(documentType, onlyRealized);
+                string reportTitle = raportTitle(documentType, realizedType); // Przekazanie realizedType
 
                 // Znajdź i zaktualizuj tekst nagłówka
                 var headerText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-title]"));
@@ -631,7 +641,7 @@ namespace SKS_Service_Manager
                             FontSize fontSize = new FontSize() { Val = "14" };
                             runProperties.Append(fontSize);
 
-                            // Połączone wartości "Data zwrotu" i "Wartość sprzedaży minus zużycie"
+                            // Połączone wartości "Data zwrotu" i "Kwota zwrotu"
                             if (i == 5) // Data zwrotu
                             {
                                 string dateValue = row[i].ToString();
@@ -783,11 +793,8 @@ namespace SKS_Service_Manager
 
                     tableText.Text = tableText.Text.Replace("#[ewidencja-tabela]", "");
                 }
-
-                mainPart.Document.Save();
             }
         }
-
 
         private TableCell CreateSummaryCell(string text, bool applyShading = false)
         {
@@ -875,7 +882,7 @@ namespace SKS_Service_Manager
 
                 DataRow newRow = invoiceData.NewRow();
                 newRow["UserID"] = userId;
-                newRow["City"] = settingsForm.GetCity();
+                newRow["City"] = issuedCity;
                 newRow["DocumentType"] = FormType.Text.ToString();
                 newRow["Description"] = Description.Text;
                 newRow["TotalAmount"] = decimal.Parse(Value.Text);
@@ -1010,7 +1017,8 @@ namespace SKS_Service_Manager
                 SaleDate.Value = Convert.ToDateTime(row["SaleDate"]);
                 SaleAmount.Text = row["SaleAmount"].ToString();
                 Commision.Text = row["Commision"].ToString();
-                Estimated_Value.Text = row["EstimatedValue"].ToString(); // Dodano EstimatedValue
+                Estimated_Value.Text = row["EstimatedValue"].ToString();
+                issuedCity = FormatCityName(row["City"].ToString());
 
                 LoadUserData(issueUserId);
             }
@@ -1020,9 +1028,26 @@ namespace SKS_Service_Manager
             }
         }
 
+        public string FormatCityName(string city)
+        {
+            if (string.IsNullOrEmpty(city))
+                return city;
+
+            var words = city.Split(new[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < words.Length; i++)
+            {
+                string word = words[i].ToLower();
+                words[i] = char.ToUpper(word[0]) + word.Substring(1);
+            }
+
+            return string.Join(" ", words).Replace(" -", "-").Replace("- ", "-");
+        }
+
+
         private void UpdateInvoiceInDatabase(int invoiceId)
         {
-            string city = settingsForm.GetCity();
+            string city = issuedCity;
             int userId = issueUserId;
             string description = Description.Text;
             decimal totalAmount = decimal.Parse(Value.Text);

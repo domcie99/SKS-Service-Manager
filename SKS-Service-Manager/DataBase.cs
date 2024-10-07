@@ -235,7 +235,7 @@ namespace SKS_Service_Manager
             CloseConnection();
         }
 
-        public DataTable uksLoadDataByDateRange(DateTime fromDate, DateTime toDate, string city, string documentType)
+        public DataTable uksLoadDataByDateRange(DateTime fromDate, DateTime toDate, string city, string documentType, bool byRealizedDate)
         {
             try
             {
@@ -254,8 +254,17 @@ namespace SKS_Service_Manager
                             "CAST(UKS.SaleAmount AS decimal(10, 2)) AS 'Kwota sprzedaży', " +
                             "CAST((UKS.SaleAmount - UKS.TotalAmount) AS decimal(10, 2)) AS 'Kwota uzyskanej prowizji albo odkupu', " +
                             "UKS.Notes AS 'Uwagi' " +
-                            "FROM UKS " +
-                            "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate";
+                            "FROM UKS ";
+
+                    // Warunek dla dat realizacji
+                    if (byRealizedDate)
+                    {
+                        query += "WHERE (UKS.DateOfReturn >= @FromDate OR UKS.SaleDate >= @FromDate) AND (UKS.DateOfReturn <= @ToDate OR UKS.SaleDate <= @ToDate) ";
+                    }
+                    else
+                    {
+                        query += "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
+                    }
                 }
                 else
                 {
@@ -271,8 +280,16 @@ namespace SKS_Service_Manager
                             "CAST(UKS.SaleAmount AS decimal(10, 2)) AS 'Kwota sprzedaży', " +
                             "CAST((UKS.SaleAmount - UKS.TotalAmount) AS decimal(10, 2)) AS 'Kwota uzyskanej prowizji albo odkupu', " +
                             "UKS.Notes AS 'Uwagi' " +
-                            "FROM UKS " +
-                            "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate";
+                            "FROM UKS ";
+
+                    if (byRealizedDate)
+                    {
+                        query += "WHERE (UKS.DateOfReturn >= @FromDate OR UKS.SaleDate >= @FromDate) AND (UKS.DateOfReturn <= @ToDate OR UKS.SaleDate <= @ToDate) ";
+                    }
+                    else
+                    {
+                        query += "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
+                    }
                 }
 
                 // Dodaj warunki dla miasta i rodzaju umowy
@@ -325,8 +342,6 @@ namespace SKS_Service_Manager
             }
             return null;
         }
-
-
 
 
         public List<string> GetUniqueCities()

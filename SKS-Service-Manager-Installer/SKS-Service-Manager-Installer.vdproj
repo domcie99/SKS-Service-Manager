@@ -209,15 +209,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SKS-Service-Manager"
-        "ProductCode" = "8:{D56596E4-4C16-4A8C-9B98-8A4CB40A8398}"
-        "PackageCode" = "8:{C16CC5E7-6F48-4B7D-A246-31176C4C64A3}"
+        "ProductCode" = "8:{9B53C31C-6DF5-4B09-B797-AAF14FDA6B86}"
+        "PackageCode" = "8:{F47CF572-1D7B-4B83-B0AE-3832EB1E7F31}"
         "UpgradeCode" = "8:{E0B1CF2E-2426-4BC8-809A-A41031EDD0C2}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.7.2"
+        "ProductVersion" = "8:1.7.3"
         "Manufacturer" = "8:SKS"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -759,7 +759,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_5BD857627A144E609DE1FBEBF9094DC8"
             {
-            "SourcePath" = "8:..\\SKS-Service-Manager\\obj\\Debug\\net8.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\SKS-Service-Manager\\obj\\Release\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A5A1C5056E46478DBAB58C9B3253FE7D"

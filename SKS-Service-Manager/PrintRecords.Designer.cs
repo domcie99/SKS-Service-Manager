@@ -44,7 +44,9 @@
             minusButton = new Button();
             currentMonthButton = new Button();
             plusButton = new Button();
-            cbOnlyRealized = new CheckBox();
+            label5 = new Label();
+            realized = new ComboBox();
+            cbByRealizedDate = new CheckBox();
             SuspendLayout();
             // 
             // print
@@ -55,7 +57,7 @@
             print.Cursor = Cursors.Hand;
             print.FlatAppearance.BorderSize = 0;
             print.FlatStyle = FlatStyle.Flat;
-            print.Location = new Point(371, 211);
+            print.Location = new Point(658, 443);
             print.Name = "print";
             print.Size = new Size(50, 50);
             print.TabIndex = 119;
@@ -79,7 +81,7 @@
             ToDate.Cursor = Cursors.Hand;
             ToDate.CustomFormat = "dd-MM-yyyy";
             ToDate.Format = DateTimePickerFormat.Short;
-            ToDate.Location = new Point(225, 166);
+            ToDate.Location = new Point(225, 248);
             ToDate.Name = "ToDate";
             ToDate.Size = new Size(100, 23);
             ToDate.TabIndex = 124;
@@ -89,7 +91,7 @@
             FromDate.Cursor = Cursors.Hand;
             FromDate.CustomFormat = "dd-MM-yyyy";
             FromDate.Format = DateTimePickerFormat.Short;
-            FromDate.Location = new Point(119, 166);
+            FromDate.Location = new Point(119, 248);
             FromDate.Name = "FromDate";
             FromDate.Size = new Size(100, 23);
             FromDate.TabIndex = 123;
@@ -100,7 +102,7 @@
             // 
             label15.BackColor = Color.Transparent;
             label15.Font = new Font("Segoe UI", 12F);
-            label15.Location = new Point(45, 166);
+            label15.Location = new Point(45, 248);
             label15.Name = "label15";
             label15.Size = new Size(68, 23);
             label15.TabIndex = 121;
@@ -122,7 +124,7 @@
             // 
             label2.BackColor = Color.Transparent;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(45, 72);
+            label2.Location = new Point(45, 75);
             label2.Name = "label2";
             label2.Size = new Size(150, 23);
             label2.TabIndex = 126;
@@ -153,7 +155,7 @@
             MonthsComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             MonthsComboBox.FormattingEnabled = true;
             MonthsComboBox.Items.AddRange(new object[] { "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień" });
-            MonthsComboBox.Location = new Point(201, 117);
+            MonthsComboBox.Location = new Point(201, 199);
             MonthsComboBox.Name = "MonthsComboBox";
             MonthsComboBox.Size = new Size(121, 23);
             MonthsComboBox.TabIndex = 128;
@@ -163,7 +165,7 @@
             // 
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(45, 114);
+            label3.Location = new Point(45, 196);
             label3.Name = "label3";
             label3.Size = new Size(150, 23);
             label3.TabIndex = 129;
@@ -174,7 +176,7 @@
             // 
             label4.BackColor = Color.Transparent;
             label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(45, 143);
+            label4.Location = new Point(45, 225);
             label4.Name = "label4";
             label4.Size = new Size(240, 23);
             label4.TabIndex = 130;
@@ -185,7 +187,7 @@
             // 
             minusButton.Cursor = Cursors.Hand;
             minusButton.Font = new Font("Arial Black", 9F, FontStyle.Bold);
-            minusButton.Location = new Point(328, 116);
+            minusButton.Location = new Point(328, 198);
             minusButton.Name = "minusButton";
             minusButton.Size = new Size(29, 23);
             minusButton.TabIndex = 131;
@@ -197,7 +199,7 @@
             // 
             currentMonthButton.Cursor = Cursors.Hand;
             currentMonthButton.Font = new Font("Arial Black", 9F, FontStyle.Bold);
-            currentMonthButton.Location = new Point(363, 116);
+            currentMonthButton.Location = new Point(363, 198);
             currentMonthButton.Name = "currentMonthButton";
             currentMonthButton.Size = new Size(29, 23);
             currentMonthButton.TabIndex = 132;
@@ -209,7 +211,7 @@
             // 
             plusButton.Cursor = Cursors.Hand;
             plusButton.Font = new Font("Arial Black", 9F, FontStyle.Bold);
-            plusButton.Location = new Point(398, 116);
+            plusButton.Location = new Point(398, 198);
             plusButton.Name = "plusButton";
             plusButton.Size = new Size(29, 23);
             plusButton.TabIndex = 133;
@@ -217,27 +219,52 @@
             plusButton.UseVisualStyleBackColor = true;
             plusButton.Click += plusButton_Click;
             // 
-            // cbOnlyRealized
+            // label5
             // 
-            cbOnlyRealized.AutoSize = true;
-            cbOnlyRealized.BackColor = Color.Transparent;
-            cbOnlyRealized.Checked = true;
-            cbOnlyRealized.CheckState = CheckState.Checked;
-            cbOnlyRealized.Font = new Font("Segoe UI", 12F);
-            cbOnlyRealized.Location = new Point(149, 223);
-            cbOnlyRealized.Name = "cbOnlyRealized";
-            cbOnlyRealized.Size = new Size(208, 25);
-            cbOnlyRealized.TabIndex = 134;
-            cbOnlyRealized.Text = "Drukuj tylko zrealizowane";
-            cbOnlyRealized.UseVisualStyleBackColor = false;
+            label5.BackColor = Color.Transparent;
+            label5.Font = new Font("Segoe UI", 12F);
+            label5.Location = new Point(45, 104);
+            label5.Name = "label5";
+            label5.Size = new Size(150, 23);
+            label5.TabIndex = 137;
+            label5.Text = "Realizacja";
+            label5.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // realized
+            // 
+            realized.AutoCompleteCustomSource.AddRange(new string[] { "Wszystkie", "Zrealizowane", "Niezrealizowane" });
+            realized.Cursor = Cursors.Hand;
+            realized.DropDownStyle = ComboBoxStyle.DropDownList;
+            realized.FormattingEnabled = true;
+            realized.Items.AddRange(new object[] { "Wszystkie", "Zrealizowane", "Niezrealizowane" });
+            realized.Location = new Point(201, 104);
+            realized.Name = "realized";
+            realized.Size = new Size(220, 23);
+            realized.TabIndex = 136;
+            // 
+            // cbByRealizedDate
+            // 
+            cbByRealizedDate.AutoSize = true;
+            cbByRealizedDate.BackColor = Color.Transparent;
+            cbByRealizedDate.Checked = true;
+            cbByRealizedDate.CheckState = CheckState.Checked;
+            cbByRealizedDate.Font = new Font("Segoe UI", 12F);
+            cbByRealizedDate.Location = new Point(45, 277);
+            cbByRealizedDate.Name = "cbByRealizedDate";
+            cbByRealizedDate.Size = new Size(439, 25);
+            cbByRealizedDate.TabIndex = 135;
+            cbByRealizedDate.Text = "Po datach zrealizowania(Domyślnie po datach wystawienia)";
+            cbByRealizedDate.UseVisualStyleBackColor = false;
             // 
             // PrintRecords
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
-            ClientSize = new Size(443, 277);
-            Controls.Add(cbOnlyRealized);
+            ClientSize = new Size(756, 541);
+            Controls.Add(label5);
+            Controls.Add(realized);
+            Controls.Add(cbByRealizedDate);
             Controls.Add(plusButton);
             Controls.Add(currentMonthButton);
             Controls.Add(minusButton);
@@ -277,6 +304,8 @@
         private Button minusButton;
         private Button currentMonthButton;
         private Button plusButton;
-        private CheckBox cbOnlyRealized;
+        private Label label5;
+        private ComboBox realized;
+        private CheckBox cbByRealizedDate;
     }
 }
