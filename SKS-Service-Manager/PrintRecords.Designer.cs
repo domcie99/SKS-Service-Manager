@@ -33,7 +33,6 @@
             DocumentType = new ComboBox();
             ToDate = new DateTimePicker();
             FromDate = new DateTimePicker();
-            label15 = new Label();
             label1 = new Label();
             label2 = new Label();
             IssuedCity = new ComboBox();
@@ -47,6 +46,7 @@
             label5 = new Label();
             realized = new ComboBox();
             cbByRealizedDate = new CheckBox();
+            label6 = new Label();
             SuspendLayout();
             // 
             // print
@@ -57,7 +57,7 @@
             print.Cursor = Cursors.Hand;
             print.FlatAppearance.BorderSize = 0;
             print.FlatStyle = FlatStyle.Flat;
-            print.Location = new Point(658, 443);
+            print.Location = new Point(218, 221);
             print.Name = "print";
             print.Size = new Size(50, 50);
             print.TabIndex = 119;
@@ -81,7 +81,7 @@
             ToDate.Cursor = Cursors.Hand;
             ToDate.CustomFormat = "dd-MM-yyyy";
             ToDate.Format = DateTimePickerFormat.Short;
-            ToDate.Location = new Point(225, 248);
+            ToDate.Location = new Point(327, 190);
             ToDate.Name = "ToDate";
             ToDate.Size = new Size(100, 23);
             ToDate.TabIndex = 124;
@@ -91,23 +91,12 @@
             FromDate.Cursor = Cursors.Hand;
             FromDate.CustomFormat = "dd-MM-yyyy";
             FromDate.Format = DateTimePickerFormat.Short;
-            FromDate.Location = new Point(119, 248);
+            FromDate.Location = new Point(201, 190);
             FromDate.Name = "FromDate";
             FromDate.Size = new Size(100, 23);
             FromDate.TabIndex = 123;
             FromDate.Value = new DateTime(2024, 1, 23, 17, 7, 29, 0);
             FromDate.ValueChanged += FromDate_ValueChanged;
-            // 
-            // label15
-            // 
-            label15.BackColor = Color.Transparent;
-            label15.Font = new Font("Segoe UI", 12F);
-            label15.Location = new Point(45, 248);
-            label15.Name = "label15";
-            label15.Size = new Size(68, 23);
-            label15.TabIndex = 121;
-            label15.Text = "Od/Do";
-            label15.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label1
             // 
@@ -154,8 +143,8 @@
             MonthsComboBox.Cursor = Cursors.Hand;
             MonthsComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             MonthsComboBox.FormattingEnabled = true;
-            MonthsComboBox.Items.AddRange(new object[] { "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień" });
-            MonthsComboBox.Location = new Point(201, 199);
+            MonthsComboBox.Items.AddRange(new object[] { "01-Styczeń", "02-Luty", "03-Marzec", "04-Kwiecień", "05-Maj", "06-Czerwiec", "07-Lipiec", "08-Sierpień", "09-Wrzesień", "10-Październik", "11-Listopad", "12-Grudzień" });
+            MonthsComboBox.Location = new Point(201, 161);
             MonthsComboBox.Name = "MonthsComboBox";
             MonthsComboBox.Size = new Size(121, 23);
             MonthsComboBox.TabIndex = 128;
@@ -165,7 +154,7 @@
             // 
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(45, 196);
+            label3.Location = new Point(45, 158);
             label3.Name = "label3";
             label3.Size = new Size(150, 23);
             label3.TabIndex = 129;
@@ -176,18 +165,19 @@
             // 
             label4.BackColor = Color.Transparent;
             label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(45, 225);
+            label4.ForeColor = Color.Black;
+            label4.Location = new Point(45, 187);
             label4.Name = "label4";
-            label4.Size = new Size(240, 23);
+            label4.Size = new Size(150, 23);
             label4.TabIndex = 130;
-            label4.Text = "Lub wybierz ręcznie zakres dat:";
+            label4.Text = "Lub wybierz ręcznie:";
             label4.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // minusButton
             // 
             minusButton.Cursor = Cursors.Hand;
             minusButton.Font = new Font("Arial Black", 9F, FontStyle.Bold);
-            minusButton.Location = new Point(328, 198);
+            minusButton.Location = new Point(328, 160);
             minusButton.Name = "minusButton";
             minusButton.Size = new Size(29, 23);
             minusButton.TabIndex = 131;
@@ -199,7 +189,7 @@
             // 
             currentMonthButton.Cursor = Cursors.Hand;
             currentMonthButton.Font = new Font("Arial Black", 9F, FontStyle.Bold);
-            currentMonthButton.Location = new Point(363, 198);
+            currentMonthButton.Location = new Point(363, 160);
             currentMonthButton.Name = "currentMonthButton";
             currentMonthButton.Size = new Size(29, 23);
             currentMonthButton.TabIndex = 132;
@@ -211,7 +201,7 @@
             // 
             plusButton.Cursor = Cursors.Hand;
             plusButton.Font = new Font("Arial Black", 9F, FontStyle.Bold);
-            plusButton.Location = new Point(398, 198);
+            plusButton.Location = new Point(398, 160);
             plusButton.Name = "plusButton";
             plusButton.Size = new Size(29, 23);
             plusButton.TabIndex = 133;
@@ -246,22 +236,35 @@
             // 
             cbByRealizedDate.AutoSize = true;
             cbByRealizedDate.BackColor = Color.Transparent;
-            cbByRealizedDate.Checked = true;
-            cbByRealizedDate.CheckState = CheckState.Checked;
+            cbByRealizedDate.CheckAlign = ContentAlignment.MiddleRight;
             cbByRealizedDate.Font = new Font("Segoe UI", 12F);
-            cbByRealizedDate.Location = new Point(45, 277);
+            cbByRealizedDate.Location = new Point(45, 130);
             cbByRealizedDate.Name = "cbByRealizedDate";
-            cbByRealizedDate.Size = new Size(439, 25);
+            cbByRealizedDate.Size = new Size(265, 25);
             cbByRealizedDate.TabIndex = 135;
-            cbByRealizedDate.Text = "Po datach zrealizowania(Domyślnie po datach wystawienia)";
+            cbByRealizedDate.Text = "Wyszukaj po datach zrealizowania";
+            cbByRealizedDate.TextAlign = ContentAlignment.MiddleCenter;
             cbByRealizedDate.UseVisualStyleBackColor = false;
+            // 
+            // label6
+            // 
+            label6.BackColor = Color.Transparent;
+            label6.Font = new Font("Segoe UI", 12F);
+            label6.ForeColor = Color.Black;
+            label6.Location = new Point(307, 190);
+            label6.Name = "label6";
+            label6.Size = new Size(20, 23);
+            label6.TabIndex = 138;
+            label6.Text = "--";
+            label6.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // PrintRecords
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background;
-            ClientSize = new Size(756, 541);
+            ClientSize = new Size(488, 283);
+            Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(realized);
             Controls.Add(cbByRealizedDate);
@@ -276,7 +279,6 @@
             Controls.Add(label1);
             Controls.Add(ToDate);
             Controls.Add(FromDate);
-            Controls.Add(label15);
             Controls.Add(DocumentType);
             Controls.Add(print);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -293,7 +295,6 @@
         private DateTimePicker ToDate;
         private Label label14;
         private DateTimePicker FromDate;
-        private Label label15;
         private Label label1;
         private Label label2;
         private ComboBox IssuedCity;
@@ -307,5 +308,6 @@
         private Label label5;
         private ComboBox realized;
         private CheckBox cbByRealizedDate;
+        private Label label6;
     }
 }

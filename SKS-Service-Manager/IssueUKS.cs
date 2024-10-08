@@ -1041,8 +1041,15 @@ namespace SKS_Service_Manager
                 words[i] = char.ToUpper(word[0]) + word.Substring(1);
             }
 
-            return string.Join(" ", words).Replace(" -", "-").Replace("- ", "-");
+            // Odtwórz myślniki między słowami
+            return string.Join("-", city.Split('-').Select(part =>
+            {
+                string formatted = string.Join(" ", part.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(word => char.ToUpper(word[0]) + word.Substring(1).ToLower()));
+                return formatted;
+            }));
         }
+
 
 
         private void UpdateInvoiceInDatabase(int invoiceId)
