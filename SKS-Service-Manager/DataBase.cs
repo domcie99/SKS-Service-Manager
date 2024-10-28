@@ -265,6 +265,19 @@ namespace SKS_Service_Manager
                     {
                         query += "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
                     }
+
+                    // Dodaj warunki dla miasta i rodzaju umowy
+                    if (!string.IsNullOrEmpty(city) && city != "Wszystko")
+                    {
+                        query += " AND UKS.City = @City ";
+                    }
+                    if (!string.IsNullOrEmpty(documentType) && documentType != "Wszystko")
+                    {
+                        query += " AND UKS.DocumentType = @DocumentType ";
+                    }
+
+                    // Dodaj klauzulę sortowania
+                    query += " ORDER BY UKS.InvoiceDate DESC";
                 }
                 else
                 {
@@ -290,16 +303,19 @@ namespace SKS_Service_Manager
                     {
                         query += "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
                     }
-                }
 
-                // Dodaj warunki dla miasta i rodzaju umowy
-                if (!string.IsNullOrEmpty(city) && city != "Wszystko")
-                {
-                    query += " AND UKS.City = @City ";
-                }
-                if (!string.IsNullOrEmpty(documentType) && documentType != "Wszystko")
-                {
-                    query += " AND UKS.DocumentType = @DocumentType ";
+                    // Dodaj warunki dla miasta i rodzaju umowy
+                    if (!string.IsNullOrEmpty(city) && city != "Wszystko")
+                    {
+                        query += " AND UKS.City = @City ";
+                    }
+                    if (!string.IsNullOrEmpty(documentType) && documentType != "Wszystko")
+                    {
+                        query += " AND UKS.DocumentType = @DocumentType ";
+                    }
+
+                    // Dodaj klauzulę sortowania
+                    query += " ORDER BY UKS.InvoiceDate DESC";
                 }
 
                 DataTable dt = new DataTable();
@@ -342,7 +358,6 @@ namespace SKS_Service_Manager
             }
             return null;
         }
-
 
         public List<string> GetUniqueCities()
         {

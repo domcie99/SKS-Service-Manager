@@ -576,55 +576,45 @@ namespace SKS_Service_Manager
 
             // Suma dla kolumn do zsumowania
             decimal totalAmountPaidToCustomer = 0;
-            decimal totalSalesValueMinusWear = 0; // Sumowanie "Wartość sprzedaży minus zużycie"
-            decimal totalReturnAmount = 0; // Kwota zwrotu
-            decimal totalSaleAmount = 0; // Kwota sprzedaży
-            decimal totalCommissionOrRepurchase = 0; // Kwota uzyskanej prowizji albo odkupu
+            decimal totalSalesValueMinusWear = 0;
+            decimal totalReturnAmount = 0;
+            decimal totalSaleAmount = 0;
+            decimal totalCommissionOrRepurchase = 0;
 
             using (WordprocessingDocument doc = WordprocessingDocument.Open(outputDocxFile, true))
             {
                 MainDocumentPart mainPart = doc.MainDocumentPart;
                 Body body = mainPart.Document.Body;
 
-                // Zdefiniuj tytuł w zależności od wybranego typu umowy
-                string reportTitle = raportTitle(documentType, realizedType); // Przekazanie realizedType
+                string reportTitle = raportTitle(documentType, realizedType);
 
-                // Znajdź i zaktualizuj tekst nagłówka
                 var headerText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-title]"));
                 if (headerText != null)
                 {
                     headerText.Text = headerText.Text.Replace("#[ewidencja-title]", $"{reportTitle} w okresie od {fromDate.ToShortDateString()} do {toDate.ToShortDateString()}");
                 }
 
-                // Znajdź i zaktualizuj tabelę
                 var tableText = body.Descendants<Text>().FirstOrDefault(t => t.Text.Contains("#[ewidencja-tabela]"));
                 if (tableText != null)
                 {
                     var table = tableText.Ancestors<Table>().FirstOrDefault();
 
-                    // Usuń istniejącą zawartość tabeli
                     foreach (var row in table.Elements<TableRow>().Skip(1).ToList())
                     {
                         row.Remove();
                     }
 
-                    // Wypełnij tabelę danymi z DataTable
                     foreach (DataRow row in data.Rows)
                     {
                         TableRow dataRow = new TableRow();
-                        decimal currentReturnAmount = 0; // Zmienna przechowująca kwotę zwrotu dla bieżącego wiersza
+                        decimal currentReturnAmount = 0;
 
                         for (int i = 0; i < row.ItemArray.Length; i++)
                         {
-                            // Pomiń kolumnę "Kwota sprzedaży" (indeks 7), ponieważ ma być połączona z datami
-                            if (i == 7)
-                            {
-                                continue;
-                            }
+                            if (i == 7) continue;
 
                             TableCell cell = new TableCell();
                             Paragraph paragraph = new Paragraph();
-
                             ParagraphProperties paragraphProperties = new ParagraphProperties();
                             Justification justification = new Justification() { Val = JustificationValues.Center };
                             paragraphProperties.Append(justification);
@@ -641,13 +631,11 @@ namespace SKS_Service_Manager
                             FontSize fontSize = new FontSize() { Val = "14" };
                             runProperties.Append(fontSize);
 
-                            // Połączone wartości "Data zwrotu" i "Kwota zwrotu"
                             if (i == 5) // Data zwrotu
                             {
                                 string dateValue = row[i].ToString();
-                                string amountValue = row[3].ToString(); // Kwota zwrotu to teraz "Wartość sprzedaży minus zużycie" (indeks 3)
+                                string amountValue = row[3].ToString();
 
-                                // Ukryj kwoty wynoszące 0
                                 if (decimal.TryParse(amountValue, out decimal amount) && amount == 0)
                                 {
                                     amountValue = "";
@@ -661,19 +649,15 @@ namespace SKS_Service_Manager
                                 {
                                     run.Append(runProperties);
                                     run.AppendChild(new Text($"{date:dd.MM.yyyy}"));
-                                    run.AppendChild(new Break()); // Dodaj nową linię dla kwoty
+                                    run.AppendChild(new Break());
                                     run.AppendChild(new Text(amountValue));
-
-                                    // Zapisz bieżącą kwotę zwrotu do zmiennej
                                     currentReturnAmount = amount;
-
-                                    // Sumowanie wartości zwrotu
-                                    totalReturnAmount += currentReturnAmount; // Sumuj wartość zwrotu
+                                    totalReturnAmount += currentReturnAmount;
                                 }
                                 else
                                 {
                                     run.Append(runProperties);
-                                    run.AppendChild(new Text("")); // Puste pole, jeśli data nie istnieje lub jest starsza niż rok 1800
+                                    run.AppendChild(new Text(""));
                                 }
 
                                 paragraph.Append(run);
@@ -681,9 +665,8 @@ namespace SKS_Service_Manager
                             else if (i == 6) // Data sprzedaży
                             {
                                 string dateValue = row[i].ToString();
-                                string amountValue = row[i + 1].ToString(); // Kwota sprzedaży (która była wcześniej w kolumnie 7)
+                                string amountValue = row[i + 1].ToString();
 
-                                // Ukryj kwoty wynoszące 0
                                 if (decimal.TryParse(amountValue, out decimal amount) && amount == 0)
                                 {
                                     amountValue = "";
@@ -697,61 +680,40 @@ namespace SKS_Service_Manager
                                 {
                                     run.Append(runProperties);
                                     run.AppendChild(new Text($"{date:dd.MM.yyyy}"));
-                                    run.AppendChild(new Break()); // Dodaj nową linię dla kwoty
+                                    run.AppendChild(new Break());
                                     run.AppendChild(new Text(amountValue));
-
-                                    // Sumowanie wartości sprzedaży
-                                    totalSaleAmount += amount; // Sumuj wartość sprzedaży
+                                    totalSaleAmount += amount;
                                 }
                                 else
                                 {
                                     run.Append(runProperties);
-                                    run.AppendChild(new Text("")); // Puste pole, jeśli data nie istnieje lub jest starsza niż rok 1800
+                                    run.AppendChild(new Text(""));
                                 }
 
                                 paragraph.Append(run);
                             }
                             else if (i == 8) // Obliczanie prowizji
                             {
-                                // Kwota zapłacona klientowi
                                 decimal totalAmountPaid = decimal.TryParse(row[1].ToString(), out decimal paidAmount) ? paidAmount : 0;
-
-                                // Sprawdź, czy mamy kwotę zwrotu lub sprzedaży
                                 decimal saleAmount = decimal.TryParse(row[7].ToString(), out decimal saleAmt) ? saleAmt : 0;
-                                decimal commissionValue = 0;
+                                decimal commissionValue = saleAmount - totalAmountPaid;
 
-                                // Użyj kwoty zwrotu lub sprzedaży do obliczenia prowizji
-                                if (saleAmount > 0)
-                                {
-                                    commissionValue = saleAmount - totalAmountPaid;
-                                }
-                                else if (currentReturnAmount > 0) // Użyj kwoty zwrotu, jeśli nie ma sprzedaży
-                                {
-                                    commissionValue = currentReturnAmount - totalAmountPaid;
-                                }
-                                else // Jeśli nie ma zwrotu ani sprzedaży, odejmij kwotę zapłaconą klientowi
-                                {
-                                    commissionValue = -totalAmountPaid;
-                                }
+                                DateTime.TryParse(row["Data sprzedaży"].ToString(), out DateTime saleDate);
+                                DateTime.TryParse(row["Data zwrotu"].ToString(), out DateTime returnDate);
 
-                                // Ustaw kolor tekstu na podstawie wartości prowizji
-                                Color color = new Color() { Val = "000000" }; // Domyślny kolor czarny
-                                if (commissionValue < 0)
+                                bool isRealized = saleDate.Year >= 1800 || returnDate.Year >= 1800;
+
+                                if (commissionValue > 0 || (realizedType == "Zrealizowane" && isRealized))
                                 {
-                                    color = new Color() { Val = "CC0000" }; // Kolor czerwony dla wartości ujemnych
+                                    if (commissionValue > 0 && isRealized)
+                                    {
+                                        totalCommissionOrRepurchase += commissionValue;
+                                    }
+
+                                    runProperties.Append(new Color() { Val = commissionValue > 0 ? "00CC00" : "000000" });
+                                    run.Append(runProperties);
+                                    run.AppendChild(new Text(commissionValue.ToString("F2")));
                                 }
-                                else if (commissionValue > 0)
-                                {
-                                    color = new Color() { Val = "00CC00" }; // Kolor zielony dla wartości dodatnich
-                                }
-
-                                runProperties.Append(color);
-                                run.Append(runProperties);
-                                run.AppendChild(new Text(commissionValue.ToString("F2")));
-
-                                // Dodaj wartość do sumy
-                                totalCommissionOrRepurchase += commissionValue;
-
                                 paragraph.Append(run);
                             }
                             else
@@ -764,12 +726,11 @@ namespace SKS_Service_Manager
                             cell.Append(paragraph);
                             dataRow.Append(cell);
 
-                            // Sumowanie wartości dla wybranych kolumn
-                            if (i == 1 && decimal.TryParse(row[i].ToString(), out decimal value1)) // Kwota zapłacona klientowi
+                            if (i == 1 && decimal.TryParse(row[i].ToString(), out decimal value1))
                             {
                                 totalAmountPaidToCustomer += value1;
                             }
-                            else if (i == 3 && decimal.TryParse(row[i].ToString(), out decimal value2)) // Wartość sprzedaży minus zużycie
+                            else if (i == 3 && decimal.TryParse(row[i].ToString(), out decimal value2))
                             {
                                 totalSalesValueMinusWear += value2;
                             }
@@ -777,22 +738,22 @@ namespace SKS_Service_Manager
                         table.Append(dataRow);
                     }
 
-                    // Dodaj wiersz z podsumowaniem na końcu tabeli z cieniowaniem #BFBFBF
                     TableRow summaryRow = new TableRow();
 
                     summaryRow.Append(CreateSummaryCell("Suma", true));
                     summaryRow.Append(CreateSummaryCell(totalAmountPaidToCustomer.ToString("F2"), true));
-                    summaryRow.Append(CreateSummaryCell("", true)); // Pusta komórka dla innych kolumn
-                    summaryRow.Append(CreateSummaryCell(totalSalesValueMinusWear.ToString("F2"), true)); // Suma "Wartość sprzedaży minus zużycie"
                     summaryRow.Append(CreateSummaryCell("", true));
-                    summaryRow.Append(CreateSummaryCell(totalReturnAmount.ToString("F2"), true)); // Suma zwrotów
-                    summaryRow.Append(CreateSummaryCell(totalSaleAmount.ToString("F2"), true)); // Suma sprzedaży
-                    summaryRow.Append(CreateSummaryCell(totalCommissionOrRepurchase.ToString("F2"), true)); // Suma prowizji
+                    summaryRow.Append(CreateSummaryCell(totalSalesValueMinusWear.ToString("F2"), true));
+                    summaryRow.Append(CreateSummaryCell("", true));
+                    summaryRow.Append(CreateSummaryCell(totalReturnAmount.ToString("F2"), true));
+                    summaryRow.Append(CreateSummaryCell(totalSaleAmount.ToString("F2"), true));
+                    summaryRow.Append(CreateSummaryCell(totalCommissionOrRepurchase.ToString("F2"), true));
                     summaryRow.Append(CreateSummaryCell("", true));
                     table.Append(summaryRow);
 
                     tableText.Text = tableText.Text.Replace("#[ewidencja-tabela]", "");
                 }
+                mainPart.Document.Save();
             }
         }
 
