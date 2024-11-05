@@ -196,7 +196,7 @@ namespace SKS_Service_Manager
                 {
                     textBox.Text = value.ToString("0.00");
                     BuyAmount.Text = (decimal.Parse(Value.Text) + decimal.Parse(Fee.Text) + decimal.Parse(LateFee.Text) + decimal.Parse(Commision.Text)).ToString("F2");
-                    
+
                 }
                 else
                 {
@@ -298,7 +298,7 @@ namespace SKS_Service_Manager
 
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa]", Estimated_Value.Text);
             ReplaceText(body, "#[przedmiot-wartosc-szacunkowa-slownie]", GetValueAsText(decimal.Parse(Estimated_Value.Text)));
-            
+
             ReplaceText(body, "#[przedmiot-wartosc-koszt-pozyczki]", (decimal.Parse(Fee.Text) + decimal.Parse(LateFee.Text) + decimal.Parse(Commision.Text)).ToString("F2"));
 
             ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
