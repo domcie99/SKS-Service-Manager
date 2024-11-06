@@ -242,7 +242,6 @@ namespace SKS_Service_Manager
                 string query = "";
                 if (useMySQL)
                 {
-                    // Zapytanie dla MySQL
                     query = "SELECT " +
                             "DATE_FORMAT(UKS.InvoiceDate, '%d.%m.%Y') AS 'Data Przyjęcia', " +
                             "CAST(UKS.TotalAmount AS decimal(10, 2)) AS 'Kwota zapłacona klientowi', " +
@@ -256,14 +255,14 @@ namespace SKS_Service_Manager
                             "UKS.Notes AS 'Uwagi' " +
                             "FROM UKS ";
 
-                    // Warunek dla dat realizacji
+                    // Warunek dla dat realizacji (tylko po Data zwrotu lub Data sprzedaży)
                     if (byRealizedDate)
                     {
-                        query += "WHERE (UKS.DateOfReturn >= @FromDate OR UKS.SaleDate >= @FromDate) AND (UKS.DateOfReturn <= @ToDate OR UKS.SaleDate <= @ToDate) ";
+                        query += "WHERE (UKS.DateOfReturn BETWEEN @FromDate AND @ToDate OR UKS.SaleDate BETWEEN @FromDate AND @ToDate) ";
                     }
-                    else
+                    else // Warunek dla dat wystawienia (tylko po Data wystawienia)
                     {
-                        query += "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
+                        query += "WHERE UKS.InvoiceDate BETWEEN @FromDate AND @ToDate ";
                     }
 
                     // Dodaj warunki dla miasta i rodzaju umowy
@@ -295,13 +294,14 @@ namespace SKS_Service_Manager
                             "UKS.Notes AS 'Uwagi' " +
                             "FROM UKS ";
 
+                    // Warunek dla dat realizacji (tylko po Data zwrotu lub Data sprzedaży)
                     if (byRealizedDate)
                     {
-                        query += "WHERE (UKS.DateOfReturn >= @FromDate OR UKS.SaleDate >= @FromDate) AND (UKS.DateOfReturn <= @ToDate OR UKS.SaleDate <= @ToDate) ";
+                        query += "WHERE (UKS.DateOfReturn BETWEEN @FromDate AND @ToDate OR UKS.SaleDate BETWEEN @FromDate AND @ToDate) ";
                     }
-                    else
+                    else // Warunek dla dat wystawienia (tylko po Data wystawienia)
                     {
-                        query += "WHERE UKS.InvoiceDate >= @FromDate AND UKS.InvoiceDate <= @ToDate ";
+                        query += "WHERE UKS.InvoiceDate BETWEEN @FromDate AND @ToDate ";
                     }
 
                     // Dodaj warunki dla miasta i rodzaju umowy
