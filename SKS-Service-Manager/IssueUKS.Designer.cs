@@ -667,6 +667,7 @@
             SaleDate.Size = new Size(100, 23);
             SaleDate.TabIndex = 113;
             SaleDate.Value = new DateTime(1753, 1, 1, 0, 0, 0, 0);
+            SaleDate.ValueChanged += SaleDate_ValueChanged;
             SaleDate.DropDown += SaleDate_DropDown;
             SaleDate.MouseDown += SaleDate_MouseDown;
             // 
@@ -691,6 +692,7 @@
             DateOfReturn.Size = new Size(100, 23);
             DateOfReturn.TabIndex = 112;
             DateOfReturn.Value = new DateTime(1753, 1, 1, 0, 0, 0, 0);
+            DateOfReturn.ValueChanged += SaleDate_ValueChanged;
             DateOfReturn.DropDown += DateOfReturn_DropDown;
             DateOfReturn.MouseDown += DateOfReturn_MouseDown;
             // 

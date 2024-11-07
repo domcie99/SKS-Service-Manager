@@ -705,14 +705,21 @@ namespace SKS_Service_Manager
 
                                 if (commissionValue > 0 || (realizedType == "Zrealizowane" && isRealized))
                                 {
+                                    // Tylko dodawanie do sumy, gdy wartość prowizji jest większa niż 0
                                     if (commissionValue > 0 && isRealized)
                                     {
                                         totalCommissionOrRepurchase += commissionValue;
                                     }
 
+                                    // Ustawienie koloru dla dodatnich wartości prowizji
                                     runProperties.Append(new Color() { Val = commissionValue > 0 ? "00CC00" : "000000" });
                                     run.Append(runProperties);
-                                    run.AppendChild(new Text(commissionValue.ToString("F2")));
+
+                                    // Dodaj wartość prowizji tylko, gdy jest dodatnia
+                                    if (commissionValue > 0)
+                                    {
+                                        run.AppendChild(new Text(commissionValue.ToString("F2")));
+                                    }
                                 }
                                 paragraph.Append(run);
                             }
@@ -1349,6 +1356,11 @@ namespace SKS_Service_Manager
             {
                 Task.Delay(200).ContinueWith(_ => this.Invoke(new Action(() => SendKeys.Send("%{DOWN}"))));
             }
+        }
+
+        private void SaleDate_ValueChanged(object sender, EventArgs e)
+        {
+            SaleAmount.Text = BuyAmount.Text;
         }
     }
 }
