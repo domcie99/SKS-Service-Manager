@@ -434,9 +434,9 @@ namespace SKS_Service_Manager
         {
             settingsForm = new Settings(this);
             database = new DataBase(this);
-            await Task.Run(() => CheckMySQLConnection());
             await Task.Run(() => CheckForUpdates());
             await Task.Run(() => CheckDependanceInstalled());
+            await Task.Run(() => CheckMySQLConnection());
         }
 
         private async Task CompareAndSyncDataAsync()
