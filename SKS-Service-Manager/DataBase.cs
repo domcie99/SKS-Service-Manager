@@ -145,7 +145,7 @@ namespace SKS_Service_Manager
                                         Notes TEXT,
                                         NIP VARCHAR(20),
                                         Days INT,
-                                        Percentage INT,
+                                        Percentage DOUBLE(10,2),
                                         Fee DECIMAL(10,2),
                                         LateFee DECIMAL(10,2),
                                         Commision DECIMAL(10,2),
@@ -867,34 +867,34 @@ namespace SKS_Service_Manager
             return null;
         }
 
-        public void UpdateInvoiceInDatabase(int invoiceId, int userId, string city, string description, decimal totalAmount, DateTime invoiceDate, string notes, string documentType, DateTime buyDate, int days, int percentage, decimal fee, string nip, decimal lateFee, decimal commision, decimal buyAmount, DateTime dateOfReturn, DateTime saleDate, decimal saleAmount, decimal estimatedValue)
+        public void UpdateInvoiceInDatabase(int invoiceId, int userId, string city, string description, decimal totalAmount, DateTime invoiceDate, string notes, string documentType, DateTime buyDate, int days, double percentage, decimal fee, string nip, decimal lateFee, decimal commision, decimal buyAmount, DateTime dateOfReturn, DateTime saleDate, decimal saleAmount, decimal estimatedValue)
         {
             try
             {
                 string query = @"
-                            UPDATE UKS
-                            SET
-                                UserID = @UserID,
-                                DocumentType = @DocumentType,
-                                City = @City,
-                                Description = @Description,
-                                TotalAmount = @TotalAmount,
-                                InvoiceDate = @InvoiceDate,
-                                BuyDate = @BuyDate,
-                                Notes = @Notes,
-                                NIP = @NIP,
-                                Days = @Days,
-                                Percentage = @Percentage,
-                                Fee = @Fee,
-                                LateFee = @LateFee,
-                                Commision = @Commision,
-                                BuyAmount = @BuyAmount,
-                                DateOfReturn = @DateOfReturn,
-                                SaleDate = @SaleDate,
-                                SaleAmount = @SaleAmount,
-                                EstimatedValue = @EstimatedValue -- Dodano EstimatedValue
-                            WHERE ID = @InvoiceId;
-                        ";
+                    UPDATE UKS
+                    SET
+                        UserID = @UserID,
+                        DocumentType = @DocumentType,
+                        City = @City,
+                        Description = @Description,
+                        TotalAmount = @TotalAmount,
+                        InvoiceDate = @InvoiceDate,
+                        BuyDate = @BuyDate,
+                        Notes = @Notes,
+                        NIP = @NIP,
+                        Days = @Days,
+                        Percentage = @Percentage,
+                        Fee = @Fee,
+                        LateFee = @LateFee,
+                        Commision = @Commision,
+                        BuyAmount = @BuyAmount,
+                        DateOfReturn = @DateOfReturn,
+                        SaleDate = @SaleDate,
+                        SaleAmount = @SaleAmount,
+                        EstimatedValue = @EstimatedValue -- Dodano EstimatedValue
+                    WHERE ID = @InvoiceId;
+                ";
 
                 OpenConnection();
                 if (useMySQL)
@@ -910,7 +910,7 @@ namespace SKS_Service_Manager
                     cmd.Parameters.AddWithValue("@DocumentType", documentType);
                     cmd.Parameters.AddWithValue("@BuyDate", buyDate);
                     cmd.Parameters.AddWithValue("@Days", days);
-                    cmd.Parameters.AddWithValue("@Percentage", percentage);
+                    cmd.Parameters.AddWithValue("@Percentage", Math.Round(percentage, 2));
                     cmd.Parameters.AddWithValue("@Fee", fee);
                     cmd.Parameters.AddWithValue("@NIP", nip);
                     cmd.Parameters.AddWithValue("@LateFee", lateFee);
@@ -935,7 +935,7 @@ namespace SKS_Service_Manager
                     cmd.Parameters.AddWithValue("@DocumentType", documentType);
                     cmd.Parameters.AddWithValue("@BuyDate", buyDate);
                     cmd.Parameters.AddWithValue("@Days", days);
-                    cmd.Parameters.AddWithValue("@Percentage", percentage);
+                    cmd.Parameters.AddWithValue("@Percentage", Math.Round(percentage, 2));
                     cmd.Parameters.AddWithValue("@Fee", fee);
                     cmd.Parameters.AddWithValue("@NIP", nip);
                     cmd.Parameters.AddWithValue("@LateFee", lateFee);
@@ -1077,8 +1077,10 @@ namespace SKS_Service_Manager
                         string BuyDate = reader["TERMIN_ODBIORU"].ToString();
                         string Days = reader["UMOWA_ILOSC_DNI"].ToString();
                         string PercentageString = reader["UMOWA_PROCENT"].ToString().Replace(".", ",");
-                        double PercentageDouble = Convert.ToDouble(string.IsNullOrEmpty(PercentageString) ? 0 : PercentageString);
-                        int Percentage = (int)Math.Floor(PercentageDouble);
+
+                        // Zmiana na double i zaokrąglenie
+                        double Percentage = Math.Round(string.IsNullOrEmpty(PercentageString) ? 0 : Convert.ToDouble(PercentageString), 2);
+
                         string Fee = reader["OPLATA"].ToString().Replace(".", ",");
                         string LateFee = reader["OPLATA_OPOZNIENIE"].ToString().Replace(".", ",");
                         string BuyAmount = reader["KWOTA_WYKUPU"].ToString().Replace(".", ",");
@@ -1109,7 +1111,7 @@ namespace SKS_Service_Manager
                             invoiceData.Columns.Add("BuyDate", typeof(DateTime));
                             invoiceData.Columns.Add("Notes", typeof(string));
                             invoiceData.Columns.Add("Days", typeof(int));
-                            invoiceData.Columns.Add("Percentage", typeof(int));
+                            invoiceData.Columns.Add("Percentage", typeof(double));  // Zmiana typu na double
                             invoiceData.Columns.Add("Fee", typeof(decimal));
                             invoiceData.Columns.Add("LateFee", typeof(decimal));
                             invoiceData.Columns.Add("BuyAmount", typeof(decimal));
@@ -1136,7 +1138,7 @@ namespace SKS_Service_Manager
                             newRow["Notes"] = Notes;
 
                             newRow["Days"] = string.IsNullOrEmpty(Days) || int.Parse(Days) == 0 ? 30 : int.Parse(Days);
-                            newRow["Percentage"] = Percentage;
+                            newRow["Percentage"] = Percentage;  // Zmienione z int na double
                             newRow["Fee"] = string.IsNullOrEmpty(Fee) ? 0 : decimal.Parse(Fee);
                             newRow["LateFee"] = string.IsNullOrEmpty(LateFee) ? 0 : decimal.Parse(LateFee);
                             newRow["BuyAmount"] = string.IsNullOrEmpty(BuyAmount) ? 0 : decimal.Parse(BuyAmount);
@@ -1177,11 +1179,12 @@ namespace SKS_Service_Manager
         }
 
 
-
         protected virtual void OnProgressChanged(int progressPercentage)
         {
-            ProgressChanged?.Invoke(this, progressPercentage);
+            double progress = Math.Round(progressPercentage / 100.0, 2);
+            ProgressChanged?.Invoke(this, (int)(progress * 100));
         }
+
 
         protected virtual void OnProgressTotalChanged(int current, int total)
         {

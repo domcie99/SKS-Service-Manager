@@ -21,8 +21,8 @@ namespace SKS_Service_Manager
         private bool generated = false;
         private DataBase dataBase;
 
-        private decimal totalIntrest;
-        private decimal totalBuyOut;
+        private double totalIntrest;
+        private double totalBuyOut;
 
         private string newFile = "uks";
         private string docxFilePath;
@@ -313,7 +313,13 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-procent]", Percentage.Text);
 
             ReplaceText(body, "#[przedmiot-oplata]", Fee.Text);
-            ReplaceText(body, "#[przedmiot-oplata-dziennie]", CalculateInterestByDay(value, int.Parse(Percentage.Text)).ToString("F2"));
+
+            double interestByDay = CalculateInterestByDay((double)(value + decimal.Parse(Commision.Text)), double.Parse(Percentage.Text));
+
+            ReplaceText(body, "#[przedmiot-oplata-dziennie]", interestByDay.ToString("F2"));
+            ReplaceText(body, "#[przedmiot-oplata-max]", (interestByDay*30).ToString("F2"));
+
+            
             ReplaceText(body, "#[przedmiot-oplata-opoznienia]", LateFee.Text);
             ReplaceText(body, "#[przedmiot-kwota-wykupu]", BuyAmount.Text);
 
@@ -838,7 +844,7 @@ namespace SKS_Service_Manager
                 invoiceData.Columns.Add("Notes", typeof(string));
                 invoiceData.Columns.Add("NIP", typeof(string));
                 invoiceData.Columns.Add("Days", typeof(int));
-                invoiceData.Columns.Add("Percentage", typeof(int));
+                invoiceData.Columns.Add("Percentage", typeof(double));
                 invoiceData.Columns.Add("Fee", typeof(decimal));
                 invoiceData.Columns.Add("LateFee", typeof(decimal));
                 invoiceData.Columns.Add("Commision", typeof(decimal));
@@ -859,7 +865,7 @@ namespace SKS_Service_Manager
                 newRow["Notes"] = Comments.Text;
                 newRow["NIP"] = Nip.Text;
                 newRow["Days"] = int.Parse(Days.Text);
-                newRow["Percentage"] = int.Parse(Percentage.Text);
+                newRow["Percentage"] = Math.Round(double.Parse(Percentage.Text), 2);
                 newRow["Fee"] = decimal.Parse(Fee.Text);
                 newRow["LateFee"] = decimal.Parse(LateFee.Text);
                 newRow["Commision"] = decimal.Parse(Commision.Text);
@@ -1032,7 +1038,7 @@ namespace SKS_Service_Manager
             string documentType = FormType.Text;
             DateTime pickupDate = Pickup_Date.Value.Date;
             int days = int.Parse(Days.Text);
-            int percentage = int.Parse(Percentage.Text);
+            double percentage = Math.Round(double.Parse(Percentage.Text), 2);
             decimal fee = decimal.Parse(Fee.Text);
 
             string nip = Nip.Text;
@@ -1059,12 +1065,29 @@ namespace SKS_Service_Manager
                 e.Handled = true;
             }
         }
+        private void Percentage_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Back)
+            {
+                return;
+            }
+
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != ',')
+            {
+                e.Handled = true; // Zablokuj inne znaki
+            }
+
+            if (e.KeyChar == ',' && Percentage.Text.Contains(","))
+            {
+                e.Handled = true; // Zablokuj, jeśli już istnieje przecinek
+            }
+        }
+
         private void Percentage_Leave(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
+            double newValue = !string.IsNullOrEmpty(Percentage.Text) ? Math.Round(double.Parse(Percentage.Text), 2) : 0;
 
-            int newValue = !string.IsNullOrEmpty(Percentage.Text) ? int.Parse(Percentage.Text) : 0;
-            // Sprawdź, czy wartość mieści się w zakresie od 0 do 100
             if (newValue < 0)
             {
                 newValue = 0;
@@ -1074,9 +1097,9 @@ namespace SKS_Service_Manager
                 newValue = 100;
             }
 
-            // Uaktualnij pole tekstowe z nową wartością
-            textBox.Text = newValue.ToString();
+            textBox.Text = newValue.ToString("F2");
         }
+
 
         private void Issue_Date_ValueChanged(object sender, EventArgs e)
         {
@@ -1107,18 +1130,14 @@ namespace SKS_Service_Manager
             return $"{wholePartInWords} złotych i {fractionalPartInWords} groszy";
         }
 
-        public decimal CalculateTotalPrice(decimal initialPrice, int days, int percentage)
+        public double CalculateTotalPrice(double initialPrice, double days, double percentage)
         {
-            // Konwertujemy procent na decimal
-            decimal decimalPercentage = (decimal)percentage / 100;
+            double decimalPercentage = percentage / 100.0;  // Procent w postaci zmiennej double
 
-            // Obliczamy wartość odsetek za pełne okresy 30 dni
-            decimal interest = initialPrice * decimalPercentage;
+            double interest = initialPrice * decimalPercentage;  // Obliczenie odsetek
+            double interestByDay = interest / 30.0;  // Odsetki za dzień
 
-            // Obliczamy wartość odsetek za pozostałe dni
-            decimal intrestByDay = interest / 30;
-
-            decimal comm = decimal.Parse(Commision.Text);
+            double comm = double.Parse(Commision.Text);
 
             if (FormType.Text == "Umowa Konsumenckiej Pożyczki Lombardowej")
             {
@@ -1128,21 +1147,21 @@ namespace SKS_Service_Manager
                 }
             }
 
-            totalIntrest = intrestByDay * days;
-            // Obliczamy całkowitą cenę przedmiotu
-            decimal totalPrice = initialPrice + totalIntrest + comm;
+            totalIntrest = interestByDay * days;  // Obliczanie całkowitej wartości odsetek
+            double totalPrice = initialPrice + totalIntrest + comm;  // Całkowita cena
 
-            return totalPrice;
+            // Zaokrąglamy do 2 miejsc po przecinku
+            return Math.Round(totalPrice, 2);
         }
 
-        public decimal CalculateInterestByDay(decimal value, int percentage)
+
+        public double CalculateInterestByDay(double value, double percentage)
         {
-            decimal decimalPercentage = (decimal)percentage / 100;
-            decimal interest = value * decimalPercentage;
-            decimal intrestByDay = interest / 30;
-            return intrestByDay;
+            double decimalPercentage = percentage / 100.0;  // Konwersja na double
+            double interest = value * decimalPercentage;  // Obliczenie odsetek
+            double interestByDay = interest / 30;  // Obliczenie odsetek na dzień
+            return Math.Round(interestByDay, 2);  // Zaokrąglenie do 2 miejsc po przecinku
         }
-
 
         private void FormType_ValueChanged(object sender, EventArgs e)
         {
@@ -1199,28 +1218,28 @@ namespace SKS_Service_Manager
 
         private void Interest_ValueChanged(object sender, EventArgs e)
         {
-            decimal value = !string.IsNullOrEmpty(Value.Text) ? decimal.Parse(Value.Text) : 0;
+            double value = !string.IsNullOrEmpty(Value.Text) ? double.Parse(Value.Text) : 0;
             int days = !string.IsNullOrEmpty(Days.Text) ? int.Parse(Days.Text) : 0;
-            int perc = !string.IsNullOrEmpty(Percentage.Text) ? int.Parse(Percentage.Text) : 0;
-
+            double perc = !string.IsNullOrEmpty(Percentage.Text) ? double.Parse(Percentage.Text) : 0;
 
             if (value < 0) { value = 0; }
             if (days < 0) { days = 0; }
             if (perc < 0) { perc = 0; }
 
-
             totalBuyOut = CalculateTotalPrice(value, days, perc);
 
             Fee.Text = totalIntrest.ToString("F2");
             BuyAmount.Text = totalBuyOut.ToString("F2");
-            Commision.Text = (value * 0.10m).ToString("F2");
+            Commision.Text = (value * 0.10).ToString("F2");
         }
+
 
 
         private void PercentageChanged(object sender, EventArgs e)
         {
-            settingsForm.SetPercentage(int.Parse(Percentage.Text.ToString()));
+            settingsForm.SetPercentage(double.Parse(Percentage.Text.ToString()));
         }
+
 
         private void Days_TextChanged(object sender, EventArgs e)
         {

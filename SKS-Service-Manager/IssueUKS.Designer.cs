@@ -850,7 +850,6 @@
             Percentage.Text = "0";
             Percentage.TextAlign = HorizontalAlignment.Right;
             Percentage.TextChanged += Interest_ValueChanged;
-            Percentage.KeyPress += IsInt_KeyPress;
             Percentage.Leave += PercentageChanged;
             // 
             // label17

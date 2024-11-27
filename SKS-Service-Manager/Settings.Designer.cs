@@ -612,6 +612,7 @@
             percentage.Name = "percentage";
             percentage.Size = new Size(70, 23);
             percentage.TabIndex = 47;
+            percentage.TextChanged += percentage_TextChanged;
             // 
             // label25
             // 
@@ -688,7 +689,6 @@
             Controls.Add(NIP);
             Controls.Add(label1);
             Controls.Add(company_name);
-            Cursor = Cursors.Default;
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Settings";

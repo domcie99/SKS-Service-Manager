@@ -45,7 +45,7 @@ namespace SKS_Service_Manager
             appSettings.MySQLPassword = password.Text;
             appSettings.MySQLDatabase = database.Text;
             appSettings.MySQLPort = port.Text;
-            appSettings.Percentage = int.Parse(percentage.Text);
+            appSettings.Percentage = double.Parse(percentage.Text);
             appSettings.Days = int.Parse(days.Text);
 
             try
@@ -94,7 +94,7 @@ namespace SKS_Service_Manager
                     MySQLPassword = Properties.Settings.Default.mysql_password,
                     MySQLDatabase = Properties.Settings.Default.mysql_database,
                     MySQLPort = Properties.Settings.Default.mysql_port,
-                    Percentage = int.Parse(Properties.Settings.Default.percentage),
+                    Percentage = double.Parse(Properties.Settings.Default.percentage),
                     Days = Properties.Settings.Default.days
                 };
             }
@@ -229,7 +229,7 @@ namespace SKS_Service_Manager
             SaveSettings();
         }
 
-        public void SetPercentage(int percentage)
+        public void SetPercentage(double percentage)
         {
             appSettings.Percentage = percentage;
             SaveSettings();
@@ -253,7 +253,7 @@ namespace SKS_Service_Manager
         public string GetEmail() => appSettings.Email;
         public string GetKRS() => appSettings.KRS;
         public string GetREGON() => appSettings.REGON;
-        public int GetPercentage() => appSettings.Percentage;
+        public double GetPercentage() => appSettings.Percentage;
         public int GetDays() => appSettings.Days;
 
         // Gettery dla ustawień MySQL
@@ -329,6 +329,11 @@ namespace SKS_Service_Manager
         {
             OpenFileToEdit("uppz");
         }
+
+        private void percentage_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
     public class AppSettings
@@ -349,7 +354,7 @@ namespace SKS_Service_Manager
         public string MySQLPassword { get; set; }
         public string MySQLDatabase { get; set; }
         public string MySQLPort { get; set; }
-        public int Percentage { get; set; }
+        public double Percentage { get; set; }
         public int Days { get; set; }
     }
 }
