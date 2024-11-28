@@ -264,7 +264,7 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[firma-regon]", settingsForm.GetREGON());
 
             ReplaceText(body, "#[data-wystawienia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[data-wystawienia+7]", Issue_Date.Value.AddDays(7).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[data-wystawienia+7]", Issue_Date.Value.AddDays(6).ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[data-wystawienia+23]", Issue_Date.Value.AddDays(23).ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[data-wystawienia+30]", Issue_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
 
@@ -306,7 +306,7 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-data-odbioru]", Pickup_Date.Value.ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[przedmiot-data-odbioru+7]", Pickup_Date.Value.AddDays(7).ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[przedmiot-data-odbioru+23]", Pickup_Date.Value.AddDays(23).ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(31).ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[przedmiot-data-odbioru+37]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
 
             ReplaceText(body, "#[przedmiot-ilosc-dni]", Days.Text);
@@ -1108,7 +1108,7 @@ namespace SKS_Service_Manager
 
             // Oblicz liczbę dni pomiędzy datami
             TimeSpan span = pickupDate - issueDate;
-            int daysDifference = span.Days;
+            int daysDifference = span.Days + 1;
 
             if (pickupDate == issueDate)
             {
