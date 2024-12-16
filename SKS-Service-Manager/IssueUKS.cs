@@ -304,22 +304,23 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-data-przyjecia]", Issue_Date.Value.ToString("dd-MM-yyyy"));
 
             ReplaceText(body, "#[przedmiot-data-odbioru]", Pickup_Date.Value.ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[przedmiot-data-odbioru+7]", Pickup_Date.Value.AddDays(7).ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[przedmiot-data-odbioru+23]", Pickup_Date.Value.AddDays(23).ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(31).ToString("dd-MM-yyyy"));
-            ReplaceText(body, "#[przedmiot-data-odbioru+37]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+20]", Pickup_Date.Value.AddDays(20).ToString("dd-MM-yyyy"));
+            ReplaceText(body, "#[przedmiot-data-odbioru+30]", Pickup_Date.Value.AddDays(30).ToString("dd-MM-yyyy"));
 
             ReplaceText(body, "#[przedmiot-ilosc-dni]", Days.Text);
             ReplaceText(body, "#[przedmiot-procent]", Percentage.Text);
+            ReplaceText(body, "#[przedmiot-procent-dziennie]", PercentageByDay(double.Parse(Percentage.Text), double.Parse(Days.Text)).ToString("F2"));
 
             ReplaceText(body, "#[przedmiot-oplata]", Fee.Text);
 
-            double interestByDay = CalculateInterestByDay((double)(value + decimal.Parse(Commision.Text)), double.Parse(Percentage.Text));
+            double interestByDay = CalculateInterestByDay((double)(value + decimal.Parse(Commision.Text)), double.Parse(Percentage.Text), 20.0);
+            double maxCommision = interestByDay * 20 + double.Parse(Commision.Text);
 
             ReplaceText(body, "#[przedmiot-oplata-dziennie]", interestByDay.ToString("F2"));
-            ReplaceText(body, "#[przedmiot-oplata-max]", (interestByDay*30).ToString("F2"));
+            ReplaceText(body, "#[przedmiot-oplata-dziennie-po-20]", "0.00");
+            ReplaceText(body, "#[przedmiot-oplata-max]", maxCommision.ToString("F2"));
 
-            
+
             ReplaceText(body, "#[przedmiot-oplata-opoznienia]", LateFee.Text);
             ReplaceText(body, "#[przedmiot-kwota-wykupu]", BuyAmount.Text);
 
@@ -1155,12 +1156,17 @@ namespace SKS_Service_Manager
         }
 
 
-        public double CalculateInterestByDay(double value, double percentage)
+        public double CalculateInterestByDay(double value, double percentage, double days)
         {
-            double decimalPercentage = percentage / 100.0;  // Konwersja na double
+            double percentageByDays = days / percentage;
+            double decimalPercentage = percentageByDays / 100.0;  // Konwersja na double
             double interest = value * decimalPercentage;  // Obliczenie odsetek
-            double interestByDay = interest / 30;  // Obliczenie odsetek na dzień
-            return Math.Round(interestByDay, 2);  // Zaokrąglenie do 2 miejsc po przecinku
+            return Math.Round(interest, 2);  // Zaokrąglenie do 2 miejsc po przecinku
+        }
+
+        public double PercentageByDay(double percentage, double days) {
+            double per = days / percentage;
+            return per;
         }
 
         private void FormType_ValueChanged(object sender, EventArgs e)
