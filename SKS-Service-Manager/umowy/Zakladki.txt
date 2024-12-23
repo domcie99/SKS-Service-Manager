@@ -38,6 +38,8 @@
 #[przedmiot-wartosc-szacunkowa]
 #[przedmiot-wartosc-szacunkowa-slownie]
 #[przedmiot-wartosc-calkowita-slownie]
+#[przedmiot-check-do-500]
+#[przedmiot-check-od-500]
 
 #[data-wystawienia]
 #[data-wystawienia+7]

@@ -57,6 +57,7 @@
             label6 = new Label();
             LoadUser = new Button();
             groupBox2 = new GroupBox();
+            checkBox1 = new CheckBox();
             imageFileName = new Label();
             uploadImageButton = new Button();
             label35 = new Label();
@@ -402,6 +403,7 @@
             // groupBox2
             // 
             groupBox2.BackColor = Color.Transparent;
+            groupBox2.Controls.Add(checkBox1);
             groupBox2.Controls.Add(imageFileName);
             groupBox2.Controls.Add(uploadImageButton);
             groupBox2.Controls.Add(label35);
@@ -419,24 +421,35 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Przedmiot";
             // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Cursor = Cursors.Hand;
+            checkBox1.Location = new Point(483, 83);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(98, 19);
+            checkBox1.TabIndex = 122;
+            checkBox1.Text = "Powyżej 500zł";
+            checkBox1.UseVisualStyleBackColor = true;
+            // 
             // imageFileName
             // 
             imageFileName.BackColor = Color.Transparent;
             imageFileName.Font = new Font("Segoe UI", 12F);
-            imageFileName.Location = new Point(644, 81);
+            imageFileName.Location = new Point(693, 81);
             imageFileName.Name = "imageFileName";
-            imageFileName.Size = new Size(143, 23);
+            imageFileName.Size = new Size(87, 23);
             imageFileName.TabIndex = 109;
             imageFileName.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // uploadImageButton
             // 
             uploadImageButton.Cursor = Cursors.Hand;
-            uploadImageButton.Location = new Point(538, 80);
+            uploadImageButton.Location = new Point(625, 80);
             uploadImageButton.Name = "uploadImageButton";
-            uploadImageButton.Size = new Size(100, 23);
+            uploadImageButton.Size = new Size(62, 23);
             uploadImageButton.TabIndex = 108;
-            uploadImageButton.Text = "Wgraj zdjęcie";
+            uploadImageButton.Text = "Zdjęcie";
             uploadImageButton.UseVisualStyleBackColor = true;
             uploadImageButton.Click += uploadImageButton_Click;
             // 
@@ -444,7 +457,7 @@
             // 
             label35.BackColor = Color.Transparent;
             label35.Font = new Font("Segoe UI", 12F);
-            label35.Location = new Point(499, 81);
+            label35.Location = new Point(425, 80);
             label35.Name = "label35";
             label35.Size = new Size(22, 23);
             label35.TabIndex = 106;
@@ -454,7 +467,7 @@
             // Estimated_Value
             // 
             Estimated_Value.Cursor = Cursors.IBeam;
-            Estimated_Value.Location = new Point(439, 81);
+            Estimated_Value.Location = new Point(365, 80);
             Estimated_Value.Name = "Estimated_Value";
             Estimated_Value.Size = new Size(60, 23);
             Estimated_Value.TabIndex = 107;
@@ -469,9 +482,9 @@
             label36.Font = new Font("Segoe UI", 12F);
             label36.Location = new Point(279, 81);
             label36.Name = "label36";
-            label36.Size = new Size(164, 23);
+            label36.Size = new Size(76, 23);
             label36.TabIndex = 105;
-            label36.Text = "Wartość Szacunkowa";
+            label36.Text = "W. Szac..";
             label36.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label19
@@ -1122,10 +1135,11 @@
         private Label label36;
         private CheckBox attachment;
         private Button uploadImageButton;
-        private Label imageFileName;
         private Button delete;
         private ImageList imageList1;
         private Button button2;
         private Button button1;
+        private CheckBox checkBox1;
+        private Label imageFileName;
     }
 }

@@ -319,8 +319,6 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-oplata-dziennie]", interestByDay.ToString("F2"));
             ReplaceText(body, "#[przedmiot-oplata-dziennie-po-20]", "0.00");
             ReplaceText(body, "#[przedmiot-oplata-max]", maxCommision.ToString("F2"));
-
-
             ReplaceText(body, "#[przedmiot-oplata-opoznienia]", LateFee.Text);
             ReplaceText(body, "#[przedmiot-kwota-wykupu]", BuyAmount.Text);
 
@@ -328,6 +326,11 @@ namespace SKS_Service_Manager
             ReplaceText(body, "#[przedmiot-data-sprzedazy]", SaleDate.Value.ToString("dd-MM-yyyy"));
             ReplaceText(body, "#[przedmiot-kwota-sprzedazy]", SaleAmount.Text);
             ReplaceText(body, "#[przedmiot-uwagi]", Comments.Text);
+
+            string checkDo500 = checkBox1.Checked ? "   " : "X";
+            string checkOd500 = checkBox1.Checked ? "X" : "   ";
+            ReplaceText(body, "#[przedmiot-check-do-500]", checkDo500);
+            ReplaceText(body, "#[przedmiot-check-od-500]", checkOd500);
 
             if (imageFilePath != null) ReplaceImage(mainPart, "#[obrazek-placeholder]", imageFilePath);
         }
@@ -1231,6 +1234,15 @@ namespace SKS_Service_Manager
             if (value < 0) { value = 0; }
             if (days < 0) { days = 0; }
             if (perc < 0) { perc = 0; }
+
+            if (value <= 500)
+            {
+                checkBox1.Checked = false;
+            }
+            else
+            {
+                checkBox1.Checked = true;
+            }
 
             totalBuyOut = CalculateTotalPrice(value, days, perc);
 
