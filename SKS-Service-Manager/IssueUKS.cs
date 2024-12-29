@@ -1180,6 +1180,7 @@ namespace SKS_Service_Manager
 
             attachment.Visible = false;
             uploadImageButton.Visible = false;
+            checkBox1.Visible = false;
 
             if (selectedText == "Umowa Kupna-Sprzedaży")
             {
@@ -1194,6 +1195,7 @@ namespace SKS_Service_Manager
                 newFile = "ukpl";
                 attachment.Visible = true;
                 uploadImageButton.Visible = true;
+                checkBox1.Visible = true;
             }
             else if (selectedText == "Umowa Pożyczki z Przechowaniem")
             {
