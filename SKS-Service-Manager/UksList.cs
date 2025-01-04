@@ -102,6 +102,7 @@ namespace SKS_Service_Manager
 
                 string[] searchableColumns =
                 {
+                    "UKS.ID",
                     "UKS.City",
                     "UKS.DocumentType",
                     "UKS.Description",

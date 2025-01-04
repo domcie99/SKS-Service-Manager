@@ -9,8 +9,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <Version>$(VersionPrefix)</Version>
-    <FileVersion>1.8.7.0</FileVersion>
-    <AssemblyVersion>1.8.7.0</AssemblyVersion>
+    <FileVersion>1.8.8.0</FileVersion>
+    <AssemblyVersion>1.8.8.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -341,6 +341,9 @@ namespace SKS_Service_Manager
             {
                 return;
             }
+
+            FormType_ValueChanged(sender, e);
+
             LoadUser.Enabled = false;
             Save.Enabled = false;
             Print.Enabled = false;
@@ -1284,11 +1287,6 @@ namespace SKS_Service_Manager
                     imageFileName.Text = imageFilePath.ToString();
                 }
             }
-        }
-
-        private void FormType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void Post_Code_Leave(object sender, EventArgs e)
