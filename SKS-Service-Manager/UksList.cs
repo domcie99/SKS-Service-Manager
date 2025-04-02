@@ -48,6 +48,7 @@ namespace SKS_Service_Manager
 
             dataGridView1.Columns[4].Width = 200;
             dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView1.CellFormatting += dataGridView1_CellFormatting;
         }
 
         private void SetDefaultCity()
@@ -258,6 +259,46 @@ namespace SKS_Service_Manager
                 e.Handled = true;
             }
         }
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "Wartość Sprzedaży")
+            {
+                // Pobieramy wartość sprzedaży
+                if (e.Value != null && decimal.TryParse(e.Value.ToString(), out decimal wartoscSprzedazy))
+                {
+                    // Pobieramy wartość podstawową z kolumny "Wartość"
+                    object wartoscCell = dataGridView1.Rows[e.RowIndex].Cells["Wartość"].Value;
 
+                    if (wartoscCell != null && decimal.TryParse(wartoscCell.ToString(), out decimal wartosc))
+                    {
+                        decimal roznica = wartoscSprzedazy - wartosc;
+
+                        if (wartoscSprzedazy == 0) 
+                        {
+                            dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = System.Drawing.Color.LightBlue;
+                        }
+                        else if(roznica > 0)
+                        {
+                            dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = System.Drawing.Color.LightGreen; // ✅ Zielony
+                        }
+                        else
+                        {
+                            dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = System.Drawing.Color.LightCoral; // ❌ Czerwony
+                        }
+
+                    }
+                    else
+                    {
+                        // Jeśli "Wartość" jest pusta lub niepoprawna, resetujemy styl
+                        dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = System.Drawing.Color.White;
+                    }
+                }
+                else
+                {
+                    // Jeśli "Wartość Sprzedaży" jest pusta, resetujemy styl
+                    dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = System.Drawing.Color.White;
+                }
+            }
+        }
     }
 }

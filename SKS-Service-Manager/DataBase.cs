@@ -1258,6 +1258,9 @@ namespace SKS_Service_Manager
                            "Users.Address AS 'Ulica Numer', " +
                            "Users.PostalCode AS 'Kod Pocztowy', " +
                            "Users.City AS 'Miasto', " +
+                           "UKS.DateOfReturn AS 'Data Zwrotu', " +
+                           "UKS.SaleDate AS 'Data Sprzedaży', " +
+                           "UKS.SaleAmount AS 'Wartość Sprzedaży', " +
                            "Users.Phone AS 'Telefon', " +
                            "Users.Pesel AS 'Pesel', " +
                            "Users.NIP AS 'NIP', " +
