@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Net;
 using System.Reflection;
-using Ionic.Zip;
 using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 #pragma warning disable
@@ -21,9 +20,8 @@ namespace SKS_Service_Manager
         private string word2Pdf = "C:\\Program Files (x86)\\Weeny Free Word to PDF Converter\\word2pdf.exe";
         private string word2PdfInstaller = AppDomain.CurrentDomain.BaseDirectory + "word2pdf.msi";
 
-        private string remoteUrl = "https://github.com/domcie99/SKS-Service-Manager/releases/download/v1.0.1/PDFConvert.zip";
-        private string versionUrl = "https://raw.githubusercontent.com/domcie99/SKS-Service-Manager/master/SKS-Service-Manager/version.txt";
-        private string updateUrl = "https://github.com/domcie99/SKS-Service-Manager/raw/master/SKS-Service-Manager-Installer/SKS-Service-Manager.msi";
+        private string versionUrl = "http://83.15.62.46:8081/version.txt";
+        private string updateUrl = "http://83.15.62.46:8081/SKS-Service-Manager.msi";
 
         private string localVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         private string latestVersion;
@@ -318,72 +316,6 @@ namespace SKS_Service_Manager
             issueUksForm.ShowDialog();
         }
 
-        private async Task DownloadFileAsync(string fileUrl, string zipPath, string unzipPath)
-        {
-            SetButtonsEnabled(false);
-            Cursor = Cursors.WaitCursor;
-
-            label2.Invoke(new Action(() => label2.Visible = true));
-            progressBar1.Invoke(new Action(() => progressBar1.Visible = true));
-
-
-            label2.Invoke(new Action(() => label2.Text = "Pobieranie 0%"));
-            progressBar1.Invoke(new Action(() => progressBar1.Value = 0));
-
-            using (var httpClient = new HttpClient())
-            {
-                try
-                {
-                    HttpResponseMessage response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead);
-                    response.EnsureSuccessStatusCode();
-
-                    long? totalBytes = response.Content.Headers.ContentLength;
-                    long bytesRead = 0;
-
-                    using (var stream = await response.Content.ReadAsStreamAsync())
-                    {
-                        using (var fileStream = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None))
-                        {
-                            var buffer = new byte[4096];
-                            int bytesReadThisChunk;
-                            double progressPercentage;
-
-                            while ((bytesReadThisChunk = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                            {
-                                await fileStream.WriteAsync(buffer, 0, bytesReadThisChunk);
-                                bytesRead += bytesReadThisChunk;
-
-                                if (totalBytes.HasValue)
-                                {
-                                    progressPercentage = (double)bytesRead / totalBytes.Value * 100;
-                                    UpdateProgressBar((int)progressPercentage);
-                                    label2.Invoke(new Action(() => label2.Text = $"Pobieranie {progressPercentage:F1}%"));
-                                }
-                            }
-                        }
-                    }
-                    UpdateProgressBar(100);
-                    label2.Invoke(new Action(() => label2.Text = "Wypakowywanie... To mo¿e chwilê zaj¹æ"));
-                    ExtractZipFile(zipPath, unzipPath);
-                }
-                catch (HttpRequestException ex)
-                {
-                    // Obs³u¿ b³¹d ¿¹dania HTTP
-                    MessageBox.Show("B³¹d podczas pobierania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                catch (Exception ex)
-                {
-                    // Obs³u¿ inne b³êdy
-                    MessageBox.Show("B³¹d: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    SetButtonsEnabled(true);
-                    Cursor = Cursors.Default;
-                }
-            }
-        }
-
         private void UpdateProgressBar(int value)
         {
             if (InvokeRequired)
@@ -393,40 +325,6 @@ namespace SKS_Service_Manager
             else
             {
                 progressBar1.Value = value;
-            }
-        }
-
-        private async void ExtractZipFile(string zipFilePath, string extractPath)
-        {
-            try
-            {
-                using (Ionic.Zip.ZipFile zip = Ionic.Zip.ZipFile.Read(zipFilePath))
-                {
-                    int totalEntries = zip.Entries.Count;
-                    int entriesExtracted = 0;
-
-                    foreach (var entry in zip)
-                    {
-                        entry.Extract(extractPath, ExtractExistingFileAction.OverwriteSilently);
-
-                        entriesExtracted++;
-                        double progressPercentage = (double)entriesExtracted / totalEntries * 100;
-                        UpdateProgressBar((int)progressPercentage);
-                        label2.Invoke(new Action(() => label2.Text = $"Wypakowywanie {progressPercentage:F1}%"));
-                    }
-
-                    // Po zakoñczeniu wypakowywania pliku, zaktualizuj pasek postêpu na 100% (pe³ny postêp)
-                    UpdateProgressBar(100);
-
-                    progressBar1.Invoke(new Action(() => progressBar1.Visible = false));
-                    label2.Invoke(new Action(() => label2.Visible = false));
-
-                    MessageBox.Show("Zainstalowano pakiet LibreOffice", "MSG", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("B³¹d podczas wypakowywania pliku: " + ex.Message, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

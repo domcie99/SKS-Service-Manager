@@ -49,6 +49,7 @@ namespace SKS_Service_Manager
             dataGridView1.Columns[4].Width = 200;
             dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;
+            dataGridView1.ScrollBars = ScrollBars.Both;
         }
 
         private void SetDefaultCity()
@@ -205,20 +206,33 @@ namespace SKS_Service_Manager
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
-                string cellValue = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
+                string selectedId = dataGridView1.SelectedRows[0].Cells["ID"].Value.ToString();
 
-                int selectedissueID = int.Parse(cellValue);
+                int selectedissueID = int.Parse(selectedId);
 
                 IssueUKS editForm = new IssueUKS(selectedissueID, mainForm);
-
                 editForm.ShowDialog();
+
                 LoadData();
+
+                dataGridView1.ClearSelection();
+
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    if (row.Cells["ID"].Value.ToString() == selectedId)
+                    {
+                        row.Selected = true;
+                        dataGridView1.FirstDisplayedScrollingRowIndex = row.Index;
+                        break;
+                    }
+                }
             }
             else
             {
                 MessageBox.Show("Proszę najpierw wybrać fakturę UKS do edycji.", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
 
         private void UksList_SizeChanged(object sender, EventArgs e)
         {
